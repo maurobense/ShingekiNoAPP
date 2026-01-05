@@ -925,7 +925,7 @@ async function loadDashboard() {
         animateValue("dash-today-count", data.todayOrdersCount);
         animateValue("dash-avg-ticket", data.averageTicket, "$");
 
-        //
+        // Tiempo estimado de entrega
         const timeEl = document.getElementById('dash-avg-time');
         if (timeEl) timeEl.textContent = data.averageDeliveryTime;
         

@@ -1,284 +1,573 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
+
+
 /* =========================================
+
    🎨 DEFINICIÓN DE VARIABLES (EL CEREBRO DEL TEMA)
+
    ========================================= */
+
 :root {
+
     /* --- TEMA CLARO (Default) --- */
+
     --primary-color: #E63946;
+
     --primary-hover: #d62839;
+
     --secondary-color: #1D3557;
-    
+
+   
+
     --bg-body: #F4F7F6;
+
     --bg-card: #FFFFFF;
+
     --bg-sidebar: #FFFFFF;
+
     --bg-input: #FFFFFF;
-    
+
+   
+
     --text-main: #333333;
+
     --text-muted: #666666;
+
     --border-color: #e0e0e0;
-    
+
+   
+
     --table-stripe: #f8f9fa;
+
     --table-hover: #f1f1f1;
-    
+
+   
+
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+
     --shadow-md: 0 4px 15px rgba(0,0,0,0.08);
 
+
+
     --navbar-height: 70px; /* Ajustado a 70px para coincidir con tu HTML */
+
 }
+
+
 
 /* --- TEMA OSCURO (Dark Mode) --- */
+
 [data-theme="dark"] {
+
     --primary-color: #ff4d5a;
+
     --primary-hover: #E63946;
+
     --secondary-color: #101c2e;
-    
+
+   
+
     --bg-body: #121212;
+
     --bg-card: #1E1E1E;
+
     --bg-sidebar: #1E1E1E;
+
     --bg-input: #2D2D2D;
-    
+
+   
+
     --text-main: #E0E0E0;
+
     --text-muted: #A0A0A0;
+
     --border-color: #333333;
-    
+
+   
+
     --table-stripe: #252525;
+
     --table-hover: #2C2C2C;
-    
+
+   
+
     --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+
     --shadow-md: 0 4px 15px rgba(0,0,0,0.5);
+
 }
+
+
 
 /* =========================================
+
    BASE & TRANSICIONES
+
    ========================================= */
+
 body {
+
     font-family: 'Inter', sans-serif;
+
     background-color: var(--bg-body);
+
     color: var(--text-main);
+
     padding-top: var(--navbar-height);
+
     overflow-x: hidden;
+
     transition: background-color 0.3s ease, color 0.3s ease;
+
 }
+
+
 
 /* Scrollbar personalizado (Toque extra) */
+
 ::-webkit-scrollbar { width: 8px; height: 8px; }
+
 ::-webkit-scrollbar-track { background: transparent; }
+
 ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; opacity: 0.5; }
+
 ::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
 
+
+
 /* --- NAVBAR --- */
+
 .navbar {
+
     background: linear-gradient(90deg, var(--secondary-color) 0%, #2b456b 100%);
+
     box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+
     height: var(--navbar-height);
+
     z-index: 1040;
+
 }
+
+
 
 /* BOTÓN TOGGLE DE TEMA (ANIMACIÓN) */
+
 .theme-toggle-btn {
+
     background: rgba(255, 255, 255, 0.1);
+
     border: 1px solid rgba(255, 255, 255, 0.2);
+
     color: #fff;
+
     width: 40px;
+
     height: 40px;
+
     border-radius: 50%;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
     cursor: pointer;
+
     transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+
     position: relative;
+
     overflow: hidden;
+
 }
+
+
 
 .theme-toggle-btn:hover {
+
     background: rgba(255, 255, 255, 0.2);
+
     transform: scale(1.1);
+
 }
+
+
 
 .theme-toggle-btn i {
+
     font-size: 1.2rem;
+
     position: absolute;
+
     transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+
 }
+
+
 
 /* Lógica de animación del icono sol/luna */
+
 /* Si NO es dark, el sol está visible, la luna oculta */
+
 body:not([data-theme="dark"]) .bi-moon-stars-fill {
+
     transform: translateY(30px) rotate(45deg);
+
     opacity: 0;
+
 }
+
 body:not([data-theme="dark"]) .bi-sun-fill {
+
     transform: translateY(0) rotate(0);
+
     opacity: 1;
+
 }
+
+
 
 /* Si ES dark, el sol baja, la luna sube */
+
 body[data-theme="dark"] .bi-sun-fill {
+
     transform: translateY(30px) rotate(45deg);
+
     opacity: 0;
+
 }
+
 body[data-theme="dark"] .bi-moon-stars-fill {
+
     transform: translateY(0) rotate(0);
+
     opacity: 1;
+
 }
+
+
 
 /* --- SIDEBAR --- */
+
 .sidebar {
+
     background-color: var(--bg-sidebar);
+
     border-right: 1px solid var(--border-color);
+
     transition: background-color 0.3s, left 0.3s;
+
     z-index: 1035;
+
 }
+
+
 
 /* VISTA DE ESCRITORIO (Desktop) */
+
 @media (min-width: 768px) {
+
     .sidebar {
+
         position: fixed;
+
         top: var(--navbar-height);
+
         left: 0;
+
         bottom: 0;
+
         width: 16.66667%; /* Ancho de col-md-2 */
+
         overflow-y: auto;
+
         padding-top: 1rem;
+
     }
+
+
 
     /* ESTA ES LA CLAVE QUE FALTABA: */
+
     /* Empujamos el contenido principal a la derecha */
+
     .main-content {
+
         margin-left: 16.66667%; /* Mismo ancho que el sidebar */
+
         width: 83.33333%;      /* El resto del ancho (100% - 16.66%) */
+
     }
+
 }
+
+
 
 /* VISTA MÓVIL (Mobile) */
+
 @media (max-width: 767.98px) {
+
     .sidebar {
+
         position: fixed !important; /* Forzamos fixed para que flote sobre el contenido */
+
         top: 70px; /* Altura del navbar */
+
         left: -100%; /* Lo sacamos de la pantalla a la izquierda */
+
         width: 260px; /* Ancho del menú */
+
         height: calc(100vh - 70px);
+
         z-index: 1050; /* Asegura que esté por encima del contenido */
+
         transition: left 0.3s ease-in-out; /* Animación suave */
+
         display: block !important; /* Forzamos que exista aunque sea grid */
-        
+
+       
+
         /* Asegurar fondo (usa tu variable o un color fijo por si acaso) */
-        background-color: var(--bg-sidebar); 
+
+        background-color: var(--bg-sidebar);
+
         border-right: 1px solid var(--border-color);
+
         overflow-y: auto;
+
     }
+
+
 
     /* 2. Estado Activo: Se mueve a la posición 0 (Visible) */
+
     .sidebar.show {
+
         left: 0 !important;
+
         box-shadow: 5px 0 15px rgba(0,0,0,0.2); /* Sombra para que destaque */
+
     }
+
+
 
     /* En móvil el contenido ocupa todo el ancho */
+
     .main-content {
+
         margin-left: 0;
+
         width: 100%;
+
     }
+
 }
+
+
 
 /* ITEMS MENÚ */
+
 .list-group-item {
+
     background-color: transparent;
+
     color: var(--text-muted);
+
     font-weight: 500;
+
     border: none;
+
     margin-bottom: 5px;
+
     cursor: pointer;
+
 }
+
+
 
 .list-group-item:hover {
+
     background-color: var(--bg-body);
+
     color: var(--primary-color);
+
 }
+
+
 
 .list-group-item.active {
+
     background-color: var(--secondary-color) !important;
+
     color: #fff !important;
+
 }
+
+
 
 /* --- CARDS & UI --- */
+
 .card {
+
     background-color: var(--bg-card);
+
     border: 1px solid var(--border-color);
+
     border-radius: 12px;
+
     box-shadow: var(--shadow-sm);
+
 }
+
+
 
 /* Títulos */
+
 h3, h5, .modal-title, .card-header {
+
     color: var(--text-main) !important;
+
     background-color: transparent !important;
+
     border-bottom: 1px solid var(--border-color) !important;
+
 }
+
+
 
 /* --- TABLAS --- */
+
 .table {
+
     color: var(--text-main);
+
 }
+
 .table thead th {
+
     background-color: var(--bg-body);
+
     color: var(--text-muted);
+
     border-bottom: 2px solid var(--border-color);
+
 }
+
 .table tbody td {
+
     border-bottom: 1px solid var(--border-color);
+
     background-color: transparent;
+
     color: var(--text-main);
+
 }
+
 .table-hover tbody tr:hover td {
+
     background-color: var(--table-hover);
+
     color: var(--text-main);
+
 }
+
+
 
 /* --- INPUTS --- */
+
 .form-control, .form-select {
+
     background-color: var(--bg-input);
+
     color: var(--text-main);
+
     border: 1px solid var(--border-color);
-    font-size: 16px; 
+
+    font-size: 16px;
+
 }
+
+
 
 .form-control:focus, .form-select:focus {
+
     background-color: var(--bg-input);
+
     color: var(--text-main);
+
     border-color: var(--primary-color);
+
     box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.2);
+
 }
+
+
 
 ::placeholder {
+
     color: var(--text-muted) !important;
+
     opacity: 0.7;
+
 }
+
+
 
 /* --- MODALES --- */
+
 .modal-content {
+
     background-color: var(--bg-card);
+
     border: 1px solid var(--border-color);
+
     color: var(--text-main);
-}
-.modal-header, .modal-footer {
-    border-color: var(--border-color);
-}
-.btn-close {
-    filter: var(--btn-close-filter, none); 
-}
-[data-theme="dark"] .btn-close {
-    filter: invert(1) grayscale(100%) brightness(200%);
+
 }
 
+.modal-header, .modal-footer {
+
+    border-color: var(--border-color);
+
+}
+
+.btn-close {
+
+    filter: var(--btn-close-filter, none);
+
+}
+
+[data-theme="dark"] .btn-close {
+
+    filter: invert(1) grayscale(100%) brightness(200%);
+
+}
+
+
+
 /* --- BOTONES --- */
+
 .btn-primary {
+
     background-color: var(--primary-color);
+
     border: none;
+
     font-weight: 600;
+
 }
+
 .btn-primary:hover {
+
     background-color: var(--primary-hover);
+
 }
+/* @media print {
+
+    .col-12:last-child {
+        display: none !important;
+    }
+} */

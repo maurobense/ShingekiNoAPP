@@ -10,3 +10,16 @@ C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Negocio\
 C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Release\net8.0\refint\Business.dll
 C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Release\net8.0\Business.pdb
 C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Release\net8.0\ref\Business.dll
+C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\bin\Release\net8.0\Business.deps.json
+C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\bin\Release\net8.0\Business.dll
+C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\bin\Release\net8.0\Business.pdb
+C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Release\net8.0\Business.csproj.AssemblyReference.cache
+C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Release\net8.0\Business.GeneratedMSBuildEditorConfig.editorconfig
+C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Release\net8.0\Business.AssemblyInfoInputs.cache
+C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Release\net8.0\Business.AssemblyInfo.cs
+C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Release\net8.0\Business.csproj.CoreCompileInputs.cache
+C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Release\net8.0\Business.sourcelink.json
+C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Release\net8.0\Business.dll
+C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Release\net8.0\refint\Business.dll
+C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Release\net8.0\Business.pdb
+C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Release\net8.0\ref\Business.dll

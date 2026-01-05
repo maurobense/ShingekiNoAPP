@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Datos.Migrations
 {
     [DbContext(typeof(ShingekiContext))]
-    [Migration("20251214223503_paymentmethod")]
-    partial class paymentmethod
+    [Migration("20260105194617_total")]
+    partial class total
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -114,6 +114,100 @@ namespace Datos.Migrations
                         .IsUnique();
 
                     b.ToTable("BranchStocks");
+                });
+
+            modelBuilder.Entity("Business.BusinessEntities.CashMovement", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CashSessionId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("CashSessionId1")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("MovementDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CashSessionId1");
+
+                    b.ToTable("CashMovements");
+                });
+
+            modelBuilder.Entity("Business.BusinessEntities.CashSession", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime?>("CloseTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("Difference")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("ExpectedBalance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("FinalBalance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("InitialBalance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("OpenTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("OperationalDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CashSessions");
                 });
 
             modelBuilder.Entity("Business.BusinessEntities.Category", b =>
@@ -516,15 +610,25 @@ namespace Datos.Migrations
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(100)")
+                        .HasDefaultValue(" ");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BranchId");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -546,6 +650,17 @@ namespace Datos.Migrations
                     b.Navigation("Branch");
 
                     b.Navigation("Ingredient");
+                });
+
+            modelBuilder.Entity("Business.BusinessEntities.CashMovement", b =>
+                {
+                    b.HasOne("Business.BusinessEntities.CashSession", "CashSession")
+                        .WithMany("Movements")
+                        .HasForeignKey("CashSessionId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CashSession");
                 });
 
             modelBuilder.Entity("Business.BusinessEntities.ClientAddress", b =>
@@ -664,6 +779,11 @@ namespace Datos.Migrations
                     b.Navigation("BranchStocks");
 
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Business.BusinessEntities.CashSession", b =>
+                {
+                    b.Navigation("Movements");
                 });
 
             modelBuilder.Entity("Business.BusinessEntities.Category", b =>
