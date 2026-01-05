@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\ShingekiNoAPPI.csproj": {}
+    "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\ShingekiNoAPPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\ShingekiNoAPPI.csproj": {
+    "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\ShingekiNoAPPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\ShingekiNoAPPI.csproj",
+        "projectUniqueName": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\ShingekiNoAPPI.csproj",
         "projectName": "ShingekiNoAPPI",
-        "projectPath": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\ShingekiNoAPPI.csproj",
-        "packagesPath": "C:\\Users\\mauro\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\obj\\",
+        "projectPath": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\ShingekiNoAPPI.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\mauro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -32,14 +32,14 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Datos.csproj": {
-                "projectPath": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Datos.csproj"
+              "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Datos.csproj": {
+                "projectPath": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Datos.csproj"
               },
-              "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\DTO\\DTO.csproj": {
-                "projectPath": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\DTO\\DTO.csproj"
+              "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\DTO.csproj": {
+                "projectPath": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\DTO.csproj"
               },
-              "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj": {
-                "projectPath": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj"
+              "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj": {
+                "projectPath": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj"
               }
             }
           }
@@ -54,7 +54,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.100"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -94,24 +94,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Datos.csproj": {
+    "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Datos.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Datos.csproj",
+        "projectUniqueName": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Datos.csproj",
         "projectName": "Datos",
-        "projectPath": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Datos.csproj",
-        "packagesPath": "C:\\Users\\mauro\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Datos\\obj\\",
+        "projectPath": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Datos.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\mauro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -126,8 +126,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj": {
-                "projectPath": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj"
+              "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj": {
+                "projectPath": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj"
               }
             }
           }
@@ -142,7 +142,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.100"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -185,24 +185,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\DTO\\DTO.csproj": {
+    "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\DTO.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\DTO\\DTO.csproj",
+        "projectUniqueName": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\DTO.csproj",
         "projectName": "DTO",
-        "projectPath": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\DTO\\DTO.csproj",
-        "packagesPath": "C:\\Users\\mauro\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\DTO\\obj\\",
+        "projectPath": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\DTO.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\mauro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -217,8 +217,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj": {
-                "projectPath": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj"
+              "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj": {
+                "projectPath": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj"
               }
             }
           }
@@ -233,7 +233,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.100"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -254,24 +254,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj": {
+    "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj",
+        "projectUniqueName": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj",
         "projectName": "Business",
-        "projectPath": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj",
-        "packagesPath": "C:\\Users\\mauro\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mauro\\OneDrive\\Documentos\\Software\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\obj\\",
+        "projectPath": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\Business.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\mauro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -298,7 +298,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.100"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -325,7 +325,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

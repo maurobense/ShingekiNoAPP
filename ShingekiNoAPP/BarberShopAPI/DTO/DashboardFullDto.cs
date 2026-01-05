@@ -14,6 +14,8 @@ namespace DTO
         public decimal AverageTicket { get; set; }
         public int PendingOrders { get; set; }
 
+        //Tiempo estimado de pedido completado
+        public string AverageDeliveryTime { get; set; } // Nuevo: Ej "45 min"
         // Gráficos y Tendencias
         public List<ChartDataDto> Last7DaysSales { get; set; } // Evolución
         public List<ChartDataDto> SalesByCategory { get; set; } // ¿Qué vendemos?

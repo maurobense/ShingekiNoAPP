@@ -1,0 +1,16 @@
+
+*.dll
+
+*.db
+
+*.vsidx
+
+*.pdb
+
+*.exe
+
+*.db-shm
+
+*.db-wal
+
+*.cache

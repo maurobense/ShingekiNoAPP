@@ -888,7 +888,7 @@ function setupForms() {
 // 📊 DASHBOARD (Lógica de Negocio & Gráficos)
 // ==========================================
 let salesChartInstance = null;
-let categoryChartInstance = null;
+let topProductsChartInstance = null; // 🔥 Variable renombrada
 let peakHoursChartInstance = null;
 
 // Función para reiniciar el filtro a "Hoy" (Turno Actual)
@@ -921,10 +921,13 @@ async function loadDashboard() {
         if (!data) return;
 
         // 4. Renderizar KPIs (Tarjetas Superiores)
-        // Usamos animateValue para efecto visual y protección contra nulos
         animateValue("dash-today-revenue", data.todayRevenue, "$");
         animateValue("dash-today-count", data.todayOrdersCount);
         animateValue("dash-avg-ticket", data.averageTicket, "$");
+
+        //
+        const timeEl = document.getElementById('dash-avg-time');
+        if (timeEl) timeEl.textContent = data.averageDeliveryTime;
         
         // Renderizar Pendientes
         const pendingEl = document.getElementById('dash-pending');
@@ -938,10 +941,10 @@ async function loadDashboard() {
             stockLabel.className = lowCount > 0 ? "text-danger fw-bold ms-2" : "text-muted ms-2";
         }
 
-        // 5. Renderizar Gráficos (Validando que existan arrays)
-        // Nota: El backend ya devuelve los datos ordenados y formateados.
+        // 5. Renderizar Gráficos
         if(data.last7DaysSales) renderSalesChart(data.last7DaysSales);
-        if(data.salesByCategory) renderCategoryChart(data.salesByCategory);
+        // 🔥 Usamos la nueva función para Top Productos
+        if(data.salesByCategory) renderTopProductsChart(data.salesByCategory);
         if(data.peakHours) renderPeakHoursChart(data.peakHours);
 
     } catch (error) {
@@ -949,7 +952,7 @@ async function loadDashboard() {
     }
 }
 
-// Utilidad para mostrar números con seguridad (evita el error 'toLocaleString of undefined')
+// Utilidad para mostrar números con seguridad
 function animateValue(id, value, prefix = "") {
     const el = document.getElementById(id);
     if (!el) return;
@@ -961,24 +964,20 @@ function animateValue(id, value, prefix = "") {
 // 📈 LÓGICA DE GRÁFICOS (Chart.js)
 // ---------------------------------------------
 
-// 1. Evolución de Ventas (Barras)
+// 1. Evolución de Ventas (Barras Verticales)
 function renderSalesChart(data) {
     const ctx = document.getElementById('salesChart');
     if (!ctx) return;
     
     if (salesChartInstance) salesChartInstance.destroy();
 
-    // El backend ya envía "dd/MM" o "HH:00", lo usamos directo.
-    const labels = data.map(d => d.label);
-    const values = data.map(d => d.value);
-
     salesChartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels,
+            labels: data.map(d => d.label),
             datasets: [{
                 label: 'Ventas ($)',
-                data: values,
+                data: data.map(d => d.value),
                 backgroundColor: 'rgba(13, 110, 253, 0.7)', // Azul Bootstrap
                 borderColor: '#0d6efd',
                 borderWidth: 1,
@@ -991,11 +990,7 @@ function renderSalesChart(data) {
             plugins: { 
                 legend: { display: false },
                 tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return '$ ' + context.raw.toLocaleString('es-UY');
-                        }
-                    }
+                    callbacks: { label: c => '$ ' + c.raw.toLocaleString('es-UY') }
                 }
             },
             scales: { y: { beginAtZero: true } }
@@ -1003,30 +998,39 @@ function renderSalesChart(data) {
     });
 }
 
-// 2. Mix de Ventas (Dona)
-function renderCategoryChart(data) {
-    const ctx = document.getElementById('categoryChart');
+// 🔥 2. Top Productos (Barras Horizontales)
+function renderTopProductsChart(data) {
+    const ctx = document.getElementById('topProductsChart'); // 🔥 ID actualizado
     if (!ctx) return;
     
-    if (categoryChartInstance) categoryChartInstance.destroy();
+    if (topProductsChartInstance) topProductsChartInstance.destroy();
 
-    categoryChartInstance = new Chart(ctx, {
-        type: 'doughnut',
+    topProductsChartInstance = new Chart(ctx, {
+        type: 'bar', // Usamos barras...
         data: {
-            labels: data.map(d => d.label),
+            labels: data.map(d => d.label), // Nombres de productos
             datasets: [{
+                label: 'Unidades Vendidas',
                 data: data.map(d => d.value),
-                backgroundColor: [
-                    '#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff', '#ff9f40'
+                backgroundColor: [ // Colores variados para que se vea bien
+                    '#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff'
                 ],
-                hoverOffset: 4
+                borderWidth: 1,
+                borderRadius: 4
             }]
         },
         options: {
+            indexAxis: 'y', // 🔥 Esto hace que las barras sean horizontales
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } }
+                legend: { display: false }, // No hace falta leyenda
+                tooltip: {
+                    callbacks: { label: c => `${c.raw} unidades` }
+                }
+            },
+            scales: { 
+                x: { beginAtZero: true } // El eje X ahora es el de valores
             }
         }
     });
@@ -1042,14 +1046,14 @@ function renderPeakHoursChart(data) {
     peakHoursChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: data.map(d => d.label), // Ej: "20:00", "21:00"
+            labels: data.map(d => d.label),
             datasets: [{
                 label: 'Pedidos Promedio',
                 data: data.map(d => d.value),
                 borderColor: '#dc3545', // Rojo Bootstrap
-                backgroundColor: 'rgba(220, 53, 69, 0.1)', // Rojo transparente
+                backgroundColor: 'rgba(220, 53, 69, 0.1)',
                 fill: true,
-                tension: 0.4, // Curva suave (spline)
+                tension: 0.4,
                 pointRadius: 4,
                 pointBackgroundColor: '#fff',
                 pointBorderColor: '#dc3545'
@@ -1058,21 +1062,10 @@ function renderPeakHoursChart(data) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: {
-                y: { 
-                    beginAtZero: true, 
-                    ticks: { stepSize: 1 } 
-                }
-            },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
             plugins: {
                 legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return ` ${context.raw} pedidos aprox.`;
-                        }
-                    }
-                }
+                tooltip: { callbacks: { label: c => `${c.raw} pedidos aprox.` } }
             }
         }
     });

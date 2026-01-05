@@ -15,13 +15,11 @@ namespace ShingekiNoAPPI.Controllers
     {
         private readonly IRepositoryOrder _repoOrder;
         private readonly IRepositoryBranchStock _repoStock;
-        private readonly IRepositoryCategory _repoCategory;
 
-        public ReportsController(IRepositoryOrder repoOrder, IRepositoryBranchStock repoStock, IRepositoryCategory repoCategory)
+        public ReportsController(IRepositoryOrder repoOrder, IRepositoryBranchStock repoStock)
         {
             _repoOrder = repoOrder;
             _repoStock = repoStock;
-            _repoCategory = repoCategory;
         }
 
         [HttpGet("dashboard")]
@@ -30,36 +28,29 @@ namespace ShingekiNoAPPI.Controllers
             try
             {
                 // =================================================================================
-                // 🕒 CONFIGURACIÓN DEL "DÍA OPERATIVO" (MAURO FIX)
+                // 🕒 CONFIGURACIÓN DE HORARIOS
                 // =================================================================================
-                // Definimos que el día del restaurante termina a las 04:00 AM de la madrugada siguiente.
-                // Todo lo que pase antes de las 4 AM pertenece al "ayer".
-                int closingHour = 4;
+                int closingHour = 2;   // Cierre a las 02:00 AM
+                int openingHour = 18;  // Apertura a las 18:00 PM
 
-                var nowUtc = DateTime.UtcNow;
-                var nowUy = nowUtc.AddHours(-3); // Hora Uruguay
+                var nowUy = DateTime.UtcNow.AddHours(-3);
 
-                // 1. DEFINIR RANGO DE FECHAS DE LA CONSULTA
-                DateTime filterStartUtc;
-                DateTime filterEndUtc;
+                // 1. DEFINIR RANGO DE FECHAS
+                DateTime filterStartUtc, filterEndUtc;
 
                 if (!startDate.HasValue || !endDate.HasValue)
                 {
-                    // Si no elige fechas: Calculamos el "Hoy Operativo"
-                    // Si son las 02:00 AM, el "Día Operativo" es ayer.
+                    // "Hoy Operativo"
                     var operationalDate = nowUy.Hour < closingHour ? nowUy.Date.AddDays(-1) : nowUy.Date;
 
-                    // El rango va desde hoy a las 04:00 AM hasta mañana a las 04:00 AM
                     var startUy = operationalDate.AddHours(closingHour);
-                    var endUy = startUy.AddDays(1); // 24 horas exactas
+                    var endUy = startUy.AddDays(1);
 
-                    filterStartUtc = startUy.AddHours(3); // Convertir a UTC para BD
+                    filterStartUtc = startUy.AddHours(3);
                     filterEndUtc = endUy.AddHours(3);
                 }
                 else
                 {
-                    // Si elige fechas manuales (ej: 01/12 al 05/12)
-                    // Queremos desde el 01/12 a las 04:00 AM hasta el 06/12 a las 04:00 AM
                     var startUy = startDate.Value.Date.AddHours(closingHour);
                     var endUy = endDate.Value.Date.AddDays(1).AddHours(closingHour);
 
@@ -68,127 +59,137 @@ namespace ShingekiNoAPPI.Controllers
                 }
 
                 // =================================================================================
-                // 2. OBTENCIÓN DE DATOS (FILTRADO SQL)
+                // 2. OBTENCIÓN DE DATOS (Incluyendo OrderStatusHistories)
                 // =================================================================================
-
-                // Traemos los pedidos básicos del rango en memoria para procesar la lógica compleja de horas
-                // (Nota: Si tienes millones de pedidos, esto se optimiza diferente, pero para <100k está perfecto así)
                 var rawOrders = _repoOrder.GetAll()
                     .Where(o => o.CurrentStatus != OrderStatus.Cancelled &&
                                 o.OrderDate >= filterStartUtc &&
                                 o.OrderDate <= filterEndUtc)
-                    .Select(o => new
-                    {
-                        o.TotalAmount,
-                        o.OrderDate,
-                        o.CurrentStatus,
-                        o.OrderItems // Necesario para categorías
-                    })
+                    .Include(o => o.OrderItems)
+                        .ThenInclude(oi => oi.Product)
+                    // 🔥 CORRECCIÓN AQUÍ: Usamos el nombre correcto de la relación
+                    .Include(o => o.StatusHistory)
                     .ToList();
 
-                // =================================================================================
-                // 3. PROCESAMIENTO EN MEMORIA (Lógica de Negocio)
-                // =================================================================================
-
-                // A. KPIs Generales
+                // --- KPIs ---
                 var totalRevenue = rawOrders.Sum(o => o.TotalAmount);
                 var totalCount = rawOrders.Count;
                 var avgTicket = totalCount > 0 ? totalRevenue / totalCount : 0;
-
-                // Pendientes (Buscamos en la DB general, no solo en el rango, para ver el estado actual real)
                 var pendingCount = _repoOrder.GetAll()
                     .Count(o => o.CurrentStatus == OrderStatus.Pending ||
                                 o.CurrentStatus == OrderStatus.Confirmed ||
                                 o.CurrentStatus == OrderStatus.Cooking);
 
-                // B. GRÁFICO 1: EVOLUCIÓN DE VENTAS (Corregido: Asignar madrugadas al día anterior)
+                // =============================================================================
+                // 🔥 CÁLCULO TIEMPO PROMEDIO (Usando OrderStatusHistories)
+                // =============================================================================
+                var deliveryTimes = new List<double>();
+
+                foreach (var order in rawOrders.Where(o => o.CurrentStatus == OrderStatus.Delivered))
+                {
+                    // Accedemos a la tabla correcta
+                    var history = order.StatusHistory;
+
+                    if (history != null && history.Any())
+                    {
+                        // Buscamos cuándo se confirmó (Inicio)
+                        // Ajusta 'ChangeDate' si tu propiedad se llama 'Date', 'CreatedAt', etc.
+                        var confirmedTime = history
+                            .Where(h => h.Status == OrderStatus.Confirmed)
+                            .OrderBy(h => h.ChangeDate)
+                            .Select(h => (DateTime?)h.ChangeDate)
+                            .FirstOrDefault();
+
+                        // Buscamos cuándo se entregó (Fin)
+                        var deliveredTime = history
+                            .Where(h => h.Status == OrderStatus.Delivered)
+                            .OrderBy(h => h.ChangeDate)
+                            .Select(h => (DateTime?)h.ChangeDate)
+                            .FirstOrDefault();
+
+                        // Calculamos diferencia
+                        if (confirmedTime.HasValue && deliveredTime.HasValue)
+                        {
+                            var minutes = (deliveredTime.Value - confirmedTime.Value).TotalMinutes;
+                            // Filtro de seguridad: entre 1 min y 5 horas (para evitar datos corruptos)
+                            if (minutes > 0 && minutes < 300)
+                            {
+                                deliveryTimes.Add(minutes);
+                            }
+                        }
+                    }
+                }
+
+                string avgDeliveryText = deliveryTimes.Any()
+                    ? $"{Math.Round(deliveryTimes.Average())} min"
+                    : "-";
+
+                // --- GRÁFICO 1: EVOLUCIÓN VENTAS ---
                 List<ChartDataDto> salesChart;
                 var daysDiff = (filterEndUtc - filterStartUtc).TotalDays;
 
                 if (daysDiff <= 2)
                 {
-                    // VISTA POR HORA (Para "Hoy" o rangos cortos)
                     salesChart = rawOrders
-                        .Select(o => new {
-                            // Convertimos a Hora UY
-                            Hour = o.OrderDate.AddHours(-3).Hour,
-                            Amount = o.TotalAmount
-                        })
+                        .Select(o => new { Hour = o.OrderDate.AddHours(-3).Hour, Amount = o.TotalAmount })
+                        .Where(x => x.Hour >= openingHour || x.Hour < closingHour)
                         .GroupBy(x => x.Hour)
                         .Select(g => new {
                             Hour = g.Key,
                             Total = g.Sum(x => x.Amount),
-                            // 🔥 TRUCO ORDENAMIENTO: Si es 0, 1, 2, 3... sumamos 24 para que queden al final
                             SortKey = g.Key < closingHour ? g.Key + 24 : g.Key
                         })
-                        .OrderBy(x => x.SortKey) // Ordenamos por la clave ajustada (19, 20... 23, 24(00), 25(01))
-                        .Select(x => new ChartDataDto
-                        {
-                            Label = $"{x.Hour}:00",
-                            Value = x.Total
-                        })
+                        .OrderBy(x => x.SortKey)
+                        .Select(x => new ChartDataDto { Label = $"{x.Hour}:00", Value = x.Total })
                         .ToList();
                 }
                 else
                 {
-                    // VISTA POR DÍA (Corregido: La venta de las 02:00 AM cuenta para ayer)
                     salesChart = rawOrders
                         .Select(o => new {
-                            // 🔥 TRUCO: Restamos 4 horas (closingHour) antes de sacar la fecha.
-                            // 01/12 02:00 AM - 4h = 30/11 22:00 PM -> Fecha: 30/11 (Correcto para el negocio)
                             OpDate = o.OrderDate.AddHours(-3).AddHours(-closingHour).Date,
                             Amount = o.TotalAmount
                         })
                         .GroupBy(x => x.OpDate)
-                        .Select(g => new ChartDataDto
-                        {
-                            Label = g.Key.ToString("dd/MM"),
-                            Value = g.Sum(x => x.Amount)
-                        })
-                        .OrderBy(x => DateTime.ParseExact(x.Label, "dd/MM", null)) // Ordenar cronológicamente
+                        .Select(g => new ChartDataDto { Label = g.Key.ToString("dd/MM"), Value = g.Sum(x => x.Amount) })
+                        .OrderBy(x => DateTime.ParseExact(x.Label, "dd/MM", null))
                         .ToList();
                 }
 
-                // C. GRÁFICO 2: HORAS PICO (Histórico General 60 días)
-                // Aquí aplicamos la misma lógica de ordenamiento visual
-                var historyStart = DateTime.UtcNow.AddDays(-60);
-
-                // Hacemos una query ligera separada para el histórico
-                var peakHoursRaw = _repoOrder.GetAll()
-                    .Where(o => o.OrderDate >= historyStart && o.CurrentStatus != OrderStatus.Cancelled)
+                // --- GRÁFICO 2: HORAS PICO (Realista) ---
+                var cutOffDate = new DateTime(2025, 12, 17, 0, 0, 0, DateTimeKind.Utc);
+                var historyDates = _repoOrder.GetAll()
+                    .Where(o => o.OrderDate >= cutOffDate && o.CurrentStatus != OrderStatus.Cancelled)
                     .Select(o => o.OrderDate)
                     .ToList();
 
-                var peakHours = peakHoursRaw
-                    .Select(d => d.AddHours(-3).Hour) // Hora Uruguay
-                    .GroupBy(h => h)
+                var validHistoryOrders = historyDates
+                    .Select(d => d.AddHours(-3))
+                    .Where(d => d.Hour >= openingHour || d.Hour < closingHour)
+                    .ToList();
+
+                decimal activeDays = validHistoryOrders
+                    .Select(d => d.AddHours(-closingHour).Date)
+                    .Distinct()
+                    .Count();
+
+                if (activeDays < 1) activeDays = 1;
+
+                var peakHours = validHistoryOrders
+                    .GroupBy(d => d.Hour)
                     .Select(g => new {
                         Hour = g.Key,
-                        // Promedio simple: Total pedidos / 60 dias (aprox)
-                        AvgOrders = Math.Round((decimal)g.Count() / 60m, 1),
-                        // 🔥 MISMO TRUCO ORDENAMIENTO
+                        AvgOrders = Math.Round((decimal)g.Count() / activeDays, 1),
                         SortKey = g.Key < closingHour ? g.Key + 24 : g.Key
                     })
                     .OrderBy(x => x.SortKey)
-                    .Select(g => new ChartDataDto
-                    {
-                        Label = $"{g.Hour}:00",
-                        Value = g.AvgOrders
-                    })
+                    .Select(g => new ChartDataDto { Label = $"{g.Hour}:00", Value = g.AvgOrders })
                     .ToList();
 
-                // D. TOP CATEGORÍAS (Usando los datos en memoria del rango)
-                // Nota: Necesitas que tu repositorio incluya OrderItems.Product.Category o usar Lazy Loading
-                // Si 'rawOrders' no trajo las relaciones, esta parte fallará. 
-                // Asegúrate en el Repo de usar .Include o hacer una query separada aquí si es necesario.
-
-                // Hacemos query separada para asegurar Categorías sin traer todo el grafo antes
-                var categorySales = _repoOrder.GetAll()
-                     .Where(o => o.CurrentStatus != OrderStatus.Cancelled &&
-                                 o.OrderDate >= filterStartUtc &&
-                                 o.OrderDate <= filterEndUtc)
+                // --- TOP PRODUCTOS ---
+                var topProducts = rawOrders
                      .SelectMany(o => o.OrderItems)
-                     .GroupBy(i => i.Product.Category.Name)
+                     .GroupBy(i => i.Product.Name)
                      .Select(g => new ChartDataDto
                      {
                          Label = g.Key,
@@ -198,19 +199,19 @@ namespace ShingekiNoAPPI.Controllers
                      .Take(5)
                      .ToList();
 
-                // E. ALERTAS STOCK
                 var lowStockCount = _repoStock.GetAll().Count(s => s.CurrentStock <= s.MinimumStockAlert);
 
-                // F. RESPUESTA FINAL
+                // --- RESPUESTA ---
                 var response = new DashboardFullDto
                 {
                     TodayRevenue = totalRevenue,
                     TodayOrdersCount = totalCount,
                     AverageTicket = Math.Round(avgTicket, 2),
                     PendingOrders = pendingCount,
+                    AverageDeliveryTime = avgDeliveryText,
                     Last7DaysSales = salesChart,
                     PeakHours = peakHours,
-                    SalesByCategory = categorySales,
+                    SalesByCategory = topProducts,
                     LowStockCount = lowStockCount
                 };
 
@@ -218,7 +219,8 @@ namespace ShingekiNoAPPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error en Dashboard: {ex.Message} {ex.StackTrace}");
+                var inner = ex.InnerException != null ? ex.InnerException.Message : "";
+                return StatusCode(500, $"Error Dashboard: {ex.Message} {inner}");
             }
         }
     }
