@@ -1,0 +1,17 @@
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\bin\Release\net8.0\Datos.deps.json
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\bin\Release\net8.0\Datos.runtimeconfig.json
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\bin\Release\net8.0\Datos.dll
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\bin\Release\net8.0\Datos.pdb
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\bin\Release\net8.0\Business.dll
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\bin\Release\net8.0\Business.pdb
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\obj\Release\net8.0\Datos.csproj.AssemblyReference.cache
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\obj\Release\net8.0\Datos.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\obj\Release\net8.0\Datos.AssemblyInfoInputs.cache
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\obj\Release\net8.0\Datos.AssemblyInfo.cs
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\obj\Release\net8.0\Datos.csproj.CoreCompileInputs.cache
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\obj\Release\net8.0\Datos.csproj.Up2Date
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\obj\Release\net8.0\Datos.dll
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\obj\Release\net8.0\refint\Datos.dll
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\obj\Release\net8.0\Datos.pdb
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\obj\Release\net8.0\Datos.genruntimeconfig.cache
+C:\Users\mauro\OneDrive\Documentos\Software\ShingekiNoAPP\BarberShopAPI\Datos\obj\Release\net8.0\ref\Datos.dll

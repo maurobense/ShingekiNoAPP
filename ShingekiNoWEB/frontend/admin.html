@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Shingeki Admin">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
+
+    <title>Admin Dashboard | Shingeki Burger</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body class="bg-body-tertiary" style="padding-top: 80px;">
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-sm" style="height: 70px;">
+        <div class="container-fluid px-3">
+            <button class="btn btn-link text-white p-0 me-3 d-lg-none" id="sidebar-toggle" type="button" onclick="toggleSidebar()">
+                <i class="bi bi-list fs-1"></i>
+            </button>
+
+            <a class="navbar-brand fw-bold d-flex align-items-center text-white" href="#">
+                <i class="bi bi-fire text-danger me-2"></i> Shingeki Admin
+            </a>
+
+            <div class="d-flex align-items-center gap-3 ms-auto">
+                <span class="text-white small d-none d-md-block fw-light" id="admin-name">Cargando...</span>
+                <button class="theme-toggle-btn mx-2" id="theme-toggle" title="Cambiar Tema">
+                    <i class="bi bi-sun-fill"></i>
+                    <i class="bi bi-moon-stars-fill"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-light border-0 bg-white bg-opacity-10" id="logout-btn">
+                    <i class="bi bi-box-arrow-right"></i> <span class="d-none d-md-inline">Salir</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+
+            <div class="col-md-2 sidebar bg-body border-end p-3 shadow-sm d-md-block" id="main-sidebar"
+                style="min-height: calc(100vh - 80px); top: 80px;">
+                <div class="list-group list-group-flush">
+                    <button class="list-group-item list-group-item-action border-0 rounded mb-1" onclick="switchTab('dashboard')">
+                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                    </button>
+                    <button class="list-group-item list-group-item-action border-0 rounded mb-1 text-primary fw-bold bg-primary bg-opacity-10 active" onclick="switchTab('orders')">
+                        <i class="bi bi-bell-fill me-2"></i> Pedidos
+                    </button>
+                    <hr class="my-2">
+                    <button class="list-group-item list-group-item-action border-0 rounded mb-1" onclick="switchTab('cash')">
+                        <i class="bi bi-wallet2 me-2"></i> Caja
+                    </button>
+                    <button class="list-group-item list-group-item-action border-0 rounded mb-1" onclick="switchTab('categories')">
+                        <i class="bi bi-tags me-2"></i> Categorías
+                    </button>
+                    <button class="list-group-item list-group-item-action border-0 rounded mb-1" onclick="switchTab('products')">
+                        <i class="bi bi-bag-heart-fill me-2"></i> Productos
+                    </button>
+                    <button class="list-group-item list-group-item-action border-0 rounded mb-1" onclick="switchTab('stock')">
+                        <i class="bi bi-box-seam me-2"></i> Inventario
+                    </button>
+                    <button class="list-group-item list-group-item-action border-0 rounded mb-1" onclick="switchTab('ingredients')">
+                        <i class="bi bi-basket me-2"></i> Ingredientes
+                    </button>
+                    <button class="list-group-item list-group-item-action border-0 rounded mb-1" onclick="switchTab('clients')">
+                        <i class="bi bi-people-fill me-2"></i> Clientes
+                    </button>
+                    <button class="list-group-item list-group-item-action border-0 rounded mb-1" onclick="switchTab('users')">
+                        <i class="bi bi-person-badge-fill me-2"></i> Usuarios
+                    </button>
+                    <a href="menu.html" class="list-group-item list-group-item-action border-0 rounded mb-1 text-secondary mt-3 small">
+                        <i class="bi bi-box-arrow-up-right me-2"></i> Ir al Menú
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-10 main-content">
+                <div class="p-4">
+
+                    <div id="view-dashboard" class="content-view container-fluid fade-in d-none">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center pt-3 pb-2 mb-3 border-bottom gap-3">
+                            <h1 class="h2 mb-0">Tablero de Control</h1>
+                            
+                            <div class="d-flex flex-wrap gap-2 align-items-center bg-white p-2 rounded shadow-sm border">
+                                <span class="small text-muted fw-bold">Rango:</span>
+                                <input type="date" id="dash-date-start" class="form-control form-control-sm border-0 bg-light" style="width: auto;">
+                                <span class="text-muted">-</span>
+                                <input type="date" id="dash-date-end" class="form-control form-control-sm border-0 bg-light" style="width: auto;">
+                                
+                                <button class="btn btn-sm btn-primary px-3" onclick="loadDashboard()">
+                                    Filtrar
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="resetDashboardDate()" title="Ver Hoy (Turno Actual)">
+                                    <i class="bi bi-calendar-check"></i> Hoy
+                                </button>
+                                
+                                <div class="vr mx-1"></div>
+                                
+                                <button type="button" class="btn btn-sm btn-outline-dark" onclick="window.print()">
+                                    <i class="bi bi-printer"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-12 col-sm-6 col-xl-3">
+                                <div class="card shadow-sm border-start border-4 border-primary h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <p class="text-muted mb-1 small text-uppercase fw-bold">Ventas (Rango)</p>
+                                                <h3 class="mb-0 fw-bold text-primary" id="dash-today-revenue">$0</h3>
+                                            </div>
+                                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
+                                                <i class="bi bi-currency-dollar fs-4"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-xl-3">
+                                <div class="card shadow-sm border-start border-4 border-success h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <p class="text-muted mb-1 small text-uppercase fw-bold">Pedidos (Rango)</p>
+                                                <h3 class="mb-0 fw-bold text-success" id="dash-today-count">0</h3>
+                                            </div>
+                                            <div class="bg-success bg-opacity-10 p-3 rounded-circle text-success">
+                                                <i class="bi bi-receipt fs-4"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-xl-3">
+                                <div class="card shadow-sm border-start border-4 border-info h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <p class="text-muted mb-1 small text-uppercase fw-bold">Ticket Promedio</p>
+                                                <h3 class="mb-0 fw-bold text-info" id="dash-avg-ticket">$0</h3>
+                                            </div>
+                                            <div class="bg-info bg-opacity-10 p-3 rounded-circle text-info">
+                                                <i class="bi bi-calculator fs-4"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-xl-3">
+                                <div class="card shadow-sm border-start border-4 border-warning h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <p class="text-muted mb-1 small text-uppercase fw-bold">Pendientes / Stock</p>
+                                                <div class="d-flex align-items-end">
+                                                    <h3 class="mb-0 fw-bold text-warning me-2" id="dash-pending">0</h3>
+                                                    <small class="text-danger fw-bold" id="dash-low-stock" style="font-size: 0.8rem;">(0 Alertas)</small>
+                                                </div>
+                                            </div>
+                                            <div class="bg-warning bg-opacity-10 p-3 rounded-circle text-warning">
+                                                <i class="bi bi-exclamation-triangle fs-4"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-8">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-header bg-transparent fw-bold py-3">
+                                        <i class="bi bi-graph-up-arrow me-2"></i> Evolución de Ventas
+                                    </div>
+                                    <div class="card-body">
+                                        <div style="height: 300px;">
+                                            <canvas id="salesChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-header bg-transparent fw-bold py-3">
+                                        <i class="bi bi-pie-chart-fill me-2"></i> Mix de Ventas
+                                    </div>
+                                    <div class="card-body">
+                                        <div style="height: 250px; position: relative;">
+                                            <canvas id="categoryChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="card shadow-sm">
+                                    <div class="card-header bg-transparent fw-bold py-3">
+                                        <i class="bi bi-clock-history me-2"></i> Horas Pico (Histórico Promedio)
+                                    </div>
+                                    <div class="card-body">
+                                        <div style="height: 250px;">
+                                            <canvas id="peakHoursChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="view-orders" class="content-view">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h3 class="fw-bold mb-0 text-body-secondary">Comanda (Pedidos)</h3>
+                                <small id="live-indicator" class="text-muted" style="font-size: 0.8rem;">
+                                    <span class="spinner-grow spinner-grow-sm text-secondary" role="status"></span>
+                                    Conectando...
+                                </small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary btn-sm" onclick="loadGlobalData()">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 overflow-auto pb-3 mb-2" id="order-filters">
+                            <button class="btn btn-dark rounded-pill px-3 fw-bold text-nowrap" onclick="filterOrders('Pending', this)">
+                                <i class="bi bi-bell-fill me-1"></i> Pendientes
+                            </button>
+                            <button class="btn btn-outline-secondary border-0 rounded-pill px-3 fw-bold text-nowrap" onclick="filterOrders('Confirmed', this)">
+                                <i class="bi bi-check-circle me-1"></i> Confirmados
+                            </button>
+                            <button class="btn btn-outline-secondary border-0 rounded-pill px-3 fw-bold text-nowrap" onclick="filterOrders('Cooking', this)">
+                                <i class="bi bi-fire me-1"></i> En Cocina
+                            </button>
+                            <button class="btn btn-outline-secondary border-0 rounded-pill px-3 fw-bold text-nowrap" onclick="filterOrders('Ready', this)">
+                                <i class="bi bi-box-seam me-1"></i> Listos
+                            </button>
+                            <button class="btn btn-outline-secondary border-0 rounded-pill px-3 fw-bold text-nowrap" onclick="filterOrders('OnTheWay', this)">
+                                <i class="bi bi-scooter me-1"></i> En Camino
+                            </button>
+                            <button class="btn btn-outline-secondary border-0 rounded-pill px-3 fw-bold text-nowrap" onclick="filterOrders('Delivered', this)">
+                                <i class="bi bi-bicycle me-1"></i> Entregados
+                            </button>
+                        </div>
+
+                        <div class="row g-3" id="orders-container">
+                            <div class="col-12 text-center text-muted py-5">
+                                <div class="spinner-border text-primary" role="status"></div>
+                                <p class="mt-2">Cargando pedidos...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="view-cash" class="content-view d-none">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h3 class="fw-bold mb-0 text-body-secondary">Arqueo de Caja</h3>
+                                <span id="cash-status-badge" class="badge bg-secondary">Cerrada</span>
+                                <small class="text-muted ms-2" id="cash-open-time">-</small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-secondary btn-sm" onclick="toggleHistoryView()">
+                                    <i class="bi bi-clock-history"></i> Historial
+                                </button>
+                                <div id="cash-actions"></div>
+                            </div>
+                        </div>
+
+                        <div id="cash-history-section" class="d-none mb-4">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
+                                    <span><i class="bi bi-archive"></i> Cierres Anteriores</span>
+                                    <button class="btn btn-sm btn-light py-0" onclick="toggleHistoryView()">Ocultar</button>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0 align-middle">
+                                            <thead class="table-light">
+                                                <tr><th>ID</th><th>Apertura</th><th>Cierre</th><th>Saldo Final</th><th>Diferencia</th><th>Acción</th></tr>
+                                            </thead>
+                                            <tbody id="cash-history-table"><tr><td colspan="6" class="text-center py-3">Cargando...</td></tr></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="history-warning-banner" class="alert alert-warning border-warning d-flex justify-content-between align-items-center d-none mb-4">
+                            <span><i class="bi bi-eye-fill me-2"></i> Estás viendo un cierre pasado (<span id="hist-date-lbl"></span>).</span>
+                            <button class="btn btn-sm btn-outline-dark" onclick="initCashView()">Volver a Caja Actual</button>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-6 col-md-2"><div class="card border-0 shadow-sm h-100 border-start border-4 border-primary"><div class="card-body p-2"><small class="text-muted text-uppercase" style="font-size: 0.7rem;">Saldo Inicial</small><h4 class="fw-bold text-primary mb-0" id="cash-initial">$0</h4></div></div></div>
+                            <div class="col-6 col-md-2"><div class="card border-0 shadow-sm h-100 border-start border-4 border-success"><div class="card-body p-2"><small class="text-muted text-uppercase" style="font-size: 0.7rem;">Efectivo</small><h4 class="fw-bold text-success mb-0" id="cash-total-cash">$0</h4></div></div></div>
+                            <div class="col-6 col-md-2"><div class="card border-0 shadow-sm h-100 border-start border-4 border-info"><div class="card-body p-2"><small class="text-muted text-uppercase" style="font-size: 0.7rem;">MercadoPago</small><h4 class="fw-bold text-info mb-0" id="cash-total-mp">$0</h4></div></div></div>
+                            <div class="col-6 col-md-2"><div class="card border-0 shadow-sm h-100 border-start border-4 border-warning"><div class="card-body p-2"><small class="text-muted text-uppercase" style="font-size: 0.7rem;">Transferencia</small><h4 class="fw-bold text-warning mb-0" id="cash-total-transfer">$0</h4></div></div></div>
+                            <div class="col-6 col-md-2"><div class="card border-0 shadow-sm h-100 border-start border-4 border-danger"><div class="card-body p-2"><small class="text-muted text-uppercase" style="font-size: 0.7rem;">Gastos</small><h4 class="fw-bold text-danger mb-0" id="cash-total-expenses">$0</h4></div></div></div>
+                            <div class="col-6 col-md-2"><div class="card border-0 shadow-sm h-100 bg-dark text-white"><div class="card-body p-2"><small class="opacity-75 text-uppercase" style="font-size: 0.7rem;">En Caja (Teórico)</small><h4 class="fw-bold mb-0" id="cash-expected">$0</h4></div></div></div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-3"><div class="card border-0 shadow-sm h-100"><div class="card-header bg-success bg-opacity-10 text-success fw-bold border-0"><i class="bi bi-cash-coin"></i> Efectivo</div><div class="card-body p-0"><ul class="list-group list-group-flush small" id="list-cash"></ul></div></div></div>
+                            <div class="col-md-3"><div class="card border-0 shadow-sm h-100"><div class="card-header bg-info bg-opacity-10 text-info fw-bold border-0"><i class="bi bi-phone"></i> MercadoPago</div><div class="card-body p-0"><ul class="list-group list-group-flush small" id="list-mp"></ul></div></div></div>
+                            <div class="col-md-3"><div class="card border-0 shadow-sm h-100"><div class="card-header bg-warning bg-opacity-10 text-warning fw-bold border-0"><i class="bi bi-bank"></i> Transferencia</div><div class="card-body p-0"><ul class="list-group list-group-flush small" id="list-transfer"></ul></div></div></div>
+                            <div class="col-md-3"><div class="card border-0 shadow-sm h-100"><div class="card-header bg-danger bg-opacity-10 text-danger fw-bold border-0 d-flex justify-content-between align-items-center"><span><i class="bi bi-dash-circle"></i> Egresos</span><button class="btn btn-sm btn-light py-0 px-2" onclick="openExpenseModal()" style="font-size:0.7rem;">+ Nuevo</button></div><div class="card-body p-0"><ul class="list-group list-group-flush small" id="list-expenses"></ul></div></div></div>
+                        </div>
+                    </div>
+
+                    <div id="view-clients" class="content-view d-none">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="fw-bold mb-0 text-body-secondary">Clientes</h3>
+                            <button class="btn btn-primary" onclick="prepareClientModal()"><i class="bi bi-person-plus-fill"></i> Nuevo</button>
+                        </div>
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0 align-middle text-nowrap"><thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">ID</th><th>Nombre</th><th>Teléfono</th><th class="text-end pe-4">Direcciones / Acciones</th></tr></thead><tbody id="clients-table"></tbody></table></div></div></div>
+                    </div>
+
+                    <div id="view-categories" class="content-view d-none">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="fw-bold mb-0 text-body-secondary">Categorías</h3>
+                            <button class="btn btn-primary" onclick="prepareCategoryModal()"><i class="bi bi-plus-lg"></i> Nueva</button>
+                        </div>
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0 align-middle text-nowrap"><thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">Nombre</th><th>Descripción</th><th class="text-end pe-4">Acciones</th></tr></thead><tbody id="categories-table"></tbody></table></div></div></div>
+                    </div>
+
+                    <div id="view-products" class="content-view d-none">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="fw-bold mb-0 text-body-secondary">Productos</h3>
+                            <button class="btn btn-primary" onclick="prepareProductModal()"><i class="bi bi-plus-lg"></i> Nuevo</button>
+                        </div>
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0 align-middle text-nowrap"><thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">Imagen</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th class="text-end pe-4">Acciones</th></tr></thead><tbody id="products-table"></tbody></table></div></div></div>
+                    </div>
+
+                    <div id="view-stock" class="content-view d-none">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+                            <h3 class="fw-bold mb-0 text-body-secondary">Inventario</h3>
+                            <div class="d-flex align-items-center gap-2">
+                                <select id="branch-select" class="form-select w-auto"></select>
+                                <button class="btn btn-primary" onclick="prepareStockModal()"><i class="bi bi-plus-lg"></i> Actualizar</button>
+                            </div>
+                        </div>
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0 align-middle text-nowrap"><thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">Ingrediente</th><th>Unidad</th><th>Stock</th><th>Mínimo</th><th>Estado</th><th class="text-end pe-4">Acciones</th></tr></thead><tbody id="stock-table"></tbody></table></div></div></div>
+                    </div>
+
+                    <div id="view-ingredients" class="content-view d-none">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="fw-bold mb-0 text-body-secondary">Ingredientes</h3>
+                            <button class="btn btn-primary" onclick="prepareIngredientModal()"><i class="bi bi-plus-lg"></i> Nuevo</button>
+                        </div>
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0 align-middle text-nowrap"><thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">Nombre</th><th>Unidad</th><th class="text-end pe-4">Acciones</th></tr></thead><tbody id="ingredients-table"></tbody></table></div></div></div>
+                    </div>
+
+                    <div id="view-users" class="content-view d-none">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="fw-bold mb-0 text-body-secondary">Gestión de Usuarios</h3>
+                            <button class="btn btn-primary" onclick="prepareUserModal()"><i class="bi bi-person-plus-fill"></i> Nuevo Usuario</button>
+                        </div>
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden"><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0 align-middle text-nowrap"><thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">Nombre</th><th>Usuario</th><th>Rol</th><th class="text-end pe-4">Acciones</th></tr></thead><tbody id="users-table"></tbody></table></div></div></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="orderModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-primary text-white border-0"><h5 class="modal-title fw-bold" id="orderModalTitle">Nuevo Pedido</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="order-form"><input type="hidden" id="order-id"><div class="mb-4"><label class="form-label fw-bold small text-muted">Cliente</label><div class="input-group"><span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span><input type="text" id="client-search-input" class="form-control border-start-0" placeholder="Buscar por nombre o teléfono..." autocomplete="off"><input type="hidden" id="selected-client-id"><button class="btn btn-outline-primary" type="button" onclick="openClientModalFromOrder()"><i class="bi bi-person-plus-fill"></i> Nuevo</button></div><div id="client-search-results" class="list-group position-absolute w-100 shadow" style="z-index: 1050; display: none; max-height: 200px; overflow-y: auto;"></div><div id="selected-client-display" class="mt-2 p-2 bg-primary bg-opacity-10 border border-primary rounded d-none d-flex justify-content-between align-items-center"><span class="fw-bold text-primary" id="selected-client-name">-</span><button type="button" class="btn-close btn-sm" onclick="clearClientSelection()"></button></div></div><div class="mb-3"><label class="form-label fw-bold small text-muted">Dirección de Envío</label><select id="order-address-id" class="form-select" required><option value="">Selecciona cliente primero...</option></select></div><div class="mb-3"><label class="form-label fw-bold small text-muted">Notas / Observaciones</label><textarea id="order-note" class="form-control" rows="2"></textarea></div><hr><div class="text-muted small text-center mb-3">(Próximamente: Selector de Productos)</div><div class="d-flex justify-content-end"><button type="submit" class="btn btn-primary px-4">Crear Pedido</button></div></form></div></div></div></div>
+    
+    <div class="modal fade" id="clientModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-dark text-white border-0"><h5 class="modal-title fw-bold">Nuevo Cliente</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="client-form"><h6 class="text-muted small fw-bold text-uppercase mb-3">Datos Personales</h6><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Nombre</label><input type="text" id="client-name" class="form-control" required placeholder="Ej: Eren"></div><div class="col-6"><label class="form-label small fw-bold">Apellido</label><input type="text" id="client-lastname" class="form-control" required placeholder="Ej: Jaeger"></div></div><div class="mb-3"><label class="form-label small fw-bold">Teléfono / Celular</label><input type="text" id="client-phone" class="form-control" required placeholder="Ej: 099123456"></div><hr class="my-4"><h6 class="text-muted small fw-bold text-uppercase mb-3">Dirección Principal</h6><div class="mb-3"><label class="form-label small fw-bold">Calle y Número</label><input type="text" id="client-addr-street" class="form-control" placeholder="Ej: Av. Muralla Maria 123" required></div><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Ciudad/Zona</label><input type="text" id="client-addr-city" class="form-control" value="Ciudad de la Costa"></div><div class="col-6"><label class="form-label small fw-bold">Etiqueta</label><input type="text" id="client-addr-label" class="form-control" value="Casa"></div></div><button type="submit" class="btn btn-primary w-100 py-2 fw-bold"><i class="bi bi-save me-2"></i> Guardar Cliente y Dirección</button></form></div></div></div></div>
+    <div class="modal fade" id="openRegisterModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold">Abrir Caja</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p class="text-muted">Ingresa el dinero con el que inicias el turno.</p><div class="mb-3"><label class="form-label fw-bold">Saldo Inicial ($)</label><input type="number" id="open-amount" class="form-control form-control-lg" placeholder="0" value="0"></div><button class="btn btn-primary w-100 py-2" onclick="confirmOpenRegister()">Iniciar Turno</button></div></div></div></div>
+    <div class="modal fade" id="closeRegisterModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold">Cerrar Caja (Arqueo)</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-secondary text-center mb-3"><small>Esperado en Caja</small><h2 class="fw-bold mb-0" id="modal-expected-amount">$0</h2></div><div class="mb-3"><label class="form-label fw-bold">Dinero Real Contado ($)</label><input type="number" id="close-real-amount" class="form-control form-control-lg" placeholder="0"></div><div class="mb-3"><label class="form-label small text-muted">Observaciones</label><textarea id="close-notes" class="form-control" rows="2" placeholder="Sobra/Falta dinero porque..."></textarea></div><button class="btn btn-danger w-100 py-2" onclick="confirmCloseRegister()">Finalizar Turno</button></div></div></div></div>
+    <div class="modal fade" id="expenseModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-warning text-dark border-0"><h5 class="modal-title fw-bold"><i class="bi bi-cash-stack"></i> Registrar Movimiento</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><form id="expense-form"><div class="mb-3"><label class="form-label small fw-bold text-muted">Tipo de Movimiento</label><select class="form-select" id="expense-type" required><option value="OUT">🔴 Retiro / Gasto (Salida)</option><option value="IN">🟢 Ingreso Extra (Entrada)</option></select></div><div class="mb-3"><label class="form-label small fw-bold text-muted">Monto ($)</label><input type="number" class="form-control form-control-lg" id="expense-amount" min="1" step="0.01" required placeholder="0"></div><div class="mb-3"><label class="form-label small fw-bold text-muted">Descripción / Motivo</label><textarea class="form-control" id="expense-desc" rows="2" placeholder="Ej: Compra de hielo, Pago proveedor..." required></textarea></div><button type="submit" class="btn btn-dark w-100 py-2">Guardar Movimiento</button></form></div></div></div></div>
+    <div class="modal fade" id="categoryModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="catModalTitle">Categoría</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="category-form"><input type="hidden" id="cat-id"><div class="mb-3"><label class="form-label small fw-bold">Nombre</label><input type="text" id="cat-name" class="form-control" required></div><div class="mb-3"><label class="form-label small fw-bold">Descripción</label><textarea id="cat-desc" class="form-control" rows="2"></textarea></div><button type="submit" class="btn btn-primary w-100">Guardar</button></form></div></div></div></div>
+    <div class="modal fade" id="productModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="prodModalTitle">Producto</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="product-form"><input type="hidden" id="prod-id"><div class="row g-2"><div class="col-8 mb-3"><label class="form-label small fw-bold">Nombre</label><input type="text" id="prod-name" class="form-control" required></div><div class="col-4 mb-3"><label class="form-label small fw-bold">Precio</label><input type="number" id="prod-price" class="form-control" step="0.01" required></div></div><div class="mb-3"><label class="form-label small fw-bold">Categoría</label><select id="prod-category" class="form-select" required></select></div><div class="mb-3"><label class="form-label small fw-bold">Descripción</label><textarea id="prod-desc" class="form-control" rows="2"></textarea></div><div class="mb-3"><label class="form-label small fw-bold">URL Imagen</label><input type="text" id="prod-img" class="form-control"></div><button type="submit" class="btn btn-primary w-100">Guardar</button></form></div></div></div></div>
+    <div class="modal fade" id="stockModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="stockModalTitle">Ajustar Stock</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="stock-form"><input type="hidden" id="stock-branch-id"><div class="mb-3"><label class="form-label small fw-bold">Ingrediente</label><select id="stock-ingredient-id" class="form-select" required></select></div><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Cantidad</label><input type="number" id="stock-quantity" class="form-control" placeholder="0" min="0" step="0.01"></div><div class="col-6"><label class="form-label small fw-bold">Mínimo</label><input type="number" id="stock-min" class="form-control" placeholder="Opcional" min="0" step="0.01"></div></div><div class="mb-4"><label class="form-label small fw-bold">Tipo Movimiento</label><select id="stock-type" class="form-select"><option value="">Selecciona...</option><option value="IN">Entrada</option><option value="OUT">Salida</option></select></div><button type="submit" class="btn btn-primary w-100">Guardar</button></form></div></div></div></div>
+    <div class="modal fade" id="ingredientModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="ingModalTitle">Ingrediente</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="ingredient-form"><input type="hidden" id="ing-id"><div class="mb-3"><label class="form-label small fw-bold">Nombre</label><input type="text" id="ing-name" class="form-control" required></div><div class="mb-3"><label class="form-label small fw-bold">Unidad</label><input type="text" id="ing-unit" class="form-control" required></div><button type="submit" class="btn btn-primary w-100">Guardar</button></form></div></div></div></div>
+    <div class="modal fade" id="recipeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="recipeModalTitle">Receta</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="input-group mb-3"><select id="recipe-ingredient-select" class="form-select" style="max-width: 55%;"><option>Cargando...</option></select><input type="number" id="recipe-quantity" class="form-control" placeholder="Cant." step="0.01"><button class="btn btn-primary" onclick="addIngredientToRecipe()"><i class="bi bi-plus-lg"></i></button></div><div class="table-responsive border rounded-3" style="max-height: 250px;"><table class="table table-sm table-hover mb-0 align-middle"><thead class="bg-body-tertiary"><tr><th class="ps-3">Ingrediente</th><th>Cantidad</th><th></th></tr></thead><tbody id="recipe-table-body"></tbody></table></div></div></div></div></div>
+    <div class="modal fade" id="addressModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold">Agregar Dirección</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="address-form"><input type="hidden" id="addr-client-id"><div class="mb-3"><label class="form-label small fw-bold">Dirección</label><input type="text" id="addr-street" class="form-control" placeholder="Calle y número" required></div><div class="row g-2 mb-3"><div class="col-6"><input type="text" id="addr-city" class="form-control" placeholder="Ciudad" value="Ciudad de la Costa"></div><div class="col-6"><input type="text" id="addr-label" class="form-control" placeholder="Etiqueta" value="Casa"></div></div><button type="submit" class="btn btn-primary w-100">Guardar Dirección</button></form></div></div></div></div>
+    <div class="modal fade" id="userModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-dark text-white border-0"><h5 class="modal-title fw-bold" id="userModalTitle">Usuario</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="user-form"><input type="hidden" id="user-id"><div class="mb-3"><label class="form-label small fw-bold">Usuario (Login)</label><input type="text" id="user-username" class="form-control" required placeholder="Ej: levi.ackerman" autocomplete="off"><div class="form-text">Este es el nombre para iniciar sesión.</div></div><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Nombre</label><input type="text" id="user-name" class="form-control" required placeholder="Levi"></div><div class="col-6"><label class="form-label small fw-bold">Apellido</label><input type="text" id="user-lastname" class="form-control" required placeholder="Ackerman"></div></div><div class="mb-3"><label class="form-label small fw-bold">Teléfono (Solo números)</label><input type="number" id="user-phone" class="form-control" required placeholder="099123456"></div><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Contraseña</label><input type="password" id="user-pass" class="form-control" placeholder="****" autocomplete="new-password"></div><div class="col-6"><label class="form-label small fw-bold">Rol</label><select id="user-role" class="form-select" required><option value="1">Administrador</option><option value="2">Cocina</option><option value="3">Delivery / Mozo</option></select></div></div><div class="mb-3"><label class="form-label small fw-bold">Sucursal</label><select id="user-branch" class="form-select" required><option value="">Cargando sucursales...</option></select></div><button type="submit" class="btn btn-primary w-100 py-2 fw-bold"><i class="bi bi-save me-2"></i> Guardar Usuario</button></form></div></div></div></div>
+    <div class="modal fade" id="orderDetailModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="detail-order-id">Cargando...</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-4"></div></div></div></div>
+    <div class="modal fade" id="clientOrdersModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-xl"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-dark text-white border-0"><h5 class="modal-title" id="clientOrdersTitle">Historial de Pedidos</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="table table-hover align-middle"><thead class="table-light"><tr><th>ID</th><th>Fecha y Hora (Editar)</th><th>Estado</th><th>Total</th><th class="text-end">Acciones</th></tr></thead><tbody id="client-orders-table-body"></tbody></table></div></div></div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // --- FUNCIÓN GLOBAL PARA EL MENÚ MÓVIL ---
+        window.toggleSidebar = function () {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) sidebar.classList.toggle('show');
+        };
+
+        // --- LÓGICA DE INTERFAZ ---
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.querySelector('.sidebar');
+            const toggleBtn = document.getElementById('sidebar-toggle');
+
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth < 992 && sidebar && sidebar.classList.contains('show')) {
+                    if (!sidebar.contains(e.target) && (!toggleBtn || !toggleBtn.contains(e.target))) {
+                        sidebar.classList.remove('show');
+                    }
+                }
+            });
+
+            // --- TEMA OSCURO ---
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const htmlElement = document.documentElement;
+            const bodyElement = document.body;
+
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    bodyElement.setAttribute('data-theme', 'dark');
+                } else {
+                    bodyElement.removeAttribute('data-theme');
+                }
+                htmlElement.setAttribute('data-bs-theme', theme);
+
+                if (themeToggleBtn) {
+                    if (theme === 'dark') {
+                        themeToggleBtn.classList.add('active');
+                    } else {
+                        themeToggleBtn.classList.remove('active');
+                    }
+                }
+                localStorage.setItem('shingeki_theme', theme);
+            }
+
+            const savedTheme = localStorage.getItem('shingeki_theme') || 'light';
+            applyTheme(savedTheme);
+
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', () => {
+                    const isDark = bodyElement.getAttribute('data-theme') === 'dark';
+                    applyTheme(isDark ? 'light' : 'dark');
+                });
+            }
+        });
+
+        // --- NAVEGACIÓN SPA ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.content-view').forEach(el => el.classList.add('d-none'));
+            const target = document.getElementById('view-' + tabName);
+            if (target) target.classList.remove('d-none');
+
+            document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active', 'bg-primary', 'bg-opacity-10', 'text-primary'));
+
+            let btn = event ? event.currentTarget : null;
+            if (btn && btn.classList) btn.classList.add('active', 'bg-primary', 'bg-opacity-10', 'text-primary');
+
+            // Cerrar menú en móvil
+            const sidebar = document.querySelector('.sidebar');
+            if (window.innerWidth < 992 && sidebar && sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+            }
+
+            // Recargar datos específicos
+            if (tabName === 'stock' && window.loadStock && window.currentBranchId) window.loadStock(window.currentBranchId);
+            if (tabName === 'ingredients' && window.renderIngredients) window.renderIngredients();
+            if (tabName === 'clients' && window.loadClients) window.loadClients();
+            if (tabName === 'orders' && window.loadOrders) window.loadOrders();
+            if (tabName === 'dashboard' && window.loadDashboard) window.loadDashboard();
+            if (tabName === 'cash' && window.initCashView) window.initCashView();
+        }
+    </script>
+    <script type="module" src="./js/app.js"></script>
+</body>
+</html>
