@@ -7,12 +7,27 @@
       "RelativeMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|solutionrelative:barbershopapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C4991E78-7F6C-4D8C-A6DF-970F63CE5041}|Datos\\Datos.csproj|c:\\software\\shingekinoapp\\shingekinoapp\\barbershopapi\\datos\\migrations\\20260105194617_total.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C4991E78-7F6C-4D8C-A6DF-970F63CE5041}|Datos\\Datos.csproj|solutionrelative:datos\\migrations\\20260105194617_total.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|c:\\software\\shingekinoapp\\shingekinoapp\\barbershopapi\\barbershopapi\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|solutionrelative:barbershopapi\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|c:\\software\\shingekinoapp\\shingekinoapp\\barbershopapi\\barbershopapi\\hubs\\deliveryhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|solutionrelative:barbershopapi\\hubs\\deliveryhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|c:\\software\\shingekinoapp\\shingekinoapp\\barbershopapi\\barbershopapi\\controllers\\reportscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|solutionrelative:barbershopapi\\controllers\\reportscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|c:\\software\\shingekinoapp\\shingekinoapp\\barbershopapi\\barbershopapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|solutionrelative:barbershopapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Admin\\source\\repos\\BarberShopAPI\\DTO\\BarberDTO.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C4991E78-7F6C-4D8C-A6DF-970F63CE5041}|Datos\\Datos.csproj|c:\\software\\shingekinoapp\\shingekinoapp\\barbershopapi\\datos\\migrations\\20260105194617_total.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C4991E78-7F6C-4D8C-A6DF-970F63CE5041}|Datos\\Datos.csproj|solutionrelative:datos\\migrations\\20260105194617_total.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B0176778-5355-4A84-909D-BFFC4C144D97}|Negocio\\Business.csproj|c:\\software\\shingekinoapp\\shingekinoapp\\barbershopapi\\negocio\\businessentities\\orderstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -28,10 +43,6 @@
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Admin\\source\\repos\\BarberShopAPI\\BarberShopAPI\\ClientController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|c:\\software\\shingekinoapp\\shingekinoapp\\barbershopapi\\barbershopapi\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|solutionrelative:barbershopapi\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B0176778-5355-4A84-909D-BFFC4C144D97}|Negocio\\Business.csproj|c:\\software\\shingekinoapp\\shingekinoapp\\barbershopapi\\negocio\\repositoryinterfaces\\irepositoryclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -76,10 +87,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|c:\\software\\shingekinoapp\\shingekinoapp\\barbershopapi\\barbershopapi\\manejadorjwt.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|solutionrelative:barbershopapi\\manejadorjwt.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|c:\\software\\shingekinoapp\\shingekinoapp\\barbershopapi\\barbershopapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C442AEA0-B124-4DC4-A999-DF99A133428F}|BarberShopAPI\\ShingekiNoAPPI.csproj|solutionrelative:barbershopapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C4991E78-7F6C-4D8C-A6DF-970F63CE5041}|Datos\\Datos.csproj|c:\\software\\shingekinoapp\\shingekinoapp\\barbershopapi\\datos\\ef\\shingekicontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -250,9 +257,6 @@
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Admin\\source\\repos\\BarberShopAPI\\BarberShopAPI\\Controllers\\ItemController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Admin\\source\\repos\\BarberShopAPI\\DTO\\BarberDTO.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -262,7 +266,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 11,
           "Children": [
             {
               "$type": "Bookmark",
@@ -278,20 +282,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "20260105194617_total.cs",
-              "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Migrations\\20260105194617_total.cs",
-              "RelativeDocumentMoniker": "Datos\\Migrations\\20260105194617_total.cs",
-              "ToolTip": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Migrations\\20260105194617_total.cs",
-              "RelativeToolTip": "Datos\\Migrations\\20260105194617_total.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "DeliveryHub.cs",
+              "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\Hubs\\DeliveryHub.cs",
+              "RelativeDocumentMoniker": "BarberShopAPI\\Hubs\\DeliveryHub.cs",
+              "ToolTip": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\Hubs\\DeliveryHub.cs",
+              "RelativeToolTip": "BarberShopAPI\\Hubs\\DeliveryHub.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-05T19:46:18.436Z",
+              "WhenOpened": "2026-01-06T05:42:22.052Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "ReportsController.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\Controllers\\ReportsController.cs",
               "RelativeDocumentMoniker": "BarberShopAPI\\Controllers\\ReportsController.cs",
@@ -304,7 +308,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 13,
               "Title": "UpdateStatusDto.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\UpdateStatusDto.cs",
               "RelativeDocumentMoniker": "DTO\\UpdateStatusDto.cs",
@@ -312,35 +316,38 @@
               "RelativeToolTip": "DTO\\UpdateStatusDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T20:08:09.77Z"
+              "WhenOpened": "2025-12-12T20:08:09.77Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 15,
               "Title": "OrderItemResponseDto.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\OrderItemResponseDto.cs",
               "RelativeDocumentMoniker": "DTO\\OrderItemResponseDto.cs",
               "ToolTip": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\OrderItemResponseDto.cs",
               "RelativeToolTip": "DTO\\OrderItemResponseDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T20:07:25.535Z"
+              "WhenOpened": "2025-12-12T20:07:25.535Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 1,
               "Title": "OrderController.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\Controllers\\OrderController.cs",
               "RelativeDocumentMoniker": "BarberShopAPI\\Controllers\\OrderController.cs",
               "ToolTip": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\Controllers\\OrderController.cs",
               "RelativeToolTip": "BarberShopAPI\\Controllers\\OrderController.cs",
-              "ViewState": "AgIAAIQAAAAAAAAAAAAswKcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAFwBAAAAAAAAAAAAAJ8BAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-06T14:21:19.497Z"
+              "WhenOpened": "2025-11-06T14:21:19.497Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 14,
               "Title": "OrderStatusHistory.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\OrderStatusHistory.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\OrderStatusHistory.cs",
@@ -348,7 +355,34 @@
               "RelativeToolTip": "Negocio\\BusinessEntities\\OrderStatusHistory.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAqwAgAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T18:05:04.569Z"
+              "WhenOpened": "2025-12-12T18:05:04.569Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "BarberDTO.cs",
+              "DocumentMoniker": "C:\\Users\\Admin\\source\\repos\\BarberShopAPI\\DTO\\BarberDTO.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\Users\\Admin\\source\\repos\\BarberShopAPI\\DTO\\BarberDTO.cs",
+              "ToolTip": "C:\\Users\\Admin\\source\\repos\\BarberShopAPI\\DTO\\BarberDTO.cs",
+              "RelativeToolTip": "..\\..\\..\\..\\Users\\Admin\\source\\repos\\BarberShopAPI\\DTO\\BarberDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-04T03:23:01.038Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\Program.cs",
+              "RelativeDocumentMoniker": "BarberShopAPI\\Program.cs",
+              "ToolTip": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\Program.cs",
+              "RelativeToolTip": "BarberShopAPI\\Program.cs",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAAAAQAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-04T03:06:34.789Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -365,7 +399,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
+              "Title": "20260105194617_total.cs",
+              "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Migrations\\20260105194617_total.cs",
+              "RelativeDocumentMoniker": "Datos\\Migrations\\20260105194617_total.cs",
+              "ToolTip": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Migrations\\20260105194617_total.cs",
+              "RelativeToolTip": "Datos\\Migrations\\20260105194617_total.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-05T19:46:18.436Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "OrderStatus.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\OrderStatus.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\OrderStatus.cs",
@@ -378,7 +425,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 8,
               "Title": "Order.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\Order.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\Order.cs",
@@ -391,7 +438,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 10,
               "Title": "ClientController.cs",
               "DocumentMoniker": "C:\\Users\\Admin\\source\\repos\\BarberShopAPI\\BarberShopAPI\\ClientController.cs",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\Users\\Admin\\source\\repos\\BarberShopAPI\\BarberShopAPI\\ClientController.cs",
@@ -404,7 +451,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
               "Title": "DashboardFullDto.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\DashboardFullDto.cs",
               "RelativeDocumentMoniker": "DTO\\DashboardFullDto.cs",
@@ -417,7 +464,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 11,
               "Title": "IRepositoryClient.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepositoryClient.cs",
               "RelativeDocumentMoniker": "Negocio\\RepositoryInterfaces\\IRepositoryClient.cs",
@@ -425,11 +472,12 @@
               "RelativeToolTip": "Negocio\\RepositoryInterfaces\\IRepositoryClient.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAqwAYAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T03:04:22.742Z"
+              "WhenOpened": "2025-11-04T03:04:22.742Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 12,
               "Title": "IRepository.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepository.cs",
               "RelativeDocumentMoniker": "Negocio\\RepositoryInterfaces\\IRepository.cs",
@@ -437,23 +485,25 @@
               "RelativeToolTip": "Negocio\\RepositoryInterfaces\\IRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAqwA4AAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T03:04:24.722Z"
+              "WhenOpened": "2025-11-04T03:04:24.722Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 16,
               "Title": "OrderResponseDto.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\OrderResponseDto.cs",
               "RelativeDocumentMoniker": "DTO\\OrderResponseDto.cs",
               "ToolTip": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\OrderResponseDto.cs",
               "RelativeToolTip": "DTO\\OrderResponseDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T20:07:03.168Z"
+              "WhenOpened": "2025-12-12T20:07:03.168Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 17,
               "Title": "OrderCreateDto.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\OrderCreateDto.cs",
               "RelativeDocumentMoniker": "DTO\\OrderCreateDto.cs",
@@ -461,11 +511,12 @@
               "RelativeToolTip": "DTO\\OrderCreateDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T20:05:26.263Z"
+              "WhenOpened": "2025-12-12T20:05:26.263Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 18,
               "Title": "OrderItemCreateDto.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\OrderItemCreateDto.cs",
               "RelativeDocumentMoniker": "DTO\\OrderItemCreateDto.cs",
@@ -473,11 +524,12 @@
               "RelativeToolTip": "DTO\\OrderItemCreateDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T20:06:04.037Z"
+              "WhenOpened": "2025-12-12T20:06:04.037Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 20,
               "Title": "LoginRequestDto.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\DTO\\LoginRequestDto.cs",
               "RelativeDocumentMoniker": "DTO\\LoginRequestDto.cs",
@@ -485,35 +537,25 @@
               "RelativeToolTip": "DTO\\LoginRequestDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T20:03:29.561Z"
+              "WhenOpened": "2025-12-12T20:03:29.561Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\Program.cs",
-              "RelativeDocumentMoniker": "BarberShopAPI\\Program.cs",
-              "ToolTip": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\Program.cs",
-              "RelativeToolTip": "BarberShopAPI\\Program.cs",
-              "ViewState": "AgIAABQAAAAAAAAAAAAUwFsAAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T03:06:34.789Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 22,
               "Title": "ShingekiContext.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\EF\\ShingekiContext.cs",
               "RelativeDocumentMoniker": "Datos\\EF\\ShingekiContext.cs",
               "ToolTip": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\EF\\ShingekiContext.cs",
               "RelativeToolTip": "Datos\\EF\\ShingekiContext.cs",
-              "ViewState": "AgIAABwAAAAAAAAAAADwv0QAAABFAAAAAAAAAA==",
+              "ViewState": "AgIAABwAAAAAAAAAAAAswEQAAABFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T18:05:56.79Z"
+              "WhenOpened": "2025-12-12T18:05:56.79Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 23,
               "Title": "RepositoryProductIngredient.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Repositories\\RepositoryProductIngredient.cs",
               "RelativeDocumentMoniker": "Datos\\Repositories\\RepositoryProductIngredient.cs",
@@ -521,23 +563,25 @@
               "RelativeToolTip": "Datos\\Repositories\\RepositoryProductIngredient.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T19:54:08.939Z"
+              "WhenOpened": "2025-12-12T19:54:08.939Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 21,
               "Title": "ManejadorJWT.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\ManejadorJWT.cs",
               "RelativeDocumentMoniker": "BarberShopAPI\\ManejadorJWT.cs",
               "ToolTip": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\ManejadorJWT.cs",
               "RelativeToolTip": "BarberShopAPI\\ManejadorJWT.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAuAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T03:36:02.805Z"
+              "WhenOpened": "2025-11-04T03:36:02.805Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 24,
               "Title": "RepositoryOrderStatusHistory.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Repositories\\RepositoryOrderStatusHistory.cs",
               "RelativeDocumentMoniker": "Datos\\Repositories\\RepositoryOrderStatusHistory.cs",
@@ -545,23 +589,25 @@
               "RelativeToolTip": "Datos\\Repositories\\RepositoryOrderStatusHistory.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T19:55:29.578Z"
+              "WhenOpened": "2025-12-12T19:55:29.578Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 19,
               "Title": "UserController.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\Controllers\\UserController.cs",
               "RelativeDocumentMoniker": "BarberShopAPI\\Controllers\\UserController.cs",
               "ToolTip": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\Controllers\\UserController.cs",
               "RelativeToolTip": "BarberShopAPI\\Controllers\\UserController.cs",
-              "ViewState": "AgIAAE0AAAAAAAAAAAA9wAIAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAE4AAAAAAAAAAAAowAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T03:33:39.954Z"
+              "WhenOpened": "2025-11-04T03:33:39.954Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 25,
               "Title": "RepositoryBranchStock.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Repositories\\RepositoryBranchStock.cs",
               "RelativeDocumentMoniker": "Datos\\Repositories\\RepositoryBranchStock.cs",
@@ -569,11 +615,12 @@
               "RelativeToolTip": "Datos\\Repositories\\RepositoryBranchStock.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAC4AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T19:54:59.828Z"
+              "WhenOpened": "2025-12-12T19:54:59.828Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 27,
               "Title": "IRepositoryOrderStatusHistory.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepositoryOrderStatusHistory.cs",
               "RelativeDocumentMoniker": "Negocio\\RepositoryInterfaces\\IRepositoryOrderStatusHistory.cs",
@@ -581,11 +628,12 @@
               "RelativeToolTip": "Negocio\\RepositoryInterfaces\\IRepositoryOrderStatusHistory.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABTAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T19:53:45.923Z"
+              "WhenOpened": "2025-12-12T19:53:45.923Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 28,
               "Title": "IRepositoryBranchStock.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepositoryBranchStock.cs",
               "RelativeDocumentMoniker": "Negocio\\RepositoryInterfaces\\IRepositoryBranchStock.cs",
@@ -593,11 +641,12 @@
               "RelativeToolTip": "Negocio\\RepositoryInterfaces\\IRepositoryBranchStock.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T19:53:20.007Z"
+              "WhenOpened": "2025-12-12T19:53:20.007Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 30,
               "Title": "IRepositoryProductIngredient.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepositoryProductIngredient.cs",
               "RelativeDocumentMoniker": "Negocio\\RepositoryInterfaces\\IRepositoryProductIngredient.cs",
@@ -605,11 +654,12 @@
               "RelativeToolTip": "Negocio\\RepositoryInterfaces\\IRepositoryProductIngredient.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAABDAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T19:52:37.562Z"
+              "WhenOpened": "2025-12-12T19:52:37.562Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 34,
               "Title": "RepositoryClientAddress.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Repositories\\RepositoryClientAddress.cs",
               "RelativeDocumentMoniker": "Datos\\Repositories\\RepositoryClientAddress.cs",
@@ -617,11 +667,12 @@
               "RelativeToolTip": "Datos\\Repositories\\RepositoryClientAddress.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-05T23:39:00.99Z"
+              "WhenOpened": "2025-11-05T23:39:00.99Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 26,
               "Title": "ProductIngredient.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\ProductIngredient.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\ProductIngredient.cs",
@@ -629,11 +680,12 @@
               "RelativeToolTip": "Negocio\\BusinessEntities\\ProductIngredient.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAqwAkAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T18:00:49.272Z"
+              "WhenOpened": "2025-12-12T18:00:49.272Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 35,
               "Title": "RepositoryCategory.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Repositories\\RepositoryCategory.cs",
               "RelativeDocumentMoniker": "Datos\\Repositories\\RepositoryCategory.cs",
@@ -641,11 +693,12 @@
               "RelativeToolTip": "Datos\\Repositories\\RepositoryCategory.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T19:36:39.406Z"
+              "WhenOpened": "2025-12-12T19:36:39.406Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 36,
               "Title": "RepositoryBranch.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Repositories\\RepositoryBranch.cs",
               "RelativeDocumentMoniker": "Datos\\Repositories\\RepositoryBranch.cs",
@@ -653,11 +706,12 @@
               "RelativeToolTip": "Datos\\Repositories\\RepositoryBranch.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T03:07:42.241Z"
+              "WhenOpened": "2025-11-04T03:07:42.241Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 37,
               "Title": "Repository.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Repositories\\Repository.cs",
               "RelativeDocumentMoniker": "Datos\\Repositories\\Repository.cs",
@@ -665,11 +719,12 @@
               "RelativeToolTip": "Datos\\Repositories\\Repository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-05T23:35:27.714Z"
+              "WhenOpened": "2025-11-05T23:35:27.714Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 33,
               "Title": "RepositoryIngredient.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Repositories\\RepositoryIngredient.cs",
               "RelativeDocumentMoniker": "Datos\\Repositories\\RepositoryIngredient.cs",
@@ -677,11 +732,12 @@
               "RelativeToolTip": "Datos\\Repositories\\RepositoryIngredient.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T19:37:04.152Z"
+              "WhenOpened": "2025-12-12T19:37:04.152Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 29,
               "Title": "BranchStock.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\BranchStock.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\BranchStock.cs",
@@ -689,11 +745,12 @@
               "RelativeToolTip": "Negocio\\BusinessEntities\\BranchStock.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAqwAkAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T18:01:07.718Z"
+              "WhenOpened": "2025-12-12T18:01:07.718Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 32,
               "Title": "RepositoryOrder.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Repositories\\RepositoryOrder.cs",
               "RelativeDocumentMoniker": "Datos\\Repositories\\RepositoryOrder.cs",
@@ -701,11 +758,12 @@
               "RelativeToolTip": "Datos\\Repositories\\RepositoryOrder.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAABSAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-05T23:39:26.596Z"
+              "WhenOpened": "2025-11-05T23:39:26.596Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 38,
               "Title": "RepositoryClient.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Repositories\\RepositoryClient.cs",
               "RelativeDocumentMoniker": "Datos\\Repositories\\RepositoryClient.cs",
@@ -713,11 +771,12 @@
               "RelativeToolTip": "Datos\\Repositories\\RepositoryClient.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T02:58:38.846Z"
+              "WhenOpened": "2025-11-04T02:58:38.846Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 31,
               "Title": "RepositoryOrderItem.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Repositories\\RepositoryOrderItem.cs",
               "RelativeDocumentMoniker": "Datos\\Repositories\\RepositoryOrderItem.cs",
@@ -725,11 +784,12 @@
               "RelativeToolTip": "Datos\\Repositories\\RepositoryOrderItem.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-05T23:38:24.256Z"
+              "WhenOpened": "2025-11-05T23:38:24.256Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 39,
               "Title": "Client.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\Client.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\Client.cs",
@@ -737,11 +797,12 @@
               "RelativeToolTip": "Negocio\\BusinessEntities\\Client.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAqwAkAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T02:58:46.268Z"
+              "WhenOpened": "2025-11-04T02:58:46.268Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 40,
               "Title": "Branch.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\Branch.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\Branch.cs",
@@ -749,23 +810,25 @@
               "RelativeToolTip": "Negocio\\BusinessEntities\\Branch.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAqwBIAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T02:58:59.098Z"
+              "WhenOpened": "2025-11-04T02:58:59.098Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 41,
               "Title": "Ingredient.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\Ingredient.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\Ingredient.cs",
               "ToolTip": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\Ingredient.cs",
               "RelativeToolTip": "Negocio\\BusinessEntities\\Ingredient.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAABCAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T18:00:26.226Z"
+              "WhenOpened": "2025-12-12T18:00:26.226Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 42,
               "Title": "IRepositoryBranch.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepositoryBranch.cs",
               "RelativeDocumentMoniker": "Negocio\\RepositoryInterfaces\\IRepositoryBranch.cs",
@@ -773,11 +836,12 @@
               "RelativeToolTip": "Negocio\\RepositoryInterfaces\\IRepositoryBranch.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T03:04:25.532Z"
+              "WhenOpened": "2025-11-04T03:04:25.532Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 43,
               "Title": "IRepositoryOrder.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepositoryOrder.cs",
               "RelativeDocumentMoniker": "Negocio\\RepositoryInterfaces\\IRepositoryOrder.cs",
@@ -785,11 +849,12 @@
               "RelativeToolTip": "Negocio\\RepositoryInterfaces\\IRepositoryOrder.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAqwAsAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-05T23:28:49.641Z"
+              "WhenOpened": "2025-11-05T23:28:49.641Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 44,
               "Title": "RepositoryUser.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Repositories\\RepositoryUser.cs",
               "RelativeDocumentMoniker": "Datos\\Repositories\\RepositoryUser.cs",
@@ -797,11 +862,12 @@
               "RelativeToolTip": "Datos\\Repositories\\RepositoryUser.cs",
               "ViewState": "AgIAAA4AAAAAAAAAAAAQwAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T03:12:20.584Z"
+              "WhenOpened": "2025-11-04T03:12:20.584Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 45,
               "Title": "User.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\User.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\User.cs",
@@ -809,11 +875,12 @@
               "RelativeToolTip": "Negocio\\BusinessEntities\\User.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T02:59:28.985Z"
+              "WhenOpened": "2025-11-04T02:59:28.985Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 46,
               "Title": "RepositoryProduct.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Datos\\Repositories\\RepositoryProduct.cs",
               "RelativeDocumentMoniker": "Datos\\Repositories\\RepositoryProduct.cs",
@@ -821,11 +888,12 @@
               "RelativeToolTip": "Datos\\Repositories\\RepositoryProduct.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T19:32:30.053Z"
+              "WhenOpened": "2025-12-12T19:32:30.053Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 47,
               "Title": "IRepositoryClientAddress.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepositoryClientAddress.cs",
               "RelativeDocumentMoniker": "Negocio\\RepositoryInterfaces\\IRepositoryClientAddress.cs",
@@ -833,23 +901,25 @@
               "RelativeToolTip": "Negocio\\RepositoryInterfaces\\IRepositoryClientAddress.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-05T23:29:26.101Z"
+              "WhenOpened": "2025-11-05T23:29:26.101Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 48,
               "Title": "IRepositoryProduct.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepositoryProduct.cs",
               "RelativeDocumentMoniker": "Negocio\\RepositoryInterfaces\\IRepositoryProduct.cs",
               "ToolTip": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepositoryProduct.cs",
               "RelativeToolTip": "Negocio\\RepositoryInterfaces\\IRepositoryProduct.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T19:24:03.156Z"
+              "WhenOpened": "2025-12-12T19:24:03.156Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 50,
               "Title": "IRepositoryUser.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepositoryUser.cs",
               "RelativeDocumentMoniker": "Negocio\\RepositoryInterfaces\\IRepositoryUser.cs",
@@ -857,11 +927,12 @@
               "RelativeToolTip": "Negocio\\RepositoryInterfaces\\IRepositoryUser.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T03:02:29.37Z"
+              "WhenOpened": "2025-11-04T03:02:29.37Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 51,
               "Title": "IRepositoryCategory.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepositoryCategory.cs",
               "RelativeDocumentMoniker": "Negocio\\RepositoryInterfaces\\IRepositoryCategory.cs",
@@ -869,11 +940,12 @@
               "RelativeToolTip": "Negocio\\RepositoryInterfaces\\IRepositoryCategory.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T19:27:56.383Z"
+              "WhenOpened": "2025-12-12T19:27:56.383Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 50,
+              "DocumentIndex": 52,
               "Title": "IRepositoryIngedient.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepositoryIngedient.cs",
               "RelativeDocumentMoniker": "Negocio\\RepositoryInterfaces\\IRepositoryIngedient.cs",
@@ -881,11 +953,12 @@
               "RelativeToolTip": "Negocio\\RepositoryInterfaces\\IRepositoryIngedient.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T19:28:20.649Z"
+              "WhenOpened": "2025-12-12T19:28:20.649Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 49,
               "Title": "ClientAddress.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\ClientAddress.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\ClientAddress.cs",
@@ -893,11 +966,12 @@
               "RelativeToolTip": "Negocio\\BusinessEntities\\ClientAddress.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAqwAkAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-05T23:08:30.9Z"
+              "WhenOpened": "2025-11-05T23:08:30.9Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 51,
+              "DocumentIndex": 53,
               "Title": "IRepositoryOrderItem.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\RepositoryInterfaces\\IRepositoryOrderItem.cs",
               "RelativeDocumentMoniker": "Negocio\\RepositoryInterfaces\\IRepositoryOrderItem.cs",
@@ -905,11 +979,12 @@
               "RelativeToolTip": "Negocio\\RepositoryInterfaces\\IRepositoryOrderItem.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-05T23:32:21.121Z"
+              "WhenOpened": "2025-11-05T23:32:21.121Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
+              "DocumentIndex": 54,
               "Title": "Product.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\Product.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\Product.cs",
@@ -917,11 +992,12 @@
               "RelativeToolTip": "Negocio\\BusinessEntities\\Product.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T17:59:05.499Z"
+              "WhenOpened": "2025-12-12T17:59:05.499Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 53,
+              "DocumentIndex": 55,
               "Title": "OrderItem.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\OrderItem.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\OrderItem.cs",
@@ -929,11 +1005,12 @@
               "RelativeToolTip": "Negocio\\BusinessEntities\\OrderItem.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-05T23:08:03.721Z"
+              "WhenOpened": "2025-11-05T23:08:03.721Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 56,
               "Title": "Category.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\Category.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\Category.cs",
@@ -941,11 +1018,12 @@
               "RelativeToolTip": "Negocio\\BusinessEntities\\Category.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T17:58:42.129Z"
+              "WhenOpened": "2025-12-12T17:58:42.129Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 55,
+              "DocumentIndex": 57,
               "Title": "UserRole.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\UserRole.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\UserRole.cs",
@@ -953,11 +1031,12 @@
               "RelativeToolTip": "Negocio\\BusinessEntities\\UserRole.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T19:12:27.373Z"
+              "WhenOpened": "2025-12-12T19:12:27.373Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 56,
+              "DocumentIndex": 58,
               "Title": "launchSettings.json",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "BarberShopAPI\\Properties\\launchSettings.json",
@@ -965,11 +1044,12 @@
               "RelativeToolTip": "BarberShopAPI\\Properties\\launchSettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-11-05T23:15:06.752Z"
+              "WhenOpened": "2025-11-05T23:15:06.752Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 59,
+              "DocumentIndex": 61,
               "Title": "BranchController.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\BarberShopAPI\\Controllers\\BranchController.cs",
               "RelativeDocumentMoniker": "BarberShopAPI\\Controllers\\BranchController.cs",
@@ -977,11 +1057,12 @@
               "RelativeToolTip": "BarberShopAPI\\Controllers\\BranchController.cs",
               "ViewState": "AgIAAB4AAAAAAAAAAAAowHQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-06T14:19:51.995Z"
+              "WhenOpened": "2025-11-06T14:19:51.995Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 57,
+              "DocumentIndex": 59,
               "Title": "BaseEntity.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\BaseEntity.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\BaseEntity.cs",
@@ -989,11 +1070,12 @@
               "RelativeToolTip": "Negocio\\BusinessEntities\\BaseEntity.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-12T17:58:18.498Z"
+              "WhenOpened": "2025-12-12T17:58:18.498Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 58,
+              "DocumentIndex": 60,
               "Title": "Item.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessEntities\\Item.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessEntities\\Item.cs",
@@ -1001,11 +1083,12 @@
               "RelativeToolTip": "Negocio\\BusinessEntities\\Item.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-05T23:06:31.802Z"
+              "WhenOpened": "2025-11-05T23:06:31.802Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 62,
+              "DocumentIndex": 64,
               "Title": "ItemController.cs",
               "DocumentMoniker": "C:\\Users\\Admin\\source\\repos\\BarberShopAPI\\BarberShopAPI\\Controllers\\ItemController.cs",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\Users\\Admin\\source\\repos\\BarberShopAPI\\BarberShopAPI\\Controllers\\ItemController.cs",
@@ -1013,11 +1096,12 @@
               "RelativeToolTip": "..\\..\\..\\..\\Users\\Admin\\source\\repos\\BarberShopAPI\\BarberShopAPI\\Controllers\\ItemController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-06T14:21:03.5Z"
+              "WhenOpened": "2025-11-06T14:21:03.5Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 61,
+              "DocumentIndex": 63,
               "Title": "BarberShopAPI.http",
               "DocumentMoniker": "C:\\Users\\Admin\\source\\repos\\BarberShopAPI\\BarberShopAPI\\BarberShopAPI.http",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\Users\\Admin\\source\\repos\\BarberShopAPI\\BarberShopAPI\\BarberShopAPI.http",
@@ -1028,19 +1112,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 63,
-              "Title": "BarberDTO.cs",
-              "DocumentMoniker": "C:\\Users\\Admin\\source\\repos\\BarberShopAPI\\DTO\\BarberDTO.cs",
-              "RelativeDocumentMoniker": "..\\..\\..\\..\\Users\\Admin\\source\\repos\\BarberShopAPI\\DTO\\BarberDTO.cs",
-              "ToolTip": "C:\\Users\\Admin\\source\\repos\\BarberShopAPI\\DTO\\BarberDTO.cs",
-              "RelativeToolTip": "..\\..\\..\\..\\Users\\Admin\\source\\repos\\BarberShopAPI\\DTO\\BarberDTO.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAATAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T03:23:01.038Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 60,
+              "DocumentIndex": 62,
               "Title": "IValidable.cs",
               "DocumentMoniker": "C:\\Software\\ShingekiNoAPP\\ShingekiNoAPP\\BarberShopAPI\\Negocio\\BusinessInterfaces\\IValidable.cs",
               "RelativeDocumentMoniker": "Negocio\\BusinessInterfaces\\IValidable.cs",
@@ -1048,7 +1120,8 @@
               "RelativeToolTip": "Negocio\\BusinessInterfaces\\IValidable.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-04T03:24:10.205Z"
+              "WhenOpened": "2025-11-04T03:24:10.205Z",
+              "EditorCaption": ""
             }
           ]
         }

@@ -72,6 +72,17 @@ export const initAdmin = async () => {
         document.getElementById('logout-btn').addEventListener('click', logout);
     }
 
+    // --- 🔥 CAMBIO CLAVE: VISIBILIDAD DEL MODO REPARTIDOR ---
+    // Ahora incluimos ADMIN, BRANCHMANAGER, 1 y 2 para que tú también puedas ver el botón y probarlo.
+    const allowedDriverRoles = ['DELIVERY', '3', 'WAITER', 'ADMIN', '1', 'BRANCHMANAGER', '2'];
+    
+    if (allowedDriverRoles.includes(role)) {
+        const driverBtn = document.getElementById('btn-driver-mode');
+        // Este ID debe existir en tu sidebar de admin.html
+        if (driverBtn) driverBtn.classList.remove('d-none');
+    }
+    // -------------------------------------------------------
+
     // 3. LOGICA SIDEBAR (Ocultar botones para Cocina y Delivery)
     // Si es Cocina (2) o Delivery (3), limpiamos la sidebar para dejar solo Pedidos y Salir
     if (['KITCHEN', '2', 'WAITER', '3', 'DELIVERY'].includes(role)) {
@@ -80,8 +91,9 @@ export const initAdmin = async () => {
             const buttons = sidebar.querySelectorAll('button, a');
             buttons.forEach(btn => {
                 const text = btn.innerText.toLowerCase();
-                // Ocultar todo lo que NO sea "Pedidos" o "Salir"
-                if (!text.includes('pedidos') && !text.includes('salir')) {
+                
+                // Ocultar todo lo que NO sea "Pedidos", "Salir" o "Modo Repartidor"
+                if (!text.includes('pedidos') && !text.includes('salir') && !text.includes('repartidor')) {
                     btn.classList.add('d-none');
                 }
             });
@@ -276,34 +288,40 @@ function filterOrders(status, btnElement) {
     loadOrders();
 }
 
+// ==========================================
+// 🔔 GESTIÓN DE PEDIDOS (VERSIÓN TARJETAS / CARDS)
+// ==========================================
+// ==========================================
+// 🔔 GESTIÓN DE PEDIDOS (CORREGIDO PARA TARJETAS)
+// ==========================================
 async function loadOrders() {
+    // 1. Buscamos el contenedor de TARJETAS (Grid), NO la tabla
     const container = document.getElementById('orders-container');
-    if (!container) return;
+    if (!container) return; // Si no existe, nos vamos
 
     try {
+        // 2. Obtener pedidos
         const orders = await apiCall(`/Orders/status/${currentOrderStatus}`);
         allOrders = orders || [];
 
+        // Filtro especial para entregados/cancelados (Solo mostrar los de HOY)
         if (currentOrderStatus === 'Delivered' || currentOrderStatus === 'Cancelled') {
             const today = new Date();
             allOrders = allOrders.filter(order => {
                 const dateStr = order.orderDate || order.orderDateIso;
                 if (!dateStr) return false;
-
-                const orderDate = new Date(dateStr);
-                if (!dateStr.endsWith('Z') && !dateStr.includes('+')) {
-                    orderDate.setHours(orderDate.getHours() - 3);
-                }
-
-                return orderDate.getDate() === today.getDate() &&
-                    orderDate.getMonth() === today.getMonth() &&
-                    orderDate.getFullYear() === today.getFullYear();
+                const d = new Date(dateStr);
+                if (!dateStr.endsWith('Z')) d.setHours(d.getHours() - 3); 
+                return d.getDate() === today.getDate() && 
+                       d.getMonth() === today.getMonth() && 
+                       d.getFullYear() === today.getFullYear();
             });
         }
 
+        // 3. Si no hay pedidos
         if (allOrders.length === 0) {
-            const emptyMessage = (currentOrderStatus === 'Delivered')
-                ? "No hay pedidos entregados <strong>hoy</strong>."
+            const emptyMessage = (currentOrderStatus === 'Delivered') 
+                ? "No hay pedidos entregados <strong>hoy</strong>." 
                 : `No hay pedidos en estado: <strong>${translateStatus(currentOrderStatus)}</strong>.`;
 
             container.innerHTML = `
@@ -314,32 +332,59 @@ async function loadOrders() {
             return;
         }
 
+        // 4. Ordenar: Los más viejos primero (FIFO) para cocina
+        if (currentOrderStatus !== 'Delivered' && currentOrderStatus !== 'Cancelled') {
+             allOrders.sort((a, b) => new Date(a.orderDate) - new Date(b.orderDate));
+        } else {
+             allOrders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate)); 
+        }
+
+        // 5. Generar HTML de TARJETAS
+        // Usamos la función auxiliar 'createOrderCardHtml' que ya tienes en tu código
         container.innerHTML = allOrders.map(order => createOrderCardHtml(order)).join('');
-        attachAdvanceButtonListeners();
+        
 
     } catch (e) {
         console.error(e);
-        if (container.innerHTML.trim() === "") {
-            container.innerHTML = `<div class="col-12 text-center text-danger py-5">Error de conexión.</div>`;
-        }
+        container.innerHTML = `<div class="col-12 text-center text-danger py-5">Error de conexión.</div>`;
     }
+}
+
+// Helper para colores de badges
+function getStatusBadgeColor(status) {
+    const colors = {
+        'Pending': 'bg-warning text-dark',
+        'Confirmed': 'bg-info text-dark',
+        'Cooking': 'bg-danger text-white', // Rojo fuego para cocina
+        'Ready': 'bg-success text-white',
+        'OnTheWay': 'bg-primary text-white',
+        'Delivered': 'bg-secondary text-white',
+        'Cancelled': 'bg-dark text-white'
+    };
+    return colors[status] || 'bg-secondary';
 }
 
 function createOrderCardHtml(order) {
     const timeString = formatFechaLocal(order.orderDate || order.orderDateIso);
 
+    // Colores de estado
     const statusColors = {
-        'Pending': 'bg-warning text-dark', 'Confirmed': 'bg-info text-white',
-        'Cooking': 'bg-primary text-white', 'Ready': 'bg-success text-white',
-        'Delivered': 'bg-secondary text-white', 'Cancelled': 'bg-danger text-white'
+        'Pending': 'bg-warning text-dark', 
+        'Confirmed': 'bg-info text-dark',
+        'Cooking': 'bg-danger text-white', 
+        'Ready': 'bg-success text-white',
+        'Delivered': 'bg-secondary text-white', 
+        'Cancelled': 'bg-dark text-white',
+        'OnTheWay': 'bg-primary text-white'
     };
     const badgeClass = statusColors[order.currentStatus] || 'bg-secondary text-white';
 
+    // Botón de Avanzar Estado
     let actionButtonHtml = '';
     if (order.nextStatus && order.currentStatus !== 'Delivered' && order.currentStatus !== 'Cancelled') {
         actionButtonHtml = `
             <button class="btn btn-success btn-sm w-100 mb-2 advance-status-btn" 
-                    data-order-id="${order.id}" data-next-status="${order.nextStatus}">
+                    onclick="updateOrderStatus(${order.id}, '${order.nextStatus}')">
                 Avanzar a ${translateStatus(order.nextStatus)}
             </button>
         `;
@@ -347,6 +392,26 @@ function createOrderCardHtml(order) {
 
     const count = order.itemsCount !== undefined ? order.itemsCount : (order.ItemsCount || 0);
     const paymentLabel = order.paymentMethod ? ` | ${translatePaymentMethod(order.paymentMethod)}` : '';
+
+    // --- 🔥 LÓGICA DE LINKS (CLIENTE Y DRIVER) ---
+    
+    // 1. Obtener GUID (Código Seguro)
+    const trackingCode = order.trackingNumber || order.TrackingNumber || order.id;
+
+    // 2. Link Cliente (track.html)
+    const trackLink = `${window.location.origin}/track.html?code=${trackingCode}`;
+    const clientMsg = encodeURIComponent(`¡Hola ${order.clientName || ''}! 🍔\nSigue tu pedido #${order.id} en vivo aquí:\n${trackLink}`);
+    
+    // 3. Link Repartidor (driver.html)
+    const driverLink = `${window.location.origin}/driver.html?code=${trackingCode}`;
+
+    // 4. Botón WhatsApp Cliente
+    const whatsappBtn = `
+        <a href="https://wa.me/${order.clientPhone || ''}?text=${clientMsg}" target="_blank" class="btn btn-outline-success w-100 mt-2">
+            <i class="bi bi-whatsapp"></i> Enviar a Cliente
+        </a>
+    `;
+    // ------------------------------------------
 
     return `
         <div class="col-12 col-md-6 col-lg-4 mb-3 fade-in">
@@ -366,9 +431,21 @@ function createOrderCardHtml(order) {
                 </div>
                 <div class="card-footer border-0 pb-3 bg-transparent">
                     ${actionButtonHtml}
-                    <button class="btn btn-outline-secondary w-100" onclick="openOrderDetailModal(${order.id})">
-                        Ver Detalle
-                    </button>
+                    
+                    <div class="row g-1">
+                        <div class="col-6">
+                            <button class="btn btn-outline-secondary w-100" onclick="openOrderDetailModal(${order.id})">
+                                Ver Detalle
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-secondary w-100" onclick="copyDriverLink('${driverLink}')" title="Copiar Link Moto">
+                                <i class="bi bi-scooter"></i> Link Moto
+                            </button>
+                        </div>
+                    </div>
+
+                    ${whatsappBtn}
                 </div>
             </div>
         </div>
@@ -388,14 +465,37 @@ function attachAdvanceButtonListeners() {
 }
 
 async function updateOrderStatus(orderId, nextStatus) {
-    const btn = document.querySelector(`button[data-order-id="${orderId}"]`);
-    if (btn) { btn.disabled = true; btn.textContent = "Actualizando..."; }
+    // 1. Mapa de conversión: Texto -> Número (Para que C# no llore)
+    const statusToInt = {
+        'Pending': 1,
+        'Confirmed': 2,
+        'Cooking': 3,
+        'Ready': 4,
+        'Delivered': 5,
+        'OnTheWay': 6,
+        'Cancelled': 0
+    };
+
+    // 2. Determinar qué enviar
+    let statusToSend = nextStatus;
+    
+    // Si nextStatus es texto (ej: "Cooking"), lo buscamos en el mapa
+    if (typeof nextStatus === 'string' && statusToInt[nextStatus] !== undefined) {
+        statusToSend = statusToInt[nextStatus];
+    } else {
+        // Si no está en el mapa, asumimos que ya es un número o intentamos convertirlo
+        statusToSend = parseInt(nextStatus);
+    }
+
     try {
-        await apiCall(`/Orders/${orderId}/status`, 'PUT', { newStatus: nextStatus, userId: 1 });
-        await loadOrders();
+        // 3. Enviar la petición con el NÚMERO
+        await apiCall(`/Orders/${orderId}/status`, 'PUT', { newStatus: statusToSend, userId: 1 });
+        
+        // No recargamos aquí, SignalR se encargará de avisar
+        
     } catch (e) {
-        alert("Error: " + e.message);
-        if (btn) { btn.disabled = false; btn.textContent = "Reintentar"; }
+        alert("Error al cambiar estado: " + e.message);
+        console.error(e);
     }
 }
 
@@ -1582,6 +1682,7 @@ function setupRoleViews(role) {
 
     // Helper para simular clic en una pestaña por defecto
     const clickDefault = (status) => {
+        // Buscamos el botón que tenga el onclick con ese estatus
         const btn = document.querySelector(`#order-filters button[onclick*="'${status}'"]`);
         if (btn) btn.click();
     };
@@ -1611,6 +1712,131 @@ function setupRoleViews(role) {
         clickDefault('Pending');
     }
 }
+// ==========================================
+// 🕵️ RASTREO MANUAL (MONITOR DE ESTADO - ADMIN)
+// ==========================================
+let currentlyTrackingId = null; // Variable para saber qué ID estamos mirando en el modal
+
+// 1. Función que se ejecuta al tocar la Lupa
+window.promptForTracking = async function() {
+    const input = prompt("🔍 Ingresa el ID del pedido a rastrear (Ej: 20140):");
+    if (!input) return;
+
+    const orderId = parseInt(input);
+    currentlyTrackingId = orderId;
+
+    // A. Abrir el Modal
+    const modalEl = document.getElementById('trackingModal');
+    if(modalEl) {
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+    }
+
+    // B. Resetear UI visualmente mientras carga
+    const idLabel = document.getElementById('track-order-id');
+    if(idLabel) idLabel.textContent = orderId;
+    updateTrackingUI(null, 'Searching'); 
+
+    // C. Buscar estado actual en la API
+    try {
+        const order = await apiCall(`/Orders/${orderId}`);
+        if(order) {
+            // A veces el backend devuelve 'status' o 'currentStatus'
+            const status = order.currentStatus || order.status;
+            updateTrackingUI(null, status); 
+        }
+    } catch(e) {
+        updateTrackingUI(null, 'NotFound');
+    }
+};
+
+// 2. Función encargada de pintar el Modal (Se llama manual o desde SignalR en app.js)
+window.updateTrackingUI = function(orderId, status) {
+    // Si la actualización viene de SignalR (orderId tiene valor) 
+    // y NO es el pedido que estamos mirando, no hacemos nada.
+    if (orderId !== null && parseInt(orderId) !== currentlyTrackingId) return;
+
+    const lbl = document.getElementById('track-status');
+    const icon = document.getElementById('track-icon');
+    const bar = document.getElementById('track-bar');
+    const msg = document.getElementById('track-msg');
+
+    if (!lbl || !icon) return; // Si el modal no está en el DOM, salir
+
+    // Lógica Visual según estado
+    if (status === 'Searching') {
+        lbl.innerText = "Buscando...";
+        icon.innerHTML = '<div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>';
+        bar.style.width = "0%";
+        bar.className = "progress-bar bg-secondary";
+        msg.innerText = "Consultando base de datos...";
+    }
+    else if (status === 'NotFound') {
+        lbl.innerText = "No Encontrado";
+        icon.innerHTML = '<i class="bi bi-question-circle text-muted" style="font-size: 4rem;"></i>';
+        bar.className = "progress-bar bg-secondary";
+        bar.style.width = "0%";
+        msg.innerText = "Verifica el número de pedido.";
+    }
+    else if (status === 'Pending') {
+        lbl.innerText = "Pendiente";
+        icon.innerHTML = '<i class="bi bi-clock-history text-warning" style="font-size: 4rem;"></i>';
+        bar.className = "progress-bar bg-warning";
+        bar.style.width = "10%";
+        msg.innerText = "Esperando confirmación del local...";
+    } 
+    else if (status === 'Confirmed') {
+        lbl.innerText = "Confirmado";
+        icon.innerHTML = '<i class="bi bi-check-circle text-info" style="font-size: 4rem;"></i>';
+        bar.className = "progress-bar bg-info";
+        bar.style.width = "25%";
+        msg.innerText = "El pedido ha sido recibido.";
+    }
+    else if (status === 'Cooking') {
+        lbl.innerText = "En Cocina";
+        icon.innerHTML = '<i class="bi bi-fire text-danger animate__animated animate__pulse animate__infinite" style="font-size: 4rem;"></i>';
+        bar.className = "progress-bar bg-danger";
+        bar.style.width = "50%";
+        msg.innerText = "¡Estamos preparando tu comida!";
+    }
+    else if (status === 'Ready') {
+        lbl.innerText = "¡Listo!";
+        icon.innerHTML = '<i class="bi bi-bell-fill text-success animate__animated animate__tada" style="font-size: 4rem;"></i>';
+        bar.className = "progress-bar bg-success";
+        bar.style.width = "75%";
+        msg.innerText = "Esperando retiro o asignación de delivery.";
+    }
+    else if (status === 'OnTheWay') {
+        lbl.innerText = "En Camino";
+        icon.innerHTML = '<i class="bi bi-scooter text-primary animate__animated animate__slideInLeft" style="font-size: 4rem;"></i>';
+        bar.className = "progress-bar bg-primary";
+        bar.style.width = "90%";
+        msg.innerText = "El pedido salió hacia tu dirección.";
+    }
+    else if (status === 'Delivered') {
+        lbl.innerText = "Entregado";
+        icon.innerHTML = '<i class="bi bi-emoji-smile-fill text-success" style="font-size: 4rem;"></i>';
+        bar.className = "progress-bar bg-success";
+        bar.style.width = "100%";
+        msg.innerText = "Pedido finalizado.";
+    }
+    else if (status === 'Cancelled') {
+        lbl.innerText = "Cancelado";
+        icon.innerHTML = '<i class="bi bi-x-octagon-fill text-dark" style="font-size: 4rem;"></i>';
+        bar.className = "progress-bar bg-dark";
+        bar.style.width = "100%";
+        msg.innerText = "El pedido fue cancelado.";
+    }
+};
+window.copyDriverLink = function(link) {
+    navigator.clipboard.writeText(link).then(() => {
+        // Usamos un alert simple o puedes usar un toast si tienes
+        alert("✅ Link para Repartidor copiado.\n\nPégalo en WhatsApp al motoquero.");
+    }).catch(err => {
+        console.error('Error al copiar: ', err);
+        prompt("Copia el link manualmente:", link);
+    });
+};
 // EXPONER FUNCIONES AL HTML
 window.confirmOpenRegister = confirmOpenRegister;
 window.confirmCloseRegister = confirmCloseRegister;
@@ -1623,3 +1849,8 @@ window.openExpenseModal = openExpenseModal;
 window.openClientModalFromOrder = openClientModalFromOrder;
 window.selectClientForOrder = selectClientForOrder;
 window.clearClientSelection = clearClientSelection;
+window.promptForTracking = promptForTracking;
+window.updateTrackingUI = updateTrackingUI;
+window.updateOrderStatus = updateOrderStatus;
+window.openOrderDetailModal = openOrderDetailModal;
+window.copyDriverLink = copyDriverLink;

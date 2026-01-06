@@ -1,12 +1,12 @@
 import { login, register, logout } from './auth.js';
-import { apiCall } from './apiService.js'; 
+import { apiCall, initSignalR } from './apiService.js'; // ⚠️ Importante: traer initSignalR
 import { initAdmin } from './adminModule.js';
 import { initMenu } from './menuModule.js';
 
 // ==========================================
 // 🧠 ROUTER (El Cerebro)
 // ==========================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     
     // 1. ¿Estamos en el LOGIN? (index.html)
     if (document.getElementById('login-view')) {
@@ -14,8 +14,35 @@ document.addEventListener('DOMContentLoaded', () => {
     } 
     // 2. ¿Estamos en el ADMIN? (admin.html)
     else if (document.getElementById('sidebar-toggle') || document.getElementById('admin-name')) {
-        initAdmin();      // Inicia la lógica general (Pedidos, Stock, etc.) desde adminModule
-        initUserLogic();  // Inicia la lógica específica de Usuarios desde aquí
+        initAdmin();      // Lógica general (Sidebar, navegación, etc)
+        initUserLogic();  // Lógica de Usuarios (CRUD)
+        
+        // 🔥 INICIAMOS SIGNALR (Solo en Admin/Cocina)
+        await initSignalR({
+            // Callback: Cuando llega un pedido nuevo
+            onNewOrder: (orderId) => {
+                console.log("🔔 Pedido recibido:", orderId);
+                
+                // A) Alerta sonora o visual (Toast)
+                // Puedes usar librerías como Toastify o SweetAlert aquí
+                alert(`🔔 ¡NUEVO PEDIDO RECIBIDO! #${orderId}`);
+
+                // B) Recargar la tabla si estamos en la vista de pedidos
+                // Verificamos si la función existe (está en adminModule.js)
+                if (window.loadOrders) window.loadOrders();
+            },
+            
+            // Callback: Cuando cambia un estado (ej: Cancelado por el cliente)
+            onStatusUpdate: (orderId, newStatus) => {
+                console.log(`Estado pedido ${orderId} cambió a: ${newStatus}`);
+                if (window.loadOrders) window.loadOrders();
+            }
+        });
+
+        // ⚠️ IMPORTANTE: Si tu apiService.js no une automáticamente al grupo, 
+        // deberías tener una función exportada 'joinKitchenGroup' y llamarla aquí.
+        // Si seguiste mi consejo anterior de que initSignalR maneje la conexión, 
+        // asegúrate de invocar "JoinKitchenGroup" dentro de apiService.js al conectar.
     }
     // 3. ¿Estamos en el MENÚ? (menu.html)
     else if (document.getElementById('product-grid')) {
@@ -58,7 +85,6 @@ function initAuthLogic() {
     if(loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            // IDs coinciden con el HTML actualizado
             const user = document.getElementById('login-username').value;
             const pass = document.getElementById('login-password').value;
             const errorDiv = document.getElementById('login-error');
@@ -70,7 +96,7 @@ function initAuthLogic() {
 
             try {
                 await login(user, pass);
-                // La redirección la maneja auth.js
+                // La redirección la maneja auth.js (window.location.href = 'admin.html' o 'menu.html')
             } catch (error) {
                 console.error("Login fallido:", error);
                 if(errorDiv) {
@@ -128,13 +154,12 @@ function initAuthLogic() {
 }
 
 // =====================================================================
-// 👥 LÓGICA DE GESTIÓN DE USUARIOS (Con apiCall para evitar 404)
+// 👥 LÓGICA DE GESTIÓN DE USUARIOS
 // =====================================================================
 function initUserLogic() {
     console.log("👥 Iniciando lógica de Usuarios en app.js...");
 
     // 1. Sobreescribimos switchTab para detectar la pestaña 'users'
-    // Guardamos referencia a la función original si la hubiera, aunque aquí redefinimos la navegación
     window.switchTab = function(tabName) {
         
         // A) Lógica Visual: Mostrar/Ocultar Vistas
@@ -144,8 +169,7 @@ function initUserLogic() {
 
         // B) Lógica Visual: Botón activo en sidebar
         document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active', 'bg-primary', 'bg-opacity-10', 'text-primary'));
-        
-        // (Hack: Para que se pinte activo, el onclick en HTML debería pasar 'this', pero esto limpia los anteriores al menos)
+        // (Nota: La clase 'active' visual se suele poner en el elemento clickeado pasando 'this' en el HTML)
 
         // C) Cargar datos específicos
         if (tabName === 'users') {
@@ -153,6 +177,7 @@ function initUserLogic() {
         }
         
         // D) Delegar a funciones globales de adminModule.js para otras pestañas
+        // Verificamos si existen antes de llamarlas para evitar errores
         if (tabName === 'stock' && window.loadStock) window.loadStock(window.currentBranchId || 1);
         if (tabName === 'ingredients' && window.renderIngredients) window.renderIngredients();
         if (tabName === 'clients' && window.loadClients) window.loadClients();
@@ -161,7 +186,7 @@ function initUserLogic() {
         if (tabName === 'cash' && window.initCashView) window.initCashView();
     };
 
-    // 2. Función Global: Preparar Modal (Llamada desde el HTML onclick)
+    // 2. Función Global: Preparar Modal
     window.prepareUserModal = function() {
         const form = document.getElementById('user-form');
         if(form) form.reset();
@@ -172,7 +197,7 @@ function initUserLogic() {
         loadBranchesForUserSelect();
     };
 
-    // 3. Función: Cargar Sucursales (apiCall)
+    // 3. Función: Cargar Sucursales
     async function loadBranchesForUserSelect() {
         try {
             const branches = await apiCall('/Branch');
@@ -190,9 +215,7 @@ function initUserLogic() {
         }
     }
 
-// ==========================================
-    // 4. Función: Cargar Usuarios (Blindada)
-    // ==========================================
+    // 4. Función: Cargar Usuarios
     async function loadUsers() {
         const tbody = document.getElementById('users-table');
         if (!tbody) return;
@@ -202,7 +225,6 @@ function initUserLogic() {
         try {
             const users = await apiCall('/User');
             
-            // Actualizamos variable global si existe
             if (typeof allUsers !== 'undefined') allUsers = users || [];
             
             const listToRender = users || [];
@@ -214,25 +236,16 @@ function initUserLogic() {
             }
     
             tbody.innerHTML = listToRender.map(u => {
-                // --- 🔍 DEBUG: Mira la consola del navegador (F12) ---
-                // Esto te dirá exactamente qué está recibiendo JS desde C#
                 const rawRole = u.role; 
                 const roleStr = String(rawRole).toUpperCase().trim();
-                console.log(`Usuario: ${u.username} | Rol original: ${rawRole} | Rol comparado: "${roleStr}"`);
-                // ----------------------------------------------------
-
-                let roleHtml = `<span class="badge bg-secondary">Empleado (${rawRole})</span>`; // Mostramos el rol real si falla
                 
-                // ADMIN (1)
+                let roleHtml = `<span class="badge bg-secondary">Empleado (${rawRole})</span>`; 
+                
                 if (['1', 'ADMIN', 'ADMINISTRATOR', 'BRANCHMANAGER'].includes(roleStr)) {
                     roleHtml = '<span class="badge bg-danger">Admin</span>';
-                } 
-                // COCINA (2)
-                else if (['2', 'KITCHEN', 'COCINA', 'CHEF'].includes(roleStr)) {
+                } else if (['2', 'KITCHEN', 'COCINA', 'CHEF'].includes(roleStr)) {
                     roleHtml = '<span class="badge bg-warning text-dark">Cocina</span>';
-                } 
-                // DELIVERY/MOZO (3)
-                else if (['3', 'WAITER', 'DELIVERY', 'MOZO', 'SERVER'].includes(roleStr)) {
+                } else if (['3', 'WAITER', 'DELIVERY', 'MOZO', 'SERVER'].includes(roleStr)) {
                     roleHtml = '<span class="badge bg-info text-dark">Mozo/Delivery</span>';
                 }
     
@@ -270,7 +283,6 @@ function initUserLogic() {
     
             const user = await apiCall(`/User/${id}`);
     
-            // Llenar campos
             document.getElementById('user-id').value = user.id;
             document.getElementById('user-username').value = user.username || user.Username || '';
             document.getElementById('user-name').value = user.name;
@@ -278,14 +290,13 @@ function initUserLogic() {
             document.getElementById('user-phone').value = user.phone;
             document.getElementById('user-branch').value = user.branchId || ''; 
             
-            // Mapeo de rol para el select
             let roleVal = 3; 
             if(user.role === 'ADMIN' || user.role === 1) roleVal = 1;
             else if(user.role === 'KITCHEN' || user.role === 2) roleVal = 2;
             else roleVal = 3;
             
             document.getElementById('user-role').value = roleVal;
-            document.getElementById('user-pass').value = ''; // Limpiar pass
+            document.getElementById('user-pass').value = ''; 
     
         } catch (error) {
             console.error(error);
@@ -309,7 +320,7 @@ function initUserLogic() {
     // 7. Event Listener: Submit del Formulario Usuario
     const userForm = document.getElementById('user-form');
     if(userForm) {
-        // Clonar para limpiar listeners previos
+        // Clonar para limpiar listeners previos y evitar duplicados
         const newForm = userForm.cloneNode(true);
         userForm.parentNode.replaceChild(newForm, userForm);
         
@@ -337,7 +348,6 @@ function initUserLogic() {
             try {
                 await apiCall(endpoint, method, userData);
     
-                // Cerrar modal y recargar
                 const modalEl = document.getElementById('userModal');
                 const modal = bootstrap.Modal.getInstance(modalEl);
                 modal.hide();

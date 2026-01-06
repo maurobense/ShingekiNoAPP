@@ -3,7 +3,7 @@
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\BarberShopAPI\bin\Release\net8.0\publish\</_PublishTargetUrl>
-    <History>True|2026-01-05T20:00:50.1294498Z||;</History>
+    <History>True|2026-01-06T07:52:01.6228850Z||;True|2026-01-05T17:00:50.1294498-03:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>

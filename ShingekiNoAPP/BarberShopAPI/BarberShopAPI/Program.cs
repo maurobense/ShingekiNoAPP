@@ -1,11 +1,12 @@
-﻿using Business.RepositoryInterfaces;
+﻿using ShingekiNoAPPI.Hubs; // ⚠️ ASEGÚRATE QUE ESTE NAMESPACE COINCIDA CON DONDE CREASTE DeliveryHub.cs
+using Business.RepositoryInterfaces;
 using Datos.EF;
 using Datos.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System.Text.Json.Serialization; // Necesario para Enums y IgnoreCycles
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,17 +14,19 @@ var builder = WebApplication.CreateBuilder(args);
 var claveSecreta = "ZWRpw6fDo28gZW0gY29tcHV0YWRvcmE=";
 
 // =========================================================
-// 🌍 CONFIGURACIÓN DE CORS (CORREGIDO: MODO "PERMITIR TODO")
+// 🌍 CONFIGURACIÓN DE CORS (ADAPTADO PARA SIGNALR)
 // =========================================================
-// Esto permite que CUALQUIER origen (tu frontend local, postman, celular) acceda a la API.
+// SignalR requiere 'AllowCredentials' para funcionar bien, lo cual choca con 'AllowAnyOrigin'.
+// Usamos 'SetIsOriginAllowed(_ => true)' como truco para permitir todo + credenciales.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
         policy =>
         {
-            policy.AllowAnyOrigin()  // Permite 127.0.0.1, localhost, vercel, etc.
-                  .AllowAnyMethod()  // Permite GET, POST, PUT, DELETE, etc.
-                  .AllowAnyHeader(); // Permite Authorization, Content-Type, etc.
+            policy.SetIsOriginAllowed(origin => true) // Permite cualquier origen dinámicamente
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials(); // ⚠️ OBLIGATORIO para SignalR
         });
 });
 
@@ -37,7 +40,7 @@ builder.Services.AddControllers()
         // ✅ FIX 1: Enums como Strings en los JSON
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 
-        // ✅ FIX 2: Ignorar referencias circulares (Evita error de profundidad 32)
+        // ✅ FIX 2: Ignorar referencias circulares
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
@@ -47,8 +50,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
+// ✅ NUEVO: Servicio de SignalR
+builder.Services.AddSignalR();
+
 // --- Configuración de la Base de Datos ---
-// Recuerda que en Somee esto se sobrescribe con el appsettings.json, pero déjalo así.
 builder.Services.AddDbContext<ShingekiContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MiConexion")));
 
@@ -97,21 +102,19 @@ var app = builder.Build();
 // 🛣️ CONFIGURACIÓN DEL PIPELINE HTTP
 // =========================================================
 
-// ⚠️ FIX: Comentamos el 'if' para que Swagger funcione en Producción (Somee)
 // if (app.Environment.IsDevelopment()) 
 // {
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    // Ajuste ruta para que funcione bien en la raíz o subcarpetas
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShingekiNoAPPI v1");
-    c.RoutePrefix = "swagger"; // Accesible en /swagger
+    c.RoutePrefix = "swagger";
 });
 // }
 
 app.UseHttpsRedirection();
 
-// ⚠️ IMPORTANTE: Aplicamos la política "AllowAll" que definimos arriba
+// ⚠️ IMPORTANTE: CORS debe ir antes de Auth y SignalR
 app.UseCors("AllowAll");
 
 // Seguridad
@@ -121,5 +124,9 @@ app.UseAuthorization();
 app.UseSession();
 
 app.MapControllers();
+
+// ✅ NUEVO: Endpoint para el Hub de SignalR
+// Asegúrate de que el frontend apunte a "https://tu-url.com/deliveryHub"
+app.MapHub<DeliveryHub>("/deliveryHub");
 
 app.Run();

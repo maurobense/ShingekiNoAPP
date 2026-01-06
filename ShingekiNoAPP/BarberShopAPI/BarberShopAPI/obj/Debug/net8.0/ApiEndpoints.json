@@ -769,6 +769,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "ShingekiNoAPPI.Controllers.OrdersController",
+    "Method": "GetByTracking",
+    "RelativePath": "api/Orders/track/{trackingNumber}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "trackingNumber",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "ShingekiNoAPPI.Controllers.ProductIngredientController",
     "Method": "AddIngredientToProduct",
     "RelativePath": "api/ProductIngredient",

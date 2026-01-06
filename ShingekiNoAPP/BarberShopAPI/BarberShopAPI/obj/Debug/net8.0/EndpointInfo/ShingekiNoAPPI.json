@@ -1151,6 +1151,29 @@
         }
       }
     },
+    "/api/Orders/track/{trackingNumber}": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "parameters": [
+          {
+            "name": "trackingNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Orders/{id}/cancel": {
       "post": {
         "tags": [

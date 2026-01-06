@@ -64,6 +64,18 @@
               "target": "Package",
               "version": "[8.0.0, )"
             },
+            "Microsoft.AspNetCore.SignalR.Client": {
+              "target": "Package",
+              "version": "[10.0.1, )"
+            },
+            "Microsoft.AspNetCore.SignalR.Common": {
+              "target": "Package",
+              "version": "[10.0.1, )"
+            },
+            "Microsoft.AspNetCore.SignalR.Protocols.Json": {
+              "target": "Package",
+              "version": "[10.0.1, )"
+            },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
