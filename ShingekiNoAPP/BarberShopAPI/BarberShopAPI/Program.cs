@@ -1,4 +1,4 @@
-﻿using ShingekiNoAPPI.Hubs; // ⚠️ ASEGÚRATE QUE ESTE NAMESPACE COINCIDA CON DONDE CREASTE DeliveryHub.cs
+using ShingekiNoAPPI.Hubs; // ⚠️ Asegúrate de que este namespace exista (tu carpeta Hubs)
 using Business.RepositoryInterfaces;
 using Datos.EF;
 using Datos.Repositories;
@@ -14,33 +14,28 @@ var builder = WebApplication.CreateBuilder(args);
 var claveSecreta = "ZWRpw6fDo28gZW0gY29tcHV0YWRvcmE=";
 
 // =========================================================
-// 🌍 CONFIGURACIÓN DE CORS (ADAPTADO PARA SIGNALR)
+// 🌍 1. CONFIGURACIÓN DE CORS (SOLUCIÓN SIGNALR)
 // =========================================================
-// SignalR requiere 'AllowCredentials' para funcionar bien, lo cual choca con 'AllowAnyOrigin'.
-// Usamos 'SetIsOriginAllowed(_ => true)' como truco para permitir todo + credenciales.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
         policy =>
         {
-            policy.SetIsOriginAllowed(origin => true) // Permite cualquier origen dinámicamente
+            policy.SetIsOriginAllowed(origin => true) // Permite cualquier origen (clave para SignalR)
                   .AllowAnyMethod()
                   .AllowAnyHeader()
-                  .AllowCredentials(); // ⚠️ OBLIGATORIO para SignalR
+                  .AllowCredentials(); // SignalR REQUIERE credenciales
         });
 });
 
 // =========================================================
-// ⚙️ SERVICIOS DE INFRAESTRUCTURA Y JSON
+// ⚙️ 2. SERVICIOS
 // =========================================================
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        // ✅ FIX 1: Enums como Strings en los JSON
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-
-        // ✅ FIX 2: Ignorar referencias circulares
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
@@ -50,15 +45,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
-// ✅ NUEVO: Servicio de SignalR
+// ✅ AGREGAMOS EL SERVICIO DE SIGNALR
 builder.Services.AddSignalR();
 
-// --- Configuración de la Base de Datos ---
+// Base de Datos
 builder.Services.AddDbContext<ShingekiContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MiConexion")));
 
 // =========================================================
-// 💉 INYECCIÓN DE DEPENDENCIAS (REPOSITORIOS)
+// 💉 3. INYECCIÓN DE DEPENDENCIAS (REPOSITORIOS)
 // =========================================================
 
 // --- 1. Actores y Sucursales ---
@@ -80,7 +75,9 @@ builder.Services.AddScoped<IRepositoryOrderItem, RepositoryOrderItem>();
 builder.Services.AddScoped<IRepositoryOrderStatusHistory, RepositoryOrderStatusHistory>();
 
 
-// --- Configuración de Seguridad JWT ---
+// =========================================================
+// 🔐 4. SEGURIDAD JWT + SIGNALR
+// =========================================================
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -93,31 +90,53 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = false,
             ValidateAudience = false
         };
+
+        // 🔥 LÓGICA PARA LEER TOKEN DESDE URL (SIGNALR)
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+
+                // Si viene un token y la ruta es hacia el Hub
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/deliveryHub"))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
 
 var app = builder.Build();
 
 // =========================================================
-// 🛣️ CONFIGURACIÓN DEL PIPELINE HTTP
+// 🚨 MANEJO DE ERRORES (IMPORTANTE PARA DEBUG)
+// =========================================================
+// Esto fuerza a mostrar el error real en Somee si algo falla (en vez de pantalla blanca)
+app.UseDeveloperExceptionPage();
+
+// =========================================================
+// 🛣️ 5. PIPELINE HTTP
 // =========================================================
 
-// if (app.Environment.IsDevelopment()) 
-// {
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShingekiNoAPPI v1");
     c.RoutePrefix = "swagger";
 });
-// }
 
 app.UseHttpsRedirection();
 
-// ⚠️ IMPORTANTE: CORS debe ir antes de Auth y SignalR
+// ⚠️ EL ORDEN ES CRÍTICO:
+// 1. CORS
+// 2. Auth (Quién eres)
+// 3. Authz (Qué permisos tienes)
 app.UseCors("AllowAll");
 
-// Seguridad
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -125,8 +144,7 @@ app.UseSession();
 
 app.MapControllers();
 
-// ✅ NUEVO: Endpoint para el Hub de SignalR
-// Asegúrate de que el frontend apunte a "https://tu-url.com/deliveryHub"
+// ✅ MAPEO DEL HUB DE SIGNALR
 app.MapHub<DeliveryHub>("/deliveryHub");
 
 app.Run();

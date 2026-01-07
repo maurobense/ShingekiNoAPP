@@ -1,9 +1,12 @@
 import { apiCall, initSignalR, connection } from './apiService.js';
 
-let map = null;
-let driverMarker = null;
+// --- VARIABLES GLOBALES ---
 let currentTrackingCode = null;
 let pollInterval = null;
+
+// Variables de Mapa (Reservadas para el futuro)
+let map = null;
+let driverMarker = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. Obtener GUID de la URL (?code=XXXX... o ?id=XXXX...)
@@ -11,7 +14,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const code = params.get('code') || params.get('id'); 
 
     if (!code) {
-        document.getElementById('status-container').innerHTML = `<h4 class="text-danger">Enlace inválido o incompleto</h4>`;
+        const statusContainer = document.getElementById('status-container');
+        if(statusContainer) {
+            statusContainer.innerHTML = `<h4 class="text-danger">Enlace inválido o incompleto</h4>`;
+        }
         return;
     }
 
@@ -20,30 +26,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 2. Cargar datos iniciales
     await loadOrderData(code);
 
-    // 3. Activar Polling (Respaldo cada 15s)
+    // 3. Activar Polling (Respaldo cada 15s por si SignalR falla)
     startPolling(code);
 
     // 4. Conectar SignalR (Tiempo Real)
     try {
         await initSignalR({
             onStatusUpdate: (id, newStatus) => {
-                // Como no tenemos el ID numérico fácil, recargamos si llega evento
-                console.log("⚡ Estado actualizado:", newStatus);
+                console.log("⚡ Estado actualizado por SignalR:", newStatus);
+                // Recargamos toda la data para actualizar textos y barras
                 loadOrderData(code, true);
             }
         });
 
-        // 5. Unirse al canal seguro de Rastreo GPS
+        // 5. Unirse al canal seguro
         if (connection) {
-            // Unirse al grupo del GUID
             await connection.invoke("JoinTrackingGroup", code);
             console.log("📡 Unido al canal de rastreo:", code);
 
-            // Escuchar ubicación del repartidor
+            /* 🚧 FUTURO: RASTREO GPS
+               Descomentar cuando la App del Repartidor esté lista
+            
             connection.on("ReceiveDriverLocation", (lat, lng) => {
                 console.log("📍 Ubicación recibida:", lat, lng);
                 updateMapLocation(lat, lng);
             });
+            */
         }
     } catch (e) {
         console.warn("SignalR no conectado. Usando solo Polling.", e);
@@ -74,12 +82,8 @@ async function loadOrderData(code, isUpdate = false) {
         const clientName = document.getElementById('client-name');
         if(clientName) clientName.innerText = order.clientName || 'Cliente';
 
-        const branchName = document.getElementById('branch-name');
-        if(branchName) branchName.innerText = order.branchName || 'Central';
-
-        // Fecha
+        // Fecha (Ajuste simple de zona horaria si es necesario)
         const dateObj = new Date(order.orderDate);
-        if (!order.orderDate.endsWith('Z')) dateObj.setHours(dateObj.getHours() - 3);
         const dateEl = document.getElementById('order-date');
         if(dateEl) dateEl.innerText = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
@@ -87,10 +91,8 @@ async function loadOrderData(code, isUpdate = false) {
         const paymentData = translatePayment(order.paymentMethod);
         const badgeEl = document.getElementById('payment-method-badge');
         if(badgeEl) badgeEl.innerText = paymentData.label;
-        const infoEl = document.getElementById('payment-info-text');
-        if(infoEl) infoEl.innerText = `Método: ${paymentData.text}`;
-
-        // Items (Solo si no es update automático para no parpadear, o siempre si prefieres)
+        
+        // Items (Solo renderizamos items si es la carga inicial para evitar parpadeos)
         if(!isUpdate) {
             const list = document.getElementById('order-items');
             if(list) {
@@ -106,16 +108,19 @@ async function loadOrderData(code, isUpdate = false) {
         }
 
         // Totales y Descuento
-        const discountRow = document.getElementById('discount-row');
+        const discountRow = document.getElementById('discount-row'); // Asegúrate de tener este ID en HTML si usas descuentos
         if(discountRow) {
             if (order.discount > 0) {
                 discountRow.classList.remove('d-none');
-                document.getElementById('order-discount').innerText = `-$${order.discount}`;
+                const discVal = document.getElementById('order-discount');
+                if(discVal) discVal.innerText = `-$${order.discount}`;
             } else {
                 discountRow.classList.add('d-none');
             }
         }
-        document.getElementById('order-total').innerText = `$${order.totalAmount}`;
+        
+        const totalEl = document.getElementById('order-total');
+        if(totalEl) totalEl.innerText = `$${order.totalAmount}`;
 
         // --- Actualizar Estado Visual ---
         updateUI(order.status);
@@ -123,12 +128,15 @@ async function loadOrderData(code, isUpdate = false) {
     } catch (error) {
         console.error(error);
         if(!isUpdate) {
-            document.getElementById('status-container').innerHTML = `
+            const container = document.getElementById('status-container');
+            if(container) {
+                container.innerHTML = `
                 <div class="text-danger py-3">
                     <i class="bi bi-exclamation-triangle fs-1"></i>
                     <h4 class="mt-2">No encontrado</h4>
                     <p>El enlace podría estar vencido o ser incorrecto.</p>
                 </div>`;
+            }
         }
     }
 }
@@ -156,16 +164,23 @@ function updateUI(status) {
     else if (status === 'Confirmed') { icon='bi-check-circle'; text='Confirmado'; color='info'; width='25%'; }
     else if (status === 'Cooking') { icon='bi-fire'; text='En Cocina 🔥'; color='danger'; width='50%'; }
     else if (status === 'Ready') { icon='bi-box-seam'; text='Listo para Salir'; color='success'; width='75%'; }
+    
     else if (status === 'OnTheWay') { 
         icon='bi-scooter'; text='En Camino 🛵'; color='primary'; width='90%'; 
         
-        // 🔥 MOSTRAR EL MAPA
+        /* 🚧 FUTURO: MOSTRAR MAPA
+           Descomentar esto cuando la App del Repartidor esté lista
+        
         if(mapSection) {
             mapSection.style.display = 'block';
-            // Pequeño delay para que Leaflet calcule bien el tamaño al hacerse visible
             setTimeout(initMap, 500); 
         }
+        */
+       
+        // Mantenemos oculto por ahora
+        if(mapSection) mapSection.style.display = 'none';
     }
+    
     else if (status === 'Delivered') { 
         icon='bi-emoji-smile-fill'; text='¡Entregado!'; color='success'; width='100%'; 
         if(mapSection) mapSection.style.display = 'none';
@@ -175,8 +190,7 @@ function updateUI(status) {
         if(mapSection) mapSection.style.display = 'none';
     }
 
-    // Actualizamos el HTML del estado
-    // Usamos innerHTML simple. Si quieres evitar parpadeo en polling, compara texto antes.
+    // Render HTML del Estado
     if(container) {
         container.innerHTML = `
             <div class="status-icon-lg text-${color} animate__animated animate__pulse animate__infinite">
@@ -193,19 +207,15 @@ function updateUI(status) {
     }
 }
 
-// --- LÓGICA DE MAPA (Leaflet) ---
-
+// --- LÓGICA DE MAPA (Leaflet) - RESERVADA ---
+/*
 function initMap() {
-    // Si el mapa ya existe, solo ajustamos tamaño y salimos
-    if (map) { 
-        map.invalidateSize(); 
-        return; 
-    }
+    if (map) { map.invalidateSize(); return; }
 
     const container = document.getElementById('map-container');
     if(!container) return;
 
-    // Coordenadas iniciales (Centro genérico, ej: Montevideo o tu local)
+    // Coordenadas por defecto (ej: Montevideo)
     const defaultLat = -34.85; 
     const defaultLng = -56.00;
 
@@ -217,33 +227,22 @@ function initMap() {
 }
 
 function updateMapLocation(lat, lng) {
-    // 1. Si el mapa no existe, crearlo
     if (!map) initMap();
-
-    // 2. Validar coordenadas (Evitar errores si llegan nulos)
     if (!lat || !lng) return;
 
-    // 3. Crear o Mover el marcador
     if (!driverMarker) {
-        console.log("📍 Creando marcador en:", lat, lng);
-
         const bikeIcon = L.divIcon({
             html: '<i class="bi bi-scooter text-danger" style="font-size: 3rem; display:block;"></i>',
-            className: 'bike-icon-marker', // Usa la clase que definimos en CSS
-            iconSize: [50, 50],             // Tamaño del contenedor
-            iconAnchor: [25, 25]            // Punto de anclaje (centro)
+            className: 'bike-icon-marker',
+            iconSize: [50, 50],
+            iconAnchor: [25, 25]
         });
 
         driverMarker = L.marker([lat, lng], { icon: bikeIcon }).addTo(map);
-        
-        // Popup opcional
         driverMarker.bindPopup("<b>¡Aquí está tu pedido!</b>").openPopup();
     } else {
-        console.log("📍 Moviendo marcador a:", lat, lng);
-        // Mover suavemente
         driverMarker.setLatLng([lat, lng]);
     }
-    
-    // 4. Centrar el mapa en la moto
     map.panTo([lat, lng]);
 }
+*/

@@ -3,7 +3,11 @@
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\BarberShopAPI\bin\Release\net8.0\publish\</_PublishTargetUrl>
+<<<<<<< HEAD
     <History>True|2026-01-06T07:52:01.6228850Z||;True|2026-01-05T17:00:50.1294498-03:00||;</History>
+=======
+    <History>True|2026-01-07T02:09:18.1699799Z||;True|2026-01-06T22:53:27.3363418-03:00||;True|2026-01-06T22:45:47.9856685-03:00||;True|2026-01-06T22:36:36.4339022-03:00||;True|2026-01-05T17:00:50.1294498-03:00||;</History>
+>>>>>>> 2af511f21f716701f4b64162d2e33b398b791d39
     <LastFailureDetails />
   </PropertyGroup>
 </Project>

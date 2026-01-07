@@ -400,7 +400,7 @@ function createOrderCardHtml(order) {
 
     // 2. Link Cliente (track.html)
     const trackLink = `${window.location.origin}/track.html?code=${trackingCode}`;
-    const clientMsg = encodeURIComponent(`¡Hola ${order.clientName || ''}! 🍔\nSigue tu pedido #${order.id} en vivo aquí:\n${trackLink}`);
+    const clientMsg = encodeURIComponent(`Sigue tu pedido #${order.id} en vivo aquí:\n${trackLink}`);
     
     // 3. Link Repartidor (driver.html)
     const driverLink = `${window.location.origin}/driver.html?code=${trackingCode}`;
@@ -465,7 +465,7 @@ function attachAdvanceButtonListeners() {
 }
 
 async function updateOrderStatus(orderId, nextStatus) {
-    // 1. Mapa de conversión: Texto -> Número (Para que C# no llore)
+    // 1. Mapa de conversión: Texto -> Número
     const statusToInt = {
         'Pending': 1,
         'Confirmed': 2,
@@ -483,19 +483,44 @@ async function updateOrderStatus(orderId, nextStatus) {
     if (typeof nextStatus === 'string' && statusToInt[nextStatus] !== undefined) {
         statusToSend = statusToInt[nextStatus];
     } else {
-        // Si no está en el mapa, asumimos que ya es un número o intentamos convertirlo
         statusToSend = parseInt(nextStatus);
     }
 
+    // --- UX: Feedback visual inmediato (Opcional pero recomendado) ---
+    // Buscamos el botón dentro de la tarjeta para ponerlo en "Cargando..."
+    const card = document.querySelector(`.order-card[data-order-id="${orderId}"]`);
+    const btn = card ? card.querySelector('.advance-status-btn') : null;
+    let originalBtnText = "";
+    
+    if (btn) {
+        originalBtnText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Procesando...';
+    }
+    // -------------------------------------------------------------
+
     try {
-        // 3. Enviar la petición con el NÚMERO
+        // 3. Enviar la petición
         await apiCall(`/Orders/${orderId}/status`, 'PUT', { newStatus: statusToSend, userId: 1 });
         
-        // No recargamos aquí, SignalR se encargará de avisar
+        // 🔥 AQUÍ ESTÁ LA SOLUCIÓN:
+        // Forzamos la recarga inmediata de la grilla de pedidos
+        await loadOrders(); 
         
+        // (Opcional) Si tienes el modal de tracking abierto, también lo actualizamos
+        if (typeof currentlyTrackingId !== 'undefined' && currentlyTrackingId === orderId) {
+             updateTrackingUI(orderId, translateStatus(statusToSend)); // Ajustar si translateStatus devuelve texto en español
+        }
+
     } catch (e) {
         alert("Error al cambiar estado: " + e.message);
         console.error(e);
+        
+        // Si falló, restauramos el botón para que pueda intentar de nuevo
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalBtnText;
+        }
     }
 }
 
