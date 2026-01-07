@@ -108,7 +108,7 @@ async function loadOrderData(code, isUpdate = false) {
         }
 
         // Totales y Descuento
-        const discountRow = document.getElementById('discount-row'); // Asegúrate de tener este ID en HTML si usas descuentos
+        const discountRow = document.getElementById('discount-row'); 
         if(discountRow) {
             if (order.discount > 0) {
                 discountRow.classList.remove('d-none');
@@ -208,7 +208,7 @@ function updateUI(status) {
 }
 
 // --- LÓGICA DE MAPA (Leaflet) - RESERVADA ---
-/*
+
 function initMap() {
     if (map) { map.invalidateSize(); return; }
 
@@ -245,4 +245,3 @@ function updateMapLocation(lat, lng) {
     }
     map.panTo([lat, lng]);
 }
-*/
