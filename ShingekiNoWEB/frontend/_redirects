@@ -1,1 +1,11 @@
-/api/* http://www.shingekinoappi.somee.com/api/:splat  200
+# --- PROXY PARA API REST ---
+# Cuando el front pida "/api/x", Netlify lo pedirá a Somee
+/api/* https://www.shingekinoappi.somee.com/api/:splat  200
+
+# --- PROXY PARA SIGNALR ---
+# Cuando el front pida "/deliveryHub/x", Netlify lo pedirá a Somee
+/deliveryHub/* https://www.shingekinoappi.somee.com/deliveryHub/:splat  200
+
+# --- SPA FALLBACK ---
+# Para que al recargar la página (F5) no te de error 404
+/* /index.html  200
