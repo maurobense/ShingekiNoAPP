@@ -47,18 +47,18 @@ namespace ShingekiNoAPPI.Controllers
                 // 1. Validaciones Flexibles
                 if (movementDto.Quantity < 0) return BadRequest("La cantidad no puede ser negativa.");
 
-                // Si Quantity es 0 y no hay MinimumStock, no hacemos nada.
                 if (movementDto.Quantity == 0 && !movementDto.MinimumStock.HasValue)
                     return BadRequest("Debes ingresar una Cantidad o un Nuevo Mínimo.");
 
-                // Si hay cantidad > 0, debe haber tipo
                 if (movementDto.Quantity > 0 && (movementDto.MovementType != "IN" && movementDto.MovementType != "OUT"))
                     return BadRequest("Falta especificar el tipo de movimiento.");
 
-                if (_repoBranch.Get(movementDto.BranchId) == null) return BadRequest("La sucursal no existe.");
+                // 🔥 BORRAMOS LA VALIDACIÓN MANUAL DE SUCURSAL 🔥
 
-                // 2. Buscar o Crear
-                var stockEntry = _repoBranchStock.GetByBranchAndIngredient(movementDto.BranchId, movementDto.IngredientId);
+                // 2. Buscar o Crear: Usamos GetAll() que ya está filtrado por el Tenant del usuario
+                var stockEntry = _repoBranchStock.GetAll()
+                    .FirstOrDefault(bs => bs.IngredientId == movementDto.IngredientId);
+
                 bool isNewEntry = false;
 
                 if (stockEntry == null)
@@ -68,7 +68,7 @@ namespace ShingekiNoAPPI.Controllers
 
                     stockEntry = new BranchStock
                     {
-                        BranchId = movementDto.BranchId,
+                        BranchId = 0, // 🔥 El ShingekiContext le pondrá el ID correcto
                         IngredientId = movementDto.IngredientId,
                         CurrentStock = 0,
                         MinimumStockAlert = movementDto.MinimumStock ?? 0,
@@ -78,13 +78,13 @@ namespace ShingekiNoAPPI.Controllers
                     isNewEntry = true;
                 }
 
-                // 3. Actualizar Mínimo (Si el usuario mandó dato)
+                // 3. Actualizar Mínimo
                 if (movementDto.MinimumStock.HasValue)
                 {
                     stockEntry.MinimumStockAlert = movementDto.MinimumStock.Value;
                 }
 
-                // 4. Actualizar Stock (Solo si Quantity > 0)
+                // 4. Actualizar Stock
                 if (movementDto.Quantity > 0)
                 {
                     if (movementDto.MovementType == "IN")
@@ -97,7 +97,7 @@ namespace ShingekiNoAPPI.Controllers
                     }
                 }
 
-                // 5. Guardar (Fix Temporary Value)
+                // 5. Guardar
                 if (!isNewEntry)
                 {
                     _repoBranchStock.Update(stockEntry);

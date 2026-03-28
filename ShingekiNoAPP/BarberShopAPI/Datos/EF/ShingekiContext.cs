@@ -1,58 +1,61 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Business.BusinessEntities;
+using Business.BusinessInterfaces;
 
 namespace Datos.EF
 {
     public partial class ShingekiContext : DbContext
     {
+        private readonly ITenantService _tenantService;
 
         public DbSet<User> Users { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<ClientAddress> ClientAddresses { get; set; }
-
         public DbSet<Branch> Branches { get; set; }
         public DbSet<BranchStock> BranchStocks { get; set; }
-
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<ProductIngredient> ProductIngredients { get; set; }
-
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<OrderStatusHistory> OrderStatusHistories { get; set; }
         public DbSet<CashSession> CashSessions { get; set; }
         public DbSet<CashMovement> CashMovements { get; set; }
 
-        public ShingekiContext(DbContextOptions<ShingekiContext> options) : base(options)
+        public ShingekiContext(DbContextOptions<ShingekiContext> options, ITenantService tenantService) : base(options)
         {
+            _tenantService = tenantService;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // --- FILTROS GLOBALES (Soft Delete) ---
-            modelBuilder.Entity<User>().HasQueryFilter(x => !x.IsDeleted);
-            modelBuilder.Entity<Client>().HasQueryFilter(x => !x.IsDeleted);
-            modelBuilder.Entity<Branch>().HasQueryFilter(x => !x.IsDeleted);
-            modelBuilder.Entity<Category>().HasQueryFilter(x => !x.IsDeleted);
-            modelBuilder.Entity<Product>().HasQueryFilter(x => !x.IsDeleted);
-            modelBuilder.Entity<Ingredient>().HasQueryFilter(x => !x.IsDeleted);
-            modelBuilder.Entity<Order>().HasQueryFilter(x => !x.IsDeleted);
+            var branchId = _tenantService.GetBranchId();
 
-            // --- CONFIGURACIÓN ESPECÍFICA DE USUARIO (AGREGADO) ---
+            // --- FILTROS GLOBALES ---
+            modelBuilder.Entity<User>().HasQueryFilter(x => !x.IsDeleted && (branchId == 0 || x.BranchId == branchId));
+            modelBuilder.Entity<Branch>().HasQueryFilter(x => !x.IsDeleted);
+            modelBuilder.Entity<Client>().HasQueryFilter(x => !x.IsDeleted && x.BranchId == branchId);
+            modelBuilder.Entity<Category>().HasQueryFilter(x => !x.IsDeleted && x.BranchId == branchId);
+            modelBuilder.Entity<Product>().HasQueryFilter(x => !x.IsDeleted && x.BranchId == branchId);
+            modelBuilder.Entity<Ingredient>().HasQueryFilter(x => !x.IsDeleted && x.BranchId == branchId);
+            modelBuilder.Entity<Order>().HasQueryFilter(x => !x.IsDeleted && x.BranchId == branchId);
+
+            // Filtros tablas hijas
+            modelBuilder.Entity<BranchStock>().HasQueryFilter(x => x.BranchId == branchId);
+            modelBuilder.Entity<OrderItem>().HasQueryFilter(x => x.Order.BranchId == branchId);
+
+            // --- CONFIGURACIÓN USUARIO ---
             modelBuilder.Entity<User>(entity =>
             {
-                // Hacemos que el Username sea único en la BD
                 entity.HasIndex(e => e.Username).IsUnique();
-
-                // Guardamos el Rol como String (ej: "ADMIN") en lugar de número
                 entity.Property(e => e.Role).HasConversion<string>();
-
-                // Valor por defecto para migraciones de datos existentes
                 entity.Property(e => e.Username).HasDefaultValue(" ");
             });
 
@@ -64,47 +67,65 @@ namespace Datos.EF
                 property.SetColumnType("decimal(18,2)");
             }
 
-            // --- PRODUCT INGREDIENT (Muchos a Muchos) ---
-            modelBuilder.Entity<ProductIngredient>()
-                .HasKey(pi => new { pi.ProductId, pi.IngredientId });
+            // --- MUCHOS A MUCHOS ---
+            modelBuilder.Entity<ProductIngredient>().HasKey(pi => new { pi.ProductId, pi.IngredientId });
 
-            modelBuilder.Entity<ProductIngredient>()
-                .HasOne(pi => pi.Product)
-                .WithMany(p => p.ProductIngredients)
-                .HasForeignKey(pi => pi.ProductId);
+            // ✅ SOLUCIÓN CICLOS CASCADA
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Product)
+                .WithMany()
+                .HasForeignKey(oi => oi.ProductId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<ProductIngredient>()
-                .HasOne(pi => pi.Ingredient)
-                .WithMany(i => i.ProductIngredients)
-                .HasForeignKey(pi => pi.IngredientId);
+            // Evitar cascada en Order -> Branch si da problemas
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Branch)
+                .WithMany()
+                .HasForeignKey(o => o.BranchId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            // --- BRANCH STOCK ---
-            modelBuilder.Entity<BranchStock>()
-                .HasIndex(bs => new { bs.BranchId, bs.IngredientId })
-                .IsUnique();
+            // ✅ SOLUCIÓN ERROR TIPOS DE DATOS (CashMovement)
+            modelBuilder.Entity<CashMovement>()
+                .HasOne(m => m.CashSession)
+                .WithMany(s => s.Movements)
+                .HasForeignKey(m => m.CashSessionId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // --- ORDER ---
+            // --- OTRAS CONFIGS ---
             modelBuilder.Entity<Order>(entity =>
             {
-                entity.Property(e => e.CurrentStatus)
-                    .HasConversion<string>();
-
-                entity.HasOne(e => e.DeliveryAddress)
-                    .WithMany()
-                    .HasForeignKey(e => e.ClientAddressId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(e => e.Client)
-                    .WithMany(c => c.Orders)
-                    .HasForeignKey(e => e.ClientId)
-                    .IsRequired(false);
+                entity.Property(e => e.CurrentStatus).HasConversion<string>();
+                entity.HasOne(e => e.DeliveryAddress).WithMany().HasForeignKey(e => e.ClientAddressId).OnDelete(DeleteBehavior.Restrict);
             });
+        }
 
-            // --- ORDER HISTORY ---
-            modelBuilder.Entity<OrderStatusHistory>(entity =>
+        public override int SaveChanges()
+        {
+            AplicarSucursalAutomatica();
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            AplicarSucursalAutomatica();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void AplicarSucursalAutomatica()
+        {
+            var branchId = _tenantService.GetBranchId();
+            if (branchId > 0)
             {
-                entity.Property(e => e.Status).HasConversion<string>();
-            });
+                var addedEntities = ChangeTracker.Entries().Where(e => e.State == EntityState.Added);
+                foreach (var entry in addedEntities)
+                {
+                    var branchIdProperty = entry.Entity.GetType().GetProperty("BranchId");
+                    if (branchIdProperty != null)
+                    {
+                        branchIdProperty.SetValue(entry.Entity, branchId);
+                    }
+                }
+            }
         }
     }
 }

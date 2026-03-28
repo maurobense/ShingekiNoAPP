@@ -22,6 +22,7 @@ namespace Business.BusinessEntities
         public decimal Discount { get; set; } // Descuento global del pedido
 
         public string? Note { get; set; }
+        public long BranchId { get; set; }
 
         // --- RELACIONES ---
 
@@ -29,7 +30,6 @@ namespace Business.BusinessEntities
         public long ClientAddressId { get; set; }
         public ClientAddress DeliveryAddress { get; set; } // Propiedad de Navegación (tipo CLASE)
 
-        public long BranchId { get; set; }
         public Branch Branch { get; set; }
         public PaymentMethod PaymentMethod { get; set; } // 🔥 NUEVO
         public long? ClientId { get; set; }

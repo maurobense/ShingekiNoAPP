@@ -25,7 +25,10 @@ namespace WebAPI
                     new Claim(ClaimTypes.Name, usu.Name),                    // Nombre del usuario
                     
                     // ✅ CORRECCIÓN CLAVE: Agregamos el ClaimTypes.Role
-                    new Claim(ClaimTypes.Role, role)
+                    new Claim(ClaimTypes.Role, role),
+
+                    // 🔥 NUEVO: Inyectamos el ID de la Sucursal para la arquitectura Multi-Tenant
+                    new Claim("BranchId", usu.BranchId.ToString())
                 }),
                 // Duración del token: 7 días
                 Expires = DateTime.UtcNow.AddDays(7),

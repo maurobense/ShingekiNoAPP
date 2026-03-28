@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ShingekiNoAPPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+04b78d52cb842775c62099960d1d767375a34641")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+642804f82a46fb8dae6554184f4b454fe2fa3fbd")]
 [assembly: System.Reflection.AssemblyProductAttribute("ShingekiNoAPPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ShingekiNoAPPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

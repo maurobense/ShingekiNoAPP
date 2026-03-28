@@ -1,5 +1,6 @@
 using ShingekiNoAPPI.Hubs; // ⚠️ Asegúrate de que este namespace exista (tu carpeta Hubs)
 using Business.RepositoryInterfaces;
+using Business.BusinessInterfaces; // ✅ AGREGADO: Necesario para la interfaz del Tenant
 using Datos.EF;
 using Datos.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
+using ShingekiNoAPPI.Services; // ✅ AGREGADO: Necesario para la implementación del Tenant
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,8 +55,12 @@ builder.Services.AddDbContext<ShingekiContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MiConexion")));
 
 // =========================================================
-// 💉 3. INYECCIÓN DE DEPENDENCIAS (REPOSITORIOS)
+// 💉 3. INYECCIÓN DE DEPENDENCIAS (REPOSITORIOS Y TENANT)
 // =========================================================
+
+// --- SERVICIOS BASE PARA MULTI-TENANT ---
+builder.Services.AddHttpContextAccessor(); // 🔥 CRÍTICO: Permite leer el token en el Contexto
+builder.Services.AddScoped<ITenantService, TenantService>(); // 🔥 REGISTRO DEL SERVICIO
 
 // --- 1. Actores y Sucursales ---
 builder.Services.AddScoped<IRepositoryUser, RepositoryUser>();

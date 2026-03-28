@@ -31,10 +31,7 @@ namespace ShingekiNoAPPI.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequestDto loginDto)
         {
-            // 1. Encriptamos la contraseña entrante para compararla con el Hash de la BD
             string passwordHash = EncryptPassword(loginDto.Password);
-
-            // 2. Validar usuario contra base de datos usando el Hash y el Username
             var user = _repoUser.Login(loginDto.Username, passwordHash);
 
             if (user == null)
@@ -42,7 +39,6 @@ namespace ShingekiNoAPPI.Controllers
                 return Unauthorized("Credenciales incorrectas (Sasageyo denegado).");
             }
 
-            // 3. Mapear la entidad User a un UserDTO
             var userDto = new DTO.UserDTO(
                 user.Id,
                 user.Name,
@@ -51,19 +47,17 @@ namespace ShingekiNoAPPI.Controllers
                 user.Picture
             )
             {
-                // Aseguramos enviar también el Username en el login por si se necesita
-                Username = user.Username
+                Username = user.Username,
+                BranchId = user.BranchId
             };
 
-            // 4. Generar el Token JWT
             string userRoleString = user.Role.ToString();
             var tokenString = ManejadorJWT.GenerarToken(userDto, userRoleString);
 
-            // 5. Devolver datos + Token
             return Ok(new LoginResponseDto
             {
                 Id = user.Id,
-                Username = user.Username, // Devolvemos el Username real
+                Username = user.Username,
                 Token = tokenString,
                 Role = userRoleString
             });
@@ -73,13 +67,11 @@ namespace ShingekiNoAPPI.Controllers
         // 👤 CRUD DE USUARIOS
         // =========================================================
 
-        // --- GET ALL ---
         [HttpGet]
         public ActionResult<IEnumerable<UserDTO>> GetAll()
         {
             try
             {
-                // 🔥 CORRECCIÓN FINAL: Incluimos Username y Role (como string)
                 var users = _repoUser.GetAll()
                     .Select(u => new UserDTO(
                         u.Id,
@@ -90,7 +82,8 @@ namespace ShingekiNoAPPI.Controllers
                     )
                     {
                         Username = u.Username,
-                        Role = u.Role.ToString() // <--- ¡ESTO FALTABA PARA QUE FUNCIONE EL FILTRO DE ROLES!
+                        Role = u.Role.ToString(),
+                        BranchId = u.BranchId
                     });
 
                 return Ok(users);
@@ -101,7 +94,6 @@ namespace ShingekiNoAPPI.Controllers
             }
         }
 
-        // --- GET BY ID ---
         [HttpGet("{id}")]
         public ActionResult<UserDTO> Get(long id)
         {
@@ -112,7 +104,9 @@ namespace ShingekiNoAPPI.Controllers
 
                 return Ok(new UserDTO(user.Id, user.Name, user.LastName, user.Phone, user.Picture)
                 {
-                    Username = user.Username // También lo enviamos aquí
+                    Username = user.Username,
+                    Role = user.Role.ToString(),
+                    BranchId = user.BranchId
                 });
             }
             catch (Exception ex)
@@ -121,32 +115,24 @@ namespace ShingekiNoAPPI.Controllers
             }
         }
 
-        // --- POST (CREAR / REGISTRO) ---
         [HttpPost]
         public ActionResult Post([FromBody] UserCreateDto dto)
         {
             try
             {
-                // 1. Validar Sucursal
-                if (_repoBranch.Get(dto.BranchId) == null)
-                {
-                    return BadRequest("La sucursal indicada no existe.");
-                }
+                // 🔥 BORRAMOS LA VALIDACIÓN DE SUCURSAL AQUÍ 🔥
 
-                // 2. Validar que el Rol sea válido
                 if (!Enum.IsDefined(typeof(UserRole), dto.Role))
                 {
                     return BadRequest("Rol inválido. Use: 1=Admin, 2=Kitchen, 3=Delivery");
                 }
 
-                // 3. Validar que el Username no exista ya
                 bool userExists = _repoUser.GetAll().Any(u => u.Username.ToLower() == dto.Username.ToLower());
                 if (userExists)
                 {
                     return BadRequest($"El usuario '{dto.Username}' ya está en uso.");
                 }
 
-                // 4. Mapear DTO a Entidad
                 var newUser = new User
                 {
                     Username = dto.Username,
@@ -154,15 +140,13 @@ namespace ShingekiNoAPPI.Controllers
                     LastName = dto.LastName,
                     Phone = int.Parse(dto.Phone),
                     Picture = dto.Picture,
-                    BranchId = dto.BranchId,
+                    BranchId = 0, // 🔥 El ShingekiContext le pone el de la sucursal actual
                     IsDeleted = false,
                     Role = (UserRole)dto.Role
                 };
 
-                // 5. Encriptar Password
                 newUser.Password = EncryptPassword(dto.Password);
 
-                // 6. Guardar
                 _repoUser.Add(newUser);
                 _repoUser.Save();
 
@@ -174,7 +158,6 @@ namespace ShingekiNoAPPI.Controllers
             }
         }
 
-        // --- PUT (ACTUALIZAR) ---
         [HttpPut("{id}")]
         public ActionResult Put(long id, [FromBody] User user)
         {
@@ -185,13 +168,8 @@ namespace ShingekiNoAPPI.Controllers
                 var existingUser = _repoUser.Get(id);
                 if (existingUser == null) return NotFound("Usuario no existe.");
 
-                // Validar Sucursal si cambió
-                if (user.BranchId != existingUser.BranchId && _repoBranch.Get(user.BranchId) == null)
-                {
-                    return BadRequest("La nueva sucursal indicada no existe.");
-                }
+                // 🔥 BORRAMOS LA VALIDACIÓN DE SUCURSAL AQUÍ 🔥
 
-                // Validar cambio de Username (Unicidad)
                 if (!string.IsNullOrEmpty(user.Username) && user.Username != existingUser.Username)
                 {
                     bool userExists = _repoUser.GetAll().Any(u => u.Username.ToLower() == user.Username.ToLower());
@@ -202,20 +180,17 @@ namespace ShingekiNoAPPI.Controllers
                     existingUser.Username = user.Username;
                 }
 
-                // Actualizamos campos básicos
                 existingUser.Name = user.Name;
                 existingUser.LastName = user.LastName;
                 existingUser.Phone = user.Phone;
                 existingUser.Picture = user.Picture;
-                existingUser.BranchId = user.BranchId;
+                // No tocamos el BranchId, se mantiene en la sucursal actual
 
-                // Actualizar Rol si viene
                 if (user.Role != 0)
                 {
                     existingUser.Role = user.Role;
                 }
 
-                // Si viene una nueva contraseña y no está vacía, la encriptamos y actualizamos
                 if (!string.IsNullOrEmpty(user.Password) && user.Password.Length > 0)
                 {
                     existingUser.Password = EncryptPassword(user.Password);
@@ -232,7 +207,6 @@ namespace ShingekiNoAPPI.Controllers
             }
         }
 
-        // --- DELETE (ELIMINAR) ---
         [HttpDelete("{id}")]
         public ActionResult Delete(long id)
         {
@@ -251,9 +225,6 @@ namespace ShingekiNoAPPI.Controllers
             }
         }
 
-        // =========================================================
-        // 🔐 MÉTODO PRIVADO DE ENCRIPTACIÓN (SHA256)
-        // =========================================================
         private string EncryptPassword(string password)
         {
             if (string.IsNullOrEmpty(password)) return "";

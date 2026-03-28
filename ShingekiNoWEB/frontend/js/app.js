@@ -1,5 +1,5 @@
 import { login, register, logout } from './auth.js';
-import { apiCall, initSignalR } from './apiService.js'; // ⚠️ Importante: traer initSignalR
+import { apiCall, initSignalR } from './apiService.js';
 import { initAdmin } from './adminModule.js';
 import { initMenu } from './menuModule.js';
 
@@ -19,30 +19,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // 🔥 INICIAMOS SIGNALR (Solo en Admin/Cocina)
         await initSignalR({
-            // Callback: Cuando llega un pedido nuevo
             onNewOrder: (orderId) => {
                 console.log("🔔 Pedido recibido:", orderId);
-                
-                // A) Alerta sonora o visual (Toast)
-                // Puedes usar librerías como Toastify o SweetAlert aquí
                 alert(`🔔 ¡NUEVO PEDIDO RECIBIDO! #${orderId}`);
-
-                // B) Recargar la tabla si estamos en la vista de pedidos
-                // Verificamos si la función existe (está en adminModule.js)
                 if (window.loadOrders) window.loadOrders();
             },
-            
-            // Callback: Cuando cambia un estado (ej: Cancelado por el cliente)
             onStatusUpdate: (orderId, newStatus) => {
                 console.log(`Estado pedido ${orderId} cambió a: ${newStatus}`);
                 if (window.loadOrders) window.loadOrders();
             }
         });
-
-        // ⚠️ IMPORTANTE: Si tu apiService.js no une automáticamente al grupo, 
-        // deberías tener una función exportada 'joinKitchenGroup' y llamarla aquí.
-        // Si seguiste mi consejo anterior de que initSignalR maneje la conexión, 
-        // asegúrate de invocar "JoinKitchenGroup" dentro de apiService.js al conectar.
     }
     // 3. ¿Estamos en el MENÚ? (menu.html)
     else if (document.getElementById('product-grid')) {
@@ -60,7 +46,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 function initAuthLogic() {
     console.log("🔒 Iniciando lógica de Autenticación...");
 
-    // --- TOGGLES VISUALES ---
     const linkRegister = document.getElementById('go-to-register');
     const linkLogin = document.getElementById('go-to-login');
     const viewLogin = document.getElementById('login-view');
@@ -80,7 +65,6 @@ function initAuthLogic() {
         });
     }
 
-    // --- LOGIN SUBMIT ---
     const loginForm = document.getElementById('login-form');
     if(loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -96,7 +80,6 @@ function initAuthLogic() {
 
             try {
                 await login(user, pass);
-                // La redirección la maneja auth.js (window.location.href = 'admin.html' o 'menu.html')
             } catch (error) {
                 console.error("Login fallido:", error);
                 if(errorDiv) {
@@ -109,7 +92,6 @@ function initAuthLogic() {
         });
     }
 
-    // --- REGISTRO SUBMIT ---
     const regForm = document.getElementById('register-form');
     if(regForm) {
         regForm.addEventListener('submit', async (e) => {
@@ -125,10 +107,10 @@ function initAuthLogic() {
                 name: document.getElementById('reg-name').value,
                 lastName: document.getElementById('reg-lastname').value,
                 phone: document.getElementById('reg-phone').value,
-                branchId: document.getElementById('reg-branch').value,
+                branchId: 0, // 🔥 YA NO SE PIDE SUCURSAL
                 username: document.getElementById('reg-username').value,
                 password: document.getElementById('reg-password').value,
-                role: 3 // Por defecto Mozo/Delivery al registrarse desde fuera
+                role: 3 
             };
 
             btn.disabled = true;
@@ -137,8 +119,6 @@ function initAuthLogic() {
             try {
                 await register(userData);
                 if(successDiv) successDiv.classList.remove('d-none');
-                
-                // Recargar para volver al login
                 setTimeout(() => window.location.reload(), 2000);
             } catch (error) {
                 console.error(error);
@@ -159,26 +139,15 @@ function initAuthLogic() {
 function initUserLogic() {
     console.log("👥 Iniciando lógica de Usuarios en app.js...");
 
-    // 1. Sobreescribimos switchTab para detectar la pestaña 'users'
     window.switchTab = function(tabName) {
-        
-        // A) Lógica Visual: Mostrar/Ocultar Vistas
         document.querySelectorAll('.content-view').forEach(el => el.classList.add('d-none'));
         const target = document.getElementById('view-' + tabName);
         if (target) target.classList.remove('d-none');
 
-        // B) Lógica Visual: Botón activo en sidebar
         document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active', 'bg-primary', 'bg-opacity-10', 'text-primary'));
-        // (Nota: La clase 'active' visual se suele poner en el elemento clickeado pasando 'this' en el HTML)
 
-        // C) Cargar datos específicos
-        if (tabName === 'users') {
-            loadUsers();
-        }
-        
-        // D) Delegar a funciones globales de adminModule.js para otras pestañas
-        // Verificamos si existen antes de llamarlas para evitar errores
-        if (tabName === 'stock' && window.loadStock) window.loadStock(window.currentBranchId || 1);
+        if (tabName === 'users') { window.loadUsers(); }
+        if (tabName === 'stock' && window.loadStock) window.loadStock();
         if (tabName === 'ingredients' && window.renderIngredients) window.renderIngredients();
         if (tabName === 'clients' && window.loadClients) window.loadClients();
         if (tabName === 'orders' && window.loadOrders) window.loadOrders();
@@ -186,7 +155,6 @@ function initUserLogic() {
         if (tabName === 'cash' && window.initCashView) window.initCashView();
     };
 
-    // 2. Función Global: Preparar Modal
     window.prepareUserModal = function() {
         const form = document.getElementById('user-form');
         if(form) form.reset();
@@ -194,29 +162,14 @@ function initUserLogic() {
         document.getElementById('user-id').value = '';
         document.getElementById('userModalTitle').innerText = 'Nuevo Usuario';
         
-        loadBranchesForUserSelect();
+        const modalEl = document.getElementById('userModal');
+        if (modalEl) {
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
+        }
     };
 
-    // 3. Función: Cargar Sucursales
-    async function loadBranchesForUserSelect() {
-        try {
-            const branches = await apiCall('/Branch');
-            const select = document.getElementById('user-branch');
-            if (select) {
-                select.innerHTML = '<option value="">Selecciona...</option>';
-                if (branches && branches.length > 0) {
-                    branches.forEach(b => {
-                        select.innerHTML += `<option value="${b.id}">${b.name}</option>`;
-                    });
-                }
-            }
-        } catch (error) {
-            console.error("Error cargando sucursales", error);
-        }
-    }
-
-    // 4. Función: Cargar Usuarios
-    async function loadUsers() {
+    window.loadUsers = async function() {
         const tbody = document.getElementById('users-table');
         if (!tbody) return;
         
@@ -224,12 +177,10 @@ function initUserLogic() {
         
         try {
             const users = await apiCall('/User');
+            window.allUsers = users || [];
             
-            if (typeof allUsers !== 'undefined') allUsers = users || [];
-            
-            const listToRender = users || [];
+            const listToRender = window.allUsers;
 
-            tbody.innerHTML = '';
             if (listToRender.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No hay usuarios.</td></tr>';
                 return;
@@ -238,7 +189,6 @@ function initUserLogic() {
             tbody.innerHTML = listToRender.map(u => {
                 const rawRole = u.role; 
                 const roleStr = String(rawRole).toUpperCase().trim();
-                
                 let roleHtml = `<span class="badge bg-secondary">Empleado (${rawRole})</span>`; 
                 
                 if (['1', 'ADMIN', 'ADMINISTRATOR', 'BRANCHMANAGER'].includes(roleStr)) {
@@ -265,22 +215,16 @@ function initUserLogic() {
                     </tr>
                 `;
             }).join('');
-
         } catch (error) {
             console.error(error);
             tbody.innerHTML = `<tr><td colspan="4" class="text-danger text-center">Error: ${error.message}</td></tr>`;
         }
-    }
+    };
 
-    // 5. Función Global: Editar Usuario
     window.editUser = async function(id) {
         try {
-            const modal = new bootstrap.Modal(document.getElementById('userModal'));
-            modal.show();
+            window.prepareUserModal();
             document.getElementById('userModalTitle').innerText = 'Editar Usuario';
-            
-            await loadBranchesForUserSelect();
-    
             const user = await apiCall(`/User/${id}`);
     
             document.getElementById('user-id').value = user.id;
@@ -288,12 +232,10 @@ function initUserLogic() {
             document.getElementById('user-name').value = user.name;
             document.getElementById('user-lastname').value = user.lastName;
             document.getElementById('user-phone').value = user.phone;
-            document.getElementById('user-branch').value = user.branchId || ''; 
             
             let roleVal = 3; 
             if(user.role === 'ADMIN' || user.role === 1) roleVal = 1;
             else if(user.role === 'KITCHEN' || user.role === 2) roleVal = 2;
-            else roleVal = 3;
             
             document.getElementById('user-role').value = roleVal;
             document.getElementById('user-pass').value = ''; 
@@ -304,29 +246,24 @@ function initUserLogic() {
         }
     };
 
-    // 6. Función Global: Eliminar Usuario
     window.deleteUser = async function(id) {
         if(!confirm('¿Seguro que quieres eliminar este usuario?')) return;
-    
         try {
             await apiCall(`/User/${id}`, 'DELETE');
-            loadUsers();
+            window.loadUsers();
         } catch (error) {
             console.error(error);
             alert('Error al eliminar: ' + error.message);
         }
     };
 
-    // 7. Event Listener: Submit del Formulario Usuario
     const userForm = document.getElementById('user-form');
     if(userForm) {
-        // Clonar para limpiar listeners previos y evitar duplicados
         const newForm = userForm.cloneNode(true);
         userForm.parentNode.replaceChild(newForm, userForm);
         
         newForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
             const id = document.getElementById('user-id').value;
             
             const userData = {
@@ -336,7 +273,7 @@ function initUserLogic() {
                 phone: document.getElementById('user-phone').value,
                 password: document.getElementById('user-pass').value,
                 role: parseInt(document.getElementById('user-role').value),
-                branchId: parseInt(document.getElementById('user-branch').value),
+                branchId: 0, // 🔥 YA NO MANDA SUCURSAL, EL BACKEND LO SABE 
                 picture: '' 
             };
     
@@ -347,14 +284,11 @@ function initUserLogic() {
     
             try {
                 await apiCall(endpoint, method, userData);
-    
                 const modalEl = document.getElementById('userModal');
                 const modal = bootstrap.Modal.getInstance(modalEl);
-                modal.hide();
-                
-                loadUsers();
+                if (modal) modal.hide();
+                window.loadUsers();
                 alert('Usuario guardado correctamente.');
-    
             } catch (error) {
                 alert('Error: ' + error.message);
             }

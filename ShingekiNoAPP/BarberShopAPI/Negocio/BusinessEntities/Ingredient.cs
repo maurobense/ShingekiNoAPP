@@ -19,6 +19,7 @@ namespace Business.BusinessEntities
         // Usamos UnitOfMeasure según lo que detectamos en el Front, 
         // pero mantén Unit si lo usas en otro lado
         public string UnitOfMeasure { get; set; }
+        public long BranchId { get; set; }
 
         // Si tu base de datos usa "Unit" en lugar de "UnitOfMeasure", descomenta esto:
         // public string Unit { get; set; } 

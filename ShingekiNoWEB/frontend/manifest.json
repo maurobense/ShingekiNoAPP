@@ -1,6 +1,6 @@
 {
-  "name": "Shingeki Admin",
-  "short_name": "ShingekiNoApp",
+  "name": "OmniGestor Admin",
+  "short_name": "OmniGestor",
   "start_url": "./admin.html",
   "display": "standalone",
   "background_color": "#121212",

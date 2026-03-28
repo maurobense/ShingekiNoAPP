@@ -15,6 +15,7 @@ namespace DTO
         public string Role { get; set; }
         public int Phone { get; set; }
         public string Picture { get; set; }
+        public long BranchId { get; set; }
 
         // Constructor vacío (necesario para serialización en algunos casos)
         public UserDTO() { }

@@ -499,7 +499,7 @@ async function submitOrder() {
     }
 
     const orderPayload = {
-        branchId: 1, 
+        branchId: 0, 
         clientId: parseInt(clientId),
         clientAddressId: addressId ? parseInt(addressId) : 0, 
         note: "Pedido Web", 

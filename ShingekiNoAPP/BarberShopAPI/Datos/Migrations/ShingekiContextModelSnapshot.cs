@@ -105,10 +105,9 @@ namespace Datos.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IngredientId");
+                    b.HasIndex("BranchId");
 
-                    b.HasIndex("BranchId", "IngredientId")
-                        .IsUnique();
+                    b.HasIndex("IngredientId");
 
                     b.ToTable("BranchStocks");
                 });
@@ -124,10 +123,7 @@ namespace Datos.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("CashSessionId")
-                        .HasColumnType("int");
-
-                    b.Property<long>("CashSessionId1")
+                    b.Property<long>("CashSessionId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
@@ -152,7 +148,7 @@ namespace Datos.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CashSessionId1");
+                    b.HasIndex("CashSessionId");
 
                     b.ToTable("CashMovements");
                 });
@@ -215,6 +211,9 @@ namespace Datos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<long>("BranchId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -244,6 +243,9 @@ namespace Datos.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("BranchId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -327,6 +329,9 @@ namespace Datos.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("BranchId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -479,9 +484,8 @@ namespace Datos.Migrations
                     b.Property<long>("OrderId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -501,7 +505,7 @@ namespace Datos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("BranchId")
+                    b.Property<long>("BranchId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("CategoryId")
@@ -653,7 +657,7 @@ namespace Datos.Migrations
                 {
                     b.HasOne("Business.BusinessEntities.CashSession", "CashSession")
                         .WithMany("Movements")
-                        .HasForeignKey("CashSessionId1")
+                        .HasForeignKey("CashSessionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -676,7 +680,7 @@ namespace Datos.Migrations
                     b.HasOne("Business.BusinessEntities.Branch", "Branch")
                         .WithMany()
                         .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Business.BusinessEntities.ClientAddress", "DeliveryAddress")
@@ -707,7 +711,7 @@ namespace Datos.Migrations
                     b.HasOne("Business.BusinessEntities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Order");
@@ -730,7 +734,9 @@ namespace Datos.Migrations
                 {
                     b.HasOne("Business.BusinessEntities.Branch", null)
                         .WithMany("Products")
-                        .HasForeignKey("BranchId");
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Business.BusinessEntities.Category", "Category")
                         .WithMany("Products")

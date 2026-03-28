@@ -17,6 +17,7 @@ namespace Business.BusinessEntities
         public decimal Price { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsActive { get; set; } = true;
+        public long BranchId { get; set; }
         public long CategoryId { get; set; }
         public Category Category { get; set; } // Asegúrate que sea tipo Category
         public ICollection<ProductIngredient> ProductIngredients { get; set; }

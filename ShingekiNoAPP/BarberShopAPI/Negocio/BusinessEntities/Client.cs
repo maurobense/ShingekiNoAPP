@@ -17,6 +17,7 @@ namespace Business.BusinessEntities
         public ICollection<ClientAddress> Addresses { get; set; }
         public ICollection<Order> Orders { get; set; }
         public bool IsDeleted { get; set; } = false; // Soft Delete
+        public long BranchId { get; set; }
         public Client() { }
         public Client(string name, string lastName, int phone)
         {

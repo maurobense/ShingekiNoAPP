@@ -66,6 +66,7 @@ namespace Datos.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BranchId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -85,6 +86,7 @@ namespace Datos.Migrations
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    BranchId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -101,6 +103,7 @@ namespace Datos.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     UnitOfMeasure = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    BranchId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -145,12 +148,11 @@ namespace Datos.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CashSessionId = table.Column<int>(type: "int", nullable: false),
+                    CashSessionId = table.Column<long>(type: "bigint", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MovementDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CashSessionId1 = table.Column<long>(type: "bigint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -159,8 +161,8 @@ namespace Datos.Migrations
                 {
                     table.PrimaryKey("PK_CashMovements", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CashMovements_CashSessions_CashSessionId1",
-                        column: x => x.CashSessionId1,
+                        name: "FK_CashMovements_CashSessions_CashSessionId",
+                        column: x => x.CashSessionId,
                         principalTable: "CashSessions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -177,8 +179,8 @@ namespace Datos.Migrations
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    BranchId = table.Column<long>(type: "bigint", nullable: false),
                     CategoryId = table.Column<long>(type: "bigint", nullable: false),
-                    BranchId = table.Column<long>(type: "bigint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -190,7 +192,8 @@ namespace Datos.Migrations
                         name: "FK_Products_Branches_BranchId",
                         column: x => x.BranchId,
                         principalTable: "Branches",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -299,8 +302,8 @@ namespace Datos.Migrations
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Discount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClientAddressId = table.Column<long>(type: "bigint", nullable: false),
                     BranchId = table.Column<long>(type: "bigint", nullable: false),
+                    ClientAddressId = table.Column<long>(type: "bigint", nullable: false),
                     PaymentMethod = table.Column<int>(type: "int", nullable: false),
                     ClientId = table.Column<long>(type: "bigint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -314,8 +317,7 @@ namespace Datos.Migrations
                         name: "FK_Orders_Branches_BranchId",
                         column: x => x.BranchId,
                         principalTable: "Branches",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Orders_ClientAddresses_ClientAddressId",
                         column: x => x.ClientAddressId,
@@ -358,8 +360,7 @@ namespace Datos.Migrations
                         name: "FK_OrderItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -369,7 +370,7 @@ namespace Datos.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OrderId = table.Column<long>(type: "bigint", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     ChangeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ChangedByUserId = table.Column<long>(type: "bigint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -388,10 +389,9 @@ namespace Datos.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BranchStocks_BranchId_IngredientId",
+                name: "IX_BranchStocks_BranchId",
                 table: "BranchStocks",
-                columns: new[] { "BranchId", "IngredientId" },
-                unique: true);
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BranchStocks_IngredientId",
@@ -399,9 +399,9 @@ namespace Datos.Migrations
                 column: "IngredientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CashMovements_CashSessionId1",
+                name: "IX_CashMovements_CashSessionId",
                 table: "CashMovements",
-                column: "CashSessionId1");
+                column: "CashSessionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientAddresses_ClientId",

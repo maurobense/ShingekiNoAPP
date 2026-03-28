@@ -12,6 +12,7 @@ namespace Business.BusinessEntities
         [Required, MaxLength(100)]
         public string Name { get; set; } // Ej: "Hamburguesas de Titán"
         public string? Description { get; set; }
+        public long BranchId { get; set; }
         public ICollection<Product> Products { get; set; }
     }
 }

@@ -14,40 +14,32 @@ namespace ShingekiNoAPPI.Controllers
     public class StockController : ControllerBase
     {
         private readonly IRepositoryBranchStock _repoStock;
-        private readonly IRepositoryBranch _repoBranch;
         private readonly IRepositoryIngredient _repoIngredient;
 
+        // 🔥 Eliminamos IRepositoryBranch porque ya no validamos sucursales a mano
         public StockController(
             IRepositoryBranchStock repoStock,
-            IRepositoryBranch repoBranch,
             IRepositoryIngredient repoIngredient)
         {
             _repoStock = repoStock;
-            _repoBranch = repoBranch;
             _repoIngredient = repoIngredient;
         }
 
         // =========================================================
-        // 🔍 GET: OBTENER INVENTARIO POR SUCURSAL
+        // 🔍 GET: OBTENER INVENTARIO (Multi-Tenant)
         // =========================================================
-        [HttpGet("branch/{branchId}")]
-        public IActionResult GetStockByBranch(long branchId)
+        [HttpGet] // 🔥 CAMBIO CLAVE: Ya no pide "branch/{branchId}" en la URL
+        public IActionResult GetStock()
         {
-            if (_repoBranch.Get(branchId) == null)
-                return NotFound("Sucursal no encontrada.");
-
             try
             {
-                var inventory = _repoStock.GetAll()
-                                          .Where(bs => bs.BranchId == branchId);
+                // El GetAll() ya viene filtrado mágicamente por la sucursal del JWT
+                var inventory = _repoStock.GetAll();
 
                 var dtos = inventory.Select(bs => new
                 {
                     IngredientId = bs.IngredientId,
-                    // IngredientName = bs.Ingredient?.Name, // Descomentar si usas Include
                     CurrentStock = bs.CurrentStock,
-
-                    // ✅ CORREGIDO: Usamos el nombre correcto de la entidad
                     MinimumStockAlert = bs.MinimumStockAlert
                 });
 
@@ -65,27 +57,19 @@ namespace ShingekiNoAPPI.Controllers
         [HttpPost]
         public IActionResult UpdateOrCreateStock([FromBody] StockUpdateDto dto)
         {
-            if (_repoBranch.Get(dto.BranchId) == null)
-                return BadRequest("Sucursal no válida.");
             if (_repoIngredient.Get(dto.IngredientId) == null)
                 return BadRequest("Ingrediente no válido.");
 
             try
             {
-                // NOTA: El DTO de entrada debe seguir llamándose 'MinimumStock' si así quieres que se vea el JSON (ej. StockUpdateDto.MinimumStock)
-                // y aquí lo mapeamos a 'MinimumStockAlert'.
-
+                // Buscamos sin filtrar por BranchId, el GetAll() ya lo hace
                 var existingStock = _repoStock.GetAll()
-                                              .FirstOrDefault(bs =>
-                                                  bs.BranchId == dto.BranchId &&
-                                                  bs.IngredientId == dto.IngredientId);
+                    .FirstOrDefault(bs => bs.IngredientId == dto.IngredientId);
 
                 if (existingStock != null)
                 {
                     // ACTUALIZACIÓN
                     existingStock.CurrentStock = dto.CurrentStock;
-
-                    // ✅ CORREGIDO: Usamos el nombre de propiedad real
                     existingStock.MinimumStockAlert = dto.MinimumStock;
 
                     _repoStock.Update(existingStock);
@@ -98,13 +82,12 @@ namespace ShingekiNoAPPI.Controllers
                     // NUEVO REGISTRO
                     var newStock = new BranchStock
                     {
-                        BranchId = dto.BranchId,
+                        BranchId = 0, // 🔥 Se manda en 0, el Contexto le asigna el ID real
                         IngredientId = dto.IngredientId,
                         CurrentStock = dto.CurrentStock,
-
-                        // ✅ CORREGIDO: Usamos el nombre de propiedad real
                         MinimumStockAlert = dto.MinimumStock
                     };
+
                     _repoStock.Add(newStock);
                     _repoStock.Save();
 

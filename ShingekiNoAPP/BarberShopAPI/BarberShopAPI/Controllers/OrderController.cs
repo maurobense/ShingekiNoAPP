@@ -77,7 +77,7 @@ namespace ShingekiNoAPPI.Controllers
             var newOrder = new Order
             {
                 ClientId = dto.ClientId,
-                BranchId = dto.BranchId,
+                BranchId = 0, // 🔥 El ShingekiContext pondrá la correcta
                 ClientAddressId = dto.ClientAddressId,
                 Note = dto.Note,
                 OrderDate = DateTime.UtcNow,
@@ -104,7 +104,10 @@ namespace ShingekiNoAPPI.Controllers
                     foreach (var recipeItem in product.ProductIngredients)
                     {
                         decimal amountToDeduct = recipeItem.Quantity * itemDto.Quantity;
-                        var stockRecord = _repoStock.GetByBranchAndIngredient(dto.BranchId, recipeItem.IngredientId);
+
+                        // 🔥 MODIFICADO PARA MULTI-TENANT 🔥
+                        var stockRecord = _repoStock.GetAll()
+                            .FirstOrDefault(s => s.IngredientId == recipeItem.IngredientId);
 
                         if (stockRecord != null)
                         {
@@ -153,7 +156,6 @@ namespace ShingekiNoAPPI.Controllers
                 _repoHistory.AddNewStatus(newOrder.Id, OrderStatus.Pending, 0);
 
                 // 🔥 SIGNALR: NOTIFICAR A LA COCINA 🔥
-                // Enviamos el ID del pedido al grupo "Kitchen"
                 await _hubContext.Clients.Group("Kitchen").SendAsync("ReceiveNewOrder", newOrder.Id);
 
                 return Ok(new
@@ -219,7 +221,6 @@ namespace ShingekiNoAPPI.Controllers
         [AllowAnonymous] // Público
         public IActionResult GetByTracking(Guid trackingNumber)
         {
-            // Buscamos por el GUID, no por el ID numérico
             var order = _repoOrder.GetAll()
                 .Include(o => o.Client)
                 .Include(o => o.Branch)
@@ -229,7 +230,6 @@ namespace ShingekiNoAPPI.Controllers
 
             if (order == null) return NotFound("Pedido no encontrado o enlace inválido.");
 
-            // Reutilizamos tu DTO existente
             var responseDto = new OrderResponseDto
             {
                 Id = order.Id,
@@ -240,7 +240,7 @@ namespace ShingekiNoAPPI.Controllers
                 PaymentMethod = order.PaymentMethod.ToString(),
                 TotalAmount = order.TotalAmount,
                 Discount = order.Discount,
-                TrackingNumber = order.TrackingNumber.ToString(), // Importante
+                TrackingNumber = order.TrackingNumber.ToString(),
                 BranchName = order.Branch?.Name ?? "Central",
                 Items = order.OrderItems.Select(oi => new OrderItemResponseDto
                 {
@@ -277,13 +277,8 @@ namespace ShingekiNoAPPI.Controllers
             _repoHistory.AddNewStatus(id, OrderStatus.Cancelled, 1);
             _repoOrder.Save();
 
-            // 📡 NOTIFICAR AL CLIENTE (Legacy ID)
             await _hubContext.Clients.Group(id.ToString()).SendAsync("ReceiveStatusUpdate", "Cancelled");
-
-            // 📡 NOTIFICAR AL CLIENTE (Public GUID)
             await _hubContext.Clients.Group(order.TrackingNumber.ToString()).SendAsync("ReceiveStatusUpdate", "Cancelled");
-
-            // 📡 NOTIFICAR A LA COCINA
             await _hubContext.Clients.Group("Kitchen").SendAsync("ReceiveStatusUpdate", id, "Cancelled");
 
             return Ok(new { Message = "Pedido cancelado correctamente." });
@@ -306,8 +301,8 @@ namespace ShingekiNoAPPI.Controllers
                 o.Id,
                 o.OrderDate,
                 o.TotalAmount,
-                o.TrackingNumber, // 🔥 Agregado para que el Admin pueda generar links seguros
-                o.Client?.Phone,  // 🔥 Agregado para el botón de WhatsApp
+                o.TrackingNumber,
+                o.Client?.Phone,
                 ClientName = o.Client != null ? $"{o.Client.Name} {o.Client.LastName}" : "Cliente Casual",
                 ItemsCount = o.OrderItems?.Count ?? 0,
                 CurrentStatus = o.CurrentStatus.ToString(),
@@ -334,22 +329,17 @@ namespace ShingekiNoAPPI.Controllers
                     return BadRequest("No se puede cambiar el estado de un pedido finalizado.");
                 }
 
-                // Actualizar DB
                 order.CurrentStatus = dto.NewStatus;
                 _repoOrder.Update(order);
                 _repoHistory.AddNewStatus(id, dto.NewStatus, dto.UserId);
                 _repoOrder.Save();
 
-                // 📡 NOTIFICAR AL CLIENTE (Legacy ID)
                 await _hubContext.Clients.Group(id.ToString())
                     .SendAsync("ReceiveStatusUpdate", dto.NewStatus.ToString());
 
-                // 📡 NOTIFICAR AL CLIENTE (Public GUID)
-                // Esto es clave para que track.html se actualice solo
                 await _hubContext.Clients.Group(order.TrackingNumber.ToString())
                     .SendAsync("ReceiveStatusUpdate", dto.NewStatus.ToString());
 
-                // 📡 NOTIFICAR A LA COCINA (Dashboard)
                 await _hubContext.Clients.Group("Kitchen")
                     .SendAsync("ReceiveStatusUpdate", id, dto.NewStatus.ToString());
 
