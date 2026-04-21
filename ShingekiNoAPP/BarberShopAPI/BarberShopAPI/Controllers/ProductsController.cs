@@ -30,21 +30,23 @@ namespace ShingekiNoAPPI.Controllers
         {
             try
             {
-                var products = _repoProduct.GetAll();
+                var dtos = _repoProduct.GetAll()
+                    .Where(p => !p.IsDeleted) // Filtramos los borrados lógicamente
+                    .Select(p => new ProductResponseDto
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Description = p.Description,
+                        Price = p.Price,
+                        ImageUrl = p.ImageUrl,
+                        CategoryId = p.CategoryId,
 
-                var dtos = products.Select(p => new ProductResponseDto
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    ImageUrl = p.ImageUrl,
-
-                    // ✅ CORRECCIÓN CRÍTICA: Devolver el ID para que el front sepa cuál seleccionar
-                    CategoryId = p.CategoryId,
-
-                    CategoryName = _repoCategory.Get(p.CategoryId)?.Name ?? "Sin Categoría"
-                });
+                        // 🔥 LA CURA: Usamos la propiedad de navegación 'p.Category'.
+                        // EF Core traduce esto a un simple 'LEFT JOIN Categories' en SQL Server.
+                        // NUNCA llames a '_repoCategory' adentro del Select.
+                        CategoryName = p.Category != null ? p.Category.Name : "Sin Categoría"
+                    })
+                    .ToList(); // 🔥 ¡CRÍTICO! Ejecutamos la consulta en la base de datos acá mismo.
 
                 return Ok(dtos);
             }

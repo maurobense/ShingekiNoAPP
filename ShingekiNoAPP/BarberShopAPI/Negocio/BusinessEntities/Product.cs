@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Business.BusinessEntities
@@ -20,6 +21,7 @@ namespace Business.BusinessEntities
         public long BranchId { get; set; }
         public long CategoryId { get; set; }
         public Category Category { get; set; } // Asegúrate que sea tipo Category
+        [JsonIgnore]
         public ICollection<ProductIngredient> ProductIngredients { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Business.BusinessEntities
@@ -14,7 +15,9 @@ namespace Business.BusinessEntities
         public string Name { get; set; }
         public string LastName { get; set; }
         public int Phone { get; set; }
+        [JsonIgnore]
         public ICollection<ClientAddress> Addresses { get; set; }
+        [JsonIgnore]
         public ICollection<Order> Orders { get; set; }
         public bool IsDeleted { get; set; } = false; // Soft Delete
         public long BranchId { get; set; }

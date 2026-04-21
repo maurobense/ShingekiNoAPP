@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Business.BusinessEntities
 {
@@ -20,6 +21,7 @@ namespace Business.BusinessEntities
 
         // --- RELACIÓN CORREGIDA ---
         // Usamos ICollection<Product> en lugar de ICollection<Item>
+        [JsonIgnore]
         public ICollection<Product> Products { get; set; }
 
         public Branch() { }

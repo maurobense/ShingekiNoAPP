@@ -304,7 +304,7 @@ function createOrderCardHtml(order) {
     `;
 
     return `
-        <div class="col-12 col-md-6 col-lg-4 mb-3 fade-in">
+<div class="col-12 col-md-6 col-lg-4 mb-3 fade-in">
             <div class="card h-100 order-card" data-order-id="${order.id}">
                 <div class="card-header border-0 d-flex justify-content-between align-items-center pt-3 bg-transparent">
                     <span class="badge ${badgeClass}">${translateStatus(order.currentStatus)}${paymentLabel}</span>
@@ -322,13 +322,8 @@ function createOrderCardHtml(order) {
                 <div class="card-footer border-0 pb-3 bg-transparent">
                     ${actionButtonHtml}
                     <div class="row g-1">
-                        <div class="col-6">
+                        <div class="col-12">
                             <button class="btn btn-outline-secondary w-100" onclick="openOrderDetailModal(${order.id})">Ver Detalle</button>
-                        </div>
-                        <div class="col-6">
-                            <button class="btn btn-secondary w-100" onclick="copyDriverLink('${driverLink}')" title="Copiar Link Moto">
-                                <i class="bi bi-scooter"></i> Link Moto
-                            </button>
                         </div>
                     </div>
                     ${whatsappBtn}

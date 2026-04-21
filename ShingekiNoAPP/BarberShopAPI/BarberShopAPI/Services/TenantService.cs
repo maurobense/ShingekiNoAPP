@@ -16,7 +16,9 @@ namespace ShingekiNoAPPI.Services
         public long GetBranchId()
         {
             var user = _httpContextAccessor.HttpContext?.User;
-            var branchClaim = user?.Claims.FirstOrDefault(c => c.Type == "BranchId");
+
+            // 🔥 Le agregamos el .Contains para que lo atrape sí o sí, aunque .NET le cambie el nombre
+            var branchClaim = user?.Claims.FirstOrDefault(c => c.Type == "BranchId" || c.Type.Contains("BranchId"));
 
             if (branchClaim != null && long.TryParse(branchClaim.Value, out long branchId))
             {

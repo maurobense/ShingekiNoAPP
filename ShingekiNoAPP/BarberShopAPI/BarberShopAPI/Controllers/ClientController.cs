@@ -31,21 +31,27 @@ namespace ShingekiNoAPPI.Controllers
         {
             try
             {
-                var clients = _repoClient.GetAll();
-
-                var dtos = clients.Select(c => new ClientResponseDto
-                {
-                    Id = c.Id,
-                    Name = c.Name,
-                    LastName = c.LastName,
-                    Phone = c.Phone,
-                    Addresses = c.Addresses?.Select(a => new AddressResponseDto
+                // Encadenamos todo directamente. 
+                // Asumiendo que _repoClient.GetAll() ahora devuelve IQueryable
+                var dtos = _repoClient.GetAll()
+                    .Where(c => !c.IsDeleted) // ¡No te olvides de ocultar los borrados!
+                    .Select(c => new ClientResponseDto
                     {
-                        Id = a.Id,
-                        FullAddress = $"{a.Street}, {a.City}",
-                        Label = a.Label
-                    }).ToList() ?? new List<AddressResponseDto>()
-                });
+                        Id = c.Id,
+                        Name = c.Name,
+                        LastName = c.LastName,
+                        Phone = c.Phone,
+                        // Magia acá: A SQL no le importan los nulos en las relaciones de esta forma.
+                        // EF Core automáticamente devuelve una lista vacía si no hay direcciones.
+                        Addresses = c.Addresses.Select(a => new AddressResponseDto
+                        {
+                            Id = a.Id,
+                            // Usamos concatenación clásica (+) que SQL traduce perfecto
+                            FullAddress = a.Street + ", " + a.City,
+                            Label = a.Label
+                        }).ToList()
+                    })
+                    .ToList(); // 🔥 ¡CRÍTICO! Este ToList() final ejecuta la query AHORA y guarda el resultado en RAM (pero solo el texto liviano).
 
                 return Ok(dtos);
             }

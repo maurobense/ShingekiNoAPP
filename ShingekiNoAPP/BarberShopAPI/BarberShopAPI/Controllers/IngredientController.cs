@@ -1,15 +1,14 @@
 ﻿using Business.BusinessEntities;
 using Business.RepositoryInterfaces;
 using Microsoft.AspNetCore.Mvc;
-using DTO; // Si tienes un DTO específico para Ingredientes, úsalo. Por ahora, asumiré que usas la entidad directa o un DTO simple.
+using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using Microsoft.AspNetCore.Authorization; // Para el atributo [Authorize]
 
 namespace ShingekiNoAPPI.Controllers
 {
-    [Route("api/[controller]")] // Esto define la ruta: /api/Ingredient
+    [Route("api/[controller]")]
     [ApiController]
     public class IngredientController : ControllerBase
     {
@@ -22,19 +21,27 @@ namespace ShingekiNoAPPI.Controllers
         }
 
         // =========================================================
-        // 🧪 GET ALL (NECESARIO PARA EL FRONTEND)
+        // 🧪 GET ALL (OPTIMIZADO PARA SOMEE)
         // =========================================================
         [HttpGet]
-        [Authorize(Roles = "Admin,BranchManager")] // Solo los autorizados pueden ver ingredientes
-        public ActionResult<IEnumerable<Ingredient>> GetAll()
+        [Authorize(Roles = "Admin,BranchManager")]
+        public ActionResult GetAll()
         {
             try
             {
-                // Devolvemos la lista completa de ingredientes (excluyendo borrados lógicamente)
-                var ingredients = _repoIngredient.GetAll().Where(i => !i.IsDeleted);
-
-                // Si deseas usar un DTO aquí (ej: IngredientDTO), mapearías:
-                // .Select(i => new IngredientDTO { ... })
+                // Al usar .Select() forzamos a Entity Framework a traer SOLO los datos básicos
+                // ignorando cualquier relación pesada que ahogue a Somee.
+                var ingredients = _repoIngredient.GetAll()
+                    .Where(i => !i.IsDeleted)
+                    .Select(i => new
+                    {
+                        i.Id,
+                        i.Name,
+                        i.BranchId
+                        // Si tenés más propiedades simples (como precio o unidad), agregalas acá.
+                        // ❌ NUNCA pongas acá propiedades de navegación (colecciones o clases virtuales).
+                    })
+                    .ToList();
 
                 return Ok(ingredients);
             }
@@ -45,18 +52,24 @@ namespace ShingekiNoAPPI.Controllers
         }
 
         // =========================================================
-        // 🧪 GET BY ID
+        // 🧪 GET BY ID (OPTIMIZADO PARA SOMEE)
         // =========================================================
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin,BranchManager")]
-        public ActionResult<Ingredient> Get(long id)
+        public ActionResult Get(long id)
         {
             try
             {
                 var ingredient = _repoIngredient.Get(id);
                 if (ingredient == null || ingredient.IsDeleted) return NotFound($"Ingrediente {id} no encontrado.");
 
-                return Ok(ingredient);
+                // Devolvemos un objeto anónimo para evitar la recursividad del JSON
+                return Ok(new
+                {
+                    ingredient.Id,
+                    ingredient.Name,
+                    ingredient.BranchId
+                });
             }
             catch (Exception ex)
             {
@@ -65,20 +78,26 @@ namespace ShingekiNoAPPI.Controllers
         }
 
         // =========================================================
-        // ➕ POST (CREAR)
+        // ➕ POST (CREAR - OPTIMIZADO PARA SOMEE)
         // =========================================================
         [HttpPost]
-        [Authorize(Roles = "Admin")] // Solo Admins pueden crear nuevos ingredientes en el sistema
+        [Authorize(Roles = "Admin")]
         public ActionResult Post([FromBody] Ingredient ingredient)
         {
             try
             {
-                // Asumo que tu entidad Ingredient tiene validaciones básicas
                 _repoIngredient.Add(ingredient);
                 _repoIngredient.Save();
 
-                // 201 Created y devolvemos la URL del nuevo recurso
-                return CreatedAtAction(nameof(Get), new { id = ingredient.Id }, ingredient);
+                // Creamos un objeto ligero para la respuesta en lugar de devolver el 'ingredient' crudo
+                var respuestaLigera = new
+                {
+                    id = ingredient.Id,
+                    name = ingredient.Name,
+                    branchId = ingredient.BranchId
+                };
+
+                return CreatedAtAction(nameof(Get), new { id = ingredient.Id }, respuestaLigera);
             }
             catch (Exception ex)
             {
@@ -93,22 +112,21 @@ namespace ShingekiNoAPPI.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult Put(long id, [FromBody] Ingredient ingredient)
         {
-            if (id != ingredient.Id) return BadRequest("ID no coincide.");
+            if (id != ingredient.Id) return BadRequest("El ID no coincide.");
 
             try
             {
                 var existingIngredient = _repoIngredient.Get(id);
-                if (existingIngredient == null) return NotFound("Ingrediente no existe.");
+                if (existingIngredient == null || existingIngredient.IsDeleted) return NotFound("Ingrediente no existe.");
 
-                // Mapear solo las propiedades que se permiten actualizar (ej: Nombre, Unidad)
+                // Actualizamos solo los campos de texto/valores
                 existingIngredient.Name = ingredient.Name;
-                existingIngredient.UnitOfMeasure = ingredient.UnitOfMeasure; // Asumo que existe esta propiedad
-                // ... otras propiedades ...
+                // existingIngredient.UnitOfMeasure = ingredient.UnitOfMeasure; // Descomentá si usas esta propiedad
 
                 _repoIngredient.Update(existingIngredient);
                 _repoIngredient.Save();
 
-                return NoContent(); // 204 No Content para actualización exitosa
+                return NoContent(); // 204 No Content para evitar devolver entidades completas
             }
             catch (Exception ex)
             {
@@ -126,14 +144,14 @@ namespace ShingekiNoAPPI.Controllers
             try
             {
                 var ingredient = _repoIngredient.Get(id);
-                if (ingredient == null) return NotFound("Ingrediente no existe.");
+                if (ingredient == null || ingredient.IsDeleted) return NotFound("Ingrediente no existe.");
 
-                // Borrado Lógico (Recomendado)
+                // Borrado Lógico
                 ingredient.IsDeleted = true;
                 _repoIngredient.Update(ingredient);
                 _repoIngredient.Save();
 
-                return NoContent();
+                return NoContent(); // 204 No Content
             }
             catch (Exception ex)
             {

@@ -12,6 +12,9 @@ namespace Datos.EF
     {
         private readonly ITenantService _tenantService;
 
+        // 🔥 LA MAGIA ESTÁ ACÁ: Propiedad que se evalúa EN TIEMPO REAL en cada consulta
+        public long CurrentBranchId => _tenantService.GetBranchId();
+
         public DbSet<User> Users { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<ClientAddress> ClientAddresses { get; set; }
@@ -36,20 +39,21 @@ namespace Datos.EF
         {
             base.OnModelCreating(modelBuilder);
 
-            var branchId = _tenantService.GetBranchId();
+            // ❌ ELIMINAMOS LA VARIABLE FIJA: var branchId = _tenantService.GetBranchId();
 
-            // --- FILTROS GLOBALES ---
-            modelBuilder.Entity<User>().HasQueryFilter(x => !x.IsDeleted && (branchId == 0 || x.BranchId == branchId));
+            // --- FILTROS GLOBALES MULTI-TENANT ---
+            // ✅ AHORA USAN 'CurrentBranchId' (Obliga a EF a preguntar el ID en cada Query)
+            modelBuilder.Entity<User>().HasQueryFilter(x => !x.IsDeleted && (CurrentBranchId == 0 || x.BranchId == CurrentBranchId));
             modelBuilder.Entity<Branch>().HasQueryFilter(x => !x.IsDeleted);
-            modelBuilder.Entity<Client>().HasQueryFilter(x => !x.IsDeleted && x.BranchId == branchId);
-            modelBuilder.Entity<Category>().HasQueryFilter(x => !x.IsDeleted && x.BranchId == branchId);
-            modelBuilder.Entity<Product>().HasQueryFilter(x => !x.IsDeleted && x.BranchId == branchId);
-            modelBuilder.Entity<Ingredient>().HasQueryFilter(x => !x.IsDeleted && x.BranchId == branchId);
-            modelBuilder.Entity<Order>().HasQueryFilter(x => !x.IsDeleted && x.BranchId == branchId);
+            modelBuilder.Entity<Client>().HasQueryFilter(x => !x.IsDeleted && (CurrentBranchId == 0 || x.BranchId == CurrentBranchId));
+            modelBuilder.Entity<Category>().HasQueryFilter(x => !x.IsDeleted && (CurrentBranchId == 0 || x.BranchId == CurrentBranchId));
+            modelBuilder.Entity<Product>().HasQueryFilter(x => !x.IsDeleted && (CurrentBranchId == 0 || x.BranchId == CurrentBranchId));
+            modelBuilder.Entity<Ingredient>().HasQueryFilter(x => !x.IsDeleted && (CurrentBranchId == 0 || x.BranchId == CurrentBranchId));
+            modelBuilder.Entity<Order>().HasQueryFilter(x => !x.IsDeleted && (CurrentBranchId == 0 || x.BranchId == CurrentBranchId));
 
             // Filtros tablas hijas
-            modelBuilder.Entity<BranchStock>().HasQueryFilter(x => x.BranchId == branchId);
-            modelBuilder.Entity<OrderItem>().HasQueryFilter(x => x.Order.BranchId == branchId);
+            modelBuilder.Entity<BranchStock>().HasQueryFilter(x => CurrentBranchId == 0 || x.BranchId == CurrentBranchId);
+            modelBuilder.Entity<OrderItem>().HasQueryFilter(x => CurrentBranchId == 0 || x.Order.BranchId == CurrentBranchId);
 
             // --- CONFIGURACIÓN USUARIO ---
             modelBuilder.Entity<User>(entity =>
@@ -113,6 +117,7 @@ namespace Datos.EF
 
         private void AplicarSucursalAutomatica()
         {
+            // Acá sí está bien leerlo en una variable porque SaveChanges se ejecuta por cada petición
             var branchId = _tenantService.GetBranchId();
             if (branchId > 0)
             {

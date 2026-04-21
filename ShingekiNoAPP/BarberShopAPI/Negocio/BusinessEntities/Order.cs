@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Business.BusinessEntities
 {
@@ -36,7 +37,9 @@ namespace Business.BusinessEntities
         public Client? Client { get; set; }
 
         // Colecciones
+        [JsonIgnore]
         public ICollection<OrderItem> OrderItems { get; set; }
+        [JsonIgnore]
         public ICollection<OrderStatusHistory> StatusHistory { get; set; }
     }
 

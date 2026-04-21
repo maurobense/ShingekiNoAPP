@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Business.BusinessEntities
@@ -19,6 +20,7 @@ namespace Business.BusinessEntities
         public bool IsClosed { get; set; }
 
         // Relación con movimientos
+        [JsonIgnore]
         public ICollection<CashMovement> Movements { get; set; }
     }
 }

@@ -39,9 +39,12 @@ namespace Datos.Repositories
             return _dbSet.FirstOrDefault(e => e.Id == id);
         }
 
-        public IEnumerable<T> GetAll()
+        public IQueryable<T> GetAll()
         {
-            return _dbSet.ToList();
+            // NO usamos .ToList() acá. Dejamos la consulta "abierta" para que 
+            // los controladores puedan sumarle los .Where() y .Select() y se
+            // ejecute directo en el motor de SQL Server.
+            return _dbSet.AsQueryable();
         }
 
         public void Save()

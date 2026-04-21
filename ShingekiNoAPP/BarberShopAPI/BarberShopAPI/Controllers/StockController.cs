@@ -1,6 +1,7 @@
 ﻿using Business.BusinessEntities;
 using Business.RepositoryInterfaces;
 using DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace ShingekiNoAPPI.Controllers
 {
     [Route("api/stock")]
     [ApiController]
-    // [Authorize(Roles = "Admin, BranchManager")]
+    [Authorize(Roles = "Admin, BranchManager")]
     public class StockController : ControllerBase
     {
         private readonly IRepositoryBranchStock _repoStock;

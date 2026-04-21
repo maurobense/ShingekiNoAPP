@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Business.BusinessEntities
 {
@@ -36,11 +37,15 @@ namespace Business.BusinessEntities
         /// <summary>
         /// Colección de entradas de stock en diferentes sucursales que usan este ingrediente.
         /// </summary>
+        /// 
+        [JsonIgnore]
         public virtual ICollection<BranchStock> BranchStocks { get; set; } = new List<BranchStock>();
 
         /// <summary>
         /// Colección de recetas que usan este ingrediente.
         /// </summary>
+        /// 
+        [JsonIgnore]
         public virtual ICollection<ProductIngredient> ProductIngredients { get; set; } = new List<ProductIngredient>();
     }
 }

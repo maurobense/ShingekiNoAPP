@@ -18,8 +18,7 @@ namespace Business.RepositoryInterfaces
         public T? Get(long id);
 
         // Obtiene todas las entidades.
-        IEnumerable<T> GetAll();
-
+        IQueryable<T> GetAll();
         // Agrega una nueva entidad a la capa de persistencia (no guarda en BD todavía).
         T Add(T entity);
 

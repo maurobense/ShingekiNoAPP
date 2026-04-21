@@ -45,23 +45,22 @@ namespace Datos.Repositories
         // 3. Método de Autenticación
         public User? Login(string username, string password)
         {
-            // 1. Encontrar al usuario
-            var user = FindByUserName(username);
+            // 1. Buscamos al usuario ignorando el filtro de BranchId del DbContext
+            // Esto es vital para que admin2 (Sucursal 2) pueda loguearse aunque el sistema esté en Sucursal 1
+            var user = _context.Users
+                               .IgnoreQueryFilters()
+                               .FirstOrDefault(u => u.Username == username && !u.IsDeleted);
 
+            // 2. Si no existe, cortamos acá
             if (user == null)
             {
-                return null; // Usuario no encontrado
+                return null;
             }
 
-            // 2. Hashear la contraseña proporcionada (usando el método en la entidad)
-            // ⚠️ AVISO: El método HashPassword DEBE ser estático y DEBE usar un algoritmo seguro (como BCrypt).
-            // Si el método HashPassword está en la entidad, se mantiene el código así:
-            var hashedPasswordProvided = password;
-
-            // 3. Comparar hashes
-            if (user.Password == hashedPasswordProvided)
+            // 3. Comparamos los hashes (ya que me confirmás que 'password' ya viene hasheada)
+            if (user.Password == password)
             {
-                return user; // Credenciales válidas
+                return user; // Éxito: El token posterior llevará su BranchId real
             }
 
             return null; // Contraseña incorrecta

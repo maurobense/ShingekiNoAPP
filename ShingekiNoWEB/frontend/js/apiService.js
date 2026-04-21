@@ -13,12 +13,10 @@ if (isLocal) {
     BASE_URL = 'https://localhost:7200/api';
     HUB_URL = 'https://localhost:7200/deliveryHub';
 } else {
-    // ☁️ MODO PRODUCCIÓN (Netlify)
-    // USAMOS RUTAS RELATIVAS PARA QUE EL _REDIRECTS FUNCIONE
-    // Eliminamos la URL de Somee de aquí, Netlify se encarga por detrás
-    console.log("☁️ Modo Producción Detectado (Netlify Proxy)");
-    BASE_URL = '/api/'; 
-    HUB_URL = '/deliveryHub/';
+    // ☁️ MODO PRODUCCIÓN (Apuntando directo a Somee con HTTPS)
+    console.log("☁️ Modo Producción Detectado (Directo a Somee)");
+    BASE_URL = 'https://www.shingekinoappi.somee.com/api'; 
+    HUB_URL = 'https://www.shingekinoappi.somee.com/deliveryHub';
 }
 
 export let connection = null;
@@ -49,8 +47,12 @@ export const apiCall = async (endpoint, method = 'GET', data = null) => {
             if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
                  throw new Error("Unauthorized");
             }
+            
             if (!window.location.pathname.includes('track.html')) {
-                localStorage.clear();
+                console.error("🚨 ALERTA 401: Token vencido o inválido. Redirigiendo al login...");
+                // 🔥 Como ahora apuntamos directo a Somee, si da 401 es porque el token caducó.
+                // Limpiamos y mandamos al login.
+                localStorage.removeItem('jwt_token');
                 window.location.href = 'index.html';
             }
             return;
