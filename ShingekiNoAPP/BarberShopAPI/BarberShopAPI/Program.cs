@@ -9,6 +9,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
 using ShingekiNoAPPI.Services;
+using Amazon;
+using Amazon.S3;
+using ShingekiNoAPPI.Options;
+using ShingekiNoAPPI.Services.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +54,15 @@ builder.Services.AddSession();
 
 // ✅ AGREGAMOS EL SERVICIO DE SIGNALR
 builder.Services.AddSignalR();
+
+builder.Services.Configure<S3StorageOptions>(builder.Configuration.GetSection("S3"));
+builder.Services.AddSingleton<IAmazonS3>(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var regionName = configuration["S3:Region"] ?? "us-east-1";
+    return new AmazonS3Client(RegionEndpoint.GetBySystemName(regionName));
+});
+builder.Services.AddScoped<IFileStorageService, S3FileStorageService>();
 
 // Base de Datos
 builder.Services.AddDbContext<ShingekiContext>(options =>

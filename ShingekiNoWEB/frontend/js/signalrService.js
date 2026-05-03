@@ -1,4 +1,5 @@
 // js/signalrService.js
+import { showToast } from './ui.js';
 
 // Ajusta el puerto a tu backend real
 const HUB_URL = 'http://localhost:5000/ordersHub'; 
@@ -25,7 +26,7 @@ export async function startSignalR() {
         console.log("🔔 Nuevo pedido recibido! ID:", orderId);
         
         // Opción A: Mostrar una notificación Toastify/SweetAlert
-        alert("¡Nuevo pedido entrante! #" + orderId); 
+        showToast('Nuevo pedido entrante #' + orderId, 'info'); 
 
         // Opción B: Recargar la tabla de pedidos automáticamente si existe
         if (window.loadOrders) window.loadOrders(); 

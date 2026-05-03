@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" data-bs-theme="light">
 
 <head>
@@ -8,10 +8,11 @@
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="OmniGestor">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3075/3075977.png">
+    <meta name="apple-mobile-web-app-title" content="Kordena">
+    <link rel="icon" href="./kordena-icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./kordena-icon.svg">
 
-    <title>Panel de Gestión | OmniGestor</title>
+    <title>Panel | Kordena</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -20,7 +21,7 @@
     <link rel="stylesheet" href="./css/style.css">
 </head>
 
-<body class="bg-body-tertiary" style="padding-top: 80px;">
+<body class="bg-body-tertiary app-admin">
 
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-sm" style="height: 70px;">
         <div class="container-fluid px-3">
@@ -28,8 +29,12 @@
                 <i class="bi bi-list fs-1"></i>
             </button>
 
-            <a class="navbar-brand fw-bold d-flex align-items-center text-white" href="#">
-                <i class="bi bi-box-seam text-primary me-2"></i> OmniGestor
+            <a class="navbar-brand brand-lockup" href="#">
+                <span class="brand-mark brand-mark--sm">K</span>
+                <span>
+                    <span class="brand-title">Kordena</span>
+                    <span class="brand-subtitle">Operations OS</span>
+                </span>
             </a>
 
             <div class="d-flex align-items-center gap-3 ms-auto">
@@ -58,17 +63,17 @@
                 style="min-height: calc(100vh - 80px); top: 80px;">
                 <div class="list-group list-group-flush">
                     <button class="list-group-item list-group-item-action border-0 rounded mb-1" onclick="switchTab('dashboard')">
-                        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        <i class="bi bi-speedometer2 me-2"></i> Centro operativo
                     </button>
                     <button class="list-group-item list-group-item-action border-0 rounded mb-1 text-primary fw-bold bg-primary bg-opacity-10 active" onclick="switchTab('orders')">
-                        <i class="bi bi-bell-fill me-2"></i> Pedidos
+                        <i class="bi bi-bell-fill me-2"></i> Ordenes
                     </button>
                     <hr class="my-2">
                     <button class="list-group-item list-group-item-action border-0 rounded mb-1" onclick="switchTab('cash')">
                         <i class="bi bi-wallet2 me-2"></i> Caja
                     </button>
                     <button class="list-group-item list-group-item-action border-0 rounded mb-1" onclick="switchTab('categories')">
-                        <i class="bi bi-tags me-2"></i> Categorías
+                        <i class="bi bi-tags me-2"></i> Categorias
                     </button>
                     <button class="list-group-item list-group-item-action border-0 rounded mb-1" onclick="switchTab('products')">
                         <i class="bi bi-bag-heart-fill me-2"></i> Productos
@@ -86,7 +91,7 @@
                         <i class="bi bi-person-badge-fill me-2"></i> Usuarios
                     </button>
                     <a href="menu.html" class="list-group-item list-group-item-action border-0 rounded mb-1 text-secondary mt-3 small">
-                        <i class="bi bi-box-arrow-up-right me-2"></i> Ir al Menú
+                        <i class="bi bi-box-arrow-up-right me-2"></i> Abrir carta
                     </a>
                 </div>
             </div>
@@ -96,7 +101,7 @@
 
                     <div id="view-dashboard" class="content-view container-fluid fade-in d-none">
                         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center pt-3 pb-2 mb-3 border-bottom gap-3">
-                            <h1 class="h2 mb-0">Tablero de Control</h1>
+                            <h1 class="h2 mb-0">Centro operativo</h1>
                             
                             <div class="d-flex flex-wrap gap-2 align-items-center bg-white p-2 rounded shadow-sm border">
                                 <span class="small text-muted fw-bold">Rango:</span>
@@ -189,7 +194,7 @@
                             <div class="col-12 col-lg-8">
                                 <div class="card shadow-sm h-100">
                                     <div class="card-header bg-transparent fw-bold py-3">
-                                        <i class="bi bi-graph-up-arrow me-2"></i> Evolución de Ventas
+                                        <i class="bi bi-graph-up-arrow me-2"></i> Evolucion de Ventas
                                     </div>
                                     <div class="card-body">
                                         <div style="height: 300px;">
@@ -228,7 +233,7 @@
                     <div id="view-orders" class="content-view">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
-                                <h3 class="fw-bold mb-0 text-body-secondary">Comanda (Pedidos)</h3>
+                                <h3 class="fw-bold mb-0 text-body-secondary">Ordenes en vivo</h3>
                                 <small id="live-indicator" class="text-muted" style="font-size: 0.8rem;">
                                     <span class="spinner-grow spinner-grow-sm text-secondary" role="status"></span>
                                     Conectando...
@@ -273,7 +278,7 @@
                     <div id="view-cash" class="content-view d-none">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div>
-                                <h3 class="fw-bold mb-0 text-body-secondary">Arqueo de Caja</h3>
+                                <h3 class="fw-bold mb-0 text-body-secondary">Caja y movimientos</h3>
                                 <span id="cash-status-badge" class="badge bg-secondary">Cerrada</span>
                                 <small class="text-muted ms-2" id="cash-open-time">-</small>
                             </div>
@@ -295,7 +300,7 @@
                                     <div class="table-responsive">
                                         <table class="table table-hover mb-0 align-middle">
                                             <thead class="table-light">
-                                                <tr><th>ID</th><th>Apertura</th><th>Cierre</th><th>Saldo Final</th><th>Diferencia</th><th>Acción</th></tr>
+                                                <tr><th>ID</th><th>Apertura</th><th>Cierre</th><th>Saldo Final</th><th>Diferencia</th><th>Accion</th></tr>
                                             </thead>
                                             <tbody id="cash-history-table"><tr><td colspan="6" class="text-center py-3">Cargando...</td></tr></tbody>
                                         </table>
@@ -305,7 +310,7 @@
                         </div>
 
                         <div id="history-warning-banner" class="alert alert-warning border-warning d-flex justify-content-between align-items-center d-none mb-4">
-                            <span><i class="bi bi-eye-fill me-2"></i> Estás viendo un cierre pasado (<span id="hist-date-lbl"></span>).</span>
+                            <span><i class="bi bi-eye-fill me-2"></i> Estas viendo un cierre pasado (<span id="hist-date-lbl"></span>).</span>
                             <button class="btn btn-sm btn-outline-dark" onclick="initCashView()">Volver a Caja Actual</button>
                         </div>
 
@@ -315,7 +320,7 @@
                             <div class="col-6 col-md-2"><div class="card border-0 shadow-sm h-100 border-start border-4 border-info"><div class="card-body p-2"><small class="text-muted text-uppercase" style="font-size: 0.7rem;">MercadoPago</small><h4 class="fw-bold text-info mb-0" id="cash-total-mp">$0</h4></div></div></div>
                             <div class="col-6 col-md-2"><div class="card border-0 shadow-sm h-100 border-start border-4 border-warning"><div class="card-body p-2"><small class="text-muted text-uppercase" style="font-size: 0.7rem;">Transferencia</small><h4 class="fw-bold text-warning mb-0" id="cash-total-transfer">$0</h4></div></div></div>
                             <div class="col-6 col-md-2"><div class="card border-0 shadow-sm h-100 border-start border-4 border-danger"><div class="card-body p-2"><small class="text-muted text-uppercase" style="font-size: 0.7rem;">Gastos</small><h4 class="fw-bold text-danger mb-0" id="cash-total-expenses">$0</h4></div></div></div>
-                            <div class="col-6 col-md-2"><div class="card border-0 shadow-sm h-100 bg-dark text-white"><div class="card-body p-2"><small class="opacity-75 text-uppercase" style="font-size: 0.7rem;">En Caja (Teórico)</small><h4 class="fw-bold mb-0" id="cash-expected">$0</h4></div></div></div>
+                            <div class="col-6 col-md-2"><div class="card border-0 shadow-sm h-100 bg-dark text-white"><div class="card-body p-2"><small class="opacity-75 text-uppercase" style="font-size: 0.7rem;">En Caja (Teorico)</small><h4 class="fw-bold mb-0" id="cash-expected">$0</h4></div></div></div>
                         </div>
 
                         <div class="row g-3">
@@ -335,7 +340,7 @@
                             <div class="card-body p-0">
                                 <div class="table-responsive">
                                     <table class="table table-hover mb-0 align-middle text-nowrap">
-                                        <thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">ID</th><th>Nombre</th><th>Teléfono</th><th class="text-end pe-4">Direcciones / Acciones</th></tr></thead>
+                                        <thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">ID</th><th>Nombre</th><th>Telefono</th><th class="text-end pe-4">Direcciones / Acciones</th></tr></thead>
                                         <tbody id="clients-table"></tbody>
                                     </table>
                                 </div>
@@ -345,14 +350,14 @@
 
                     <div id="view-categories" class="content-view d-none">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h3 class="fw-bold mb-0 text-body-secondary">Categorías</h3>
+                            <h3 class="fw-bold mb-0 text-body-secondary">Categorias</h3>
                             <button class="btn btn-danger" onclick="prepareCategoryModal()">+ Nueva</button>
                         </div>
                         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                             <div class="card-body p-0">
                                 <div class="table-responsive">
                                     <table class="table table-hover mb-0 align-middle text-nowrap">
-                                        <thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">Nombre</th><th>Descripción</th><th class="text-end pe-4">Acciones</th></tr></thead>
+                                        <thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">Nombre</th><th>Descripcion</th><th class="text-end pe-4">Acciones</th></tr></thead>
                                         <tbody id="categories-table"></tbody>
                                     </table>
                                 </div>
@@ -369,7 +374,7 @@
                             <div class="card-body p-0">
                                 <div class="table-responsive">
                                     <table class="table table-hover mb-0 align-middle text-nowrap">
-                                        <thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">Imagen</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th class="text-end pe-4">Acciones</th></tr></thead>
+                                        <thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">Imagen</th><th>Nombre</th><th>Categoria</th><th>Precio</th><th class="text-end pe-4">Acciones</th></tr></thead>
                                         <tbody id="products-table"></tbody>
                                     </table>
                                 </div>
@@ -388,7 +393,7 @@
                             <div class="card-body p-0">
                                 <div class="table-responsive">
                                     <table class="table table-hover mb-0 align-middle text-nowrap">
-                                        <thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">Ingrediente</th><th>Unidad</th><th>Stock</th><th>Mínimo</th><th>Estado</th><th class="text-end pe-4">Acciones</th></tr></thead>
+                                        <thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">Ingrediente</th><th>Unidad</th><th>Stock</th><th>Minimo</th><th>Estado</th><th class="text-end pe-4">Acciones</th></tr></thead>
                                         <tbody id="stock-table"></tbody>
                                     </table>
                                 </div>
@@ -405,7 +410,7 @@
                             <div class="card-body p-0">
                                 <div class="table-responsive">
                                     <table class="table table-hover mb-0 align-middle text-nowrap">
-                                        <thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">Nombre</th><th>Unidad</th><th class="text-end pe-4">Acciones</th></tr></thead>
+                                        <thead class="bg-body-tertiary text-secondary"><tr><th class="ps-4">Imagen</th><th>Nombre</th><th>Unidad</th><th class="text-end pe-4">Acciones</th></tr></thead>
                                         <tbody id="ingredients-table"></tbody>
                                     </table>
                                 </div>
@@ -415,7 +420,7 @@
 
                     <div id="view-users" class="content-view d-none">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h3 class="fw-bold mb-0 text-body-secondary">Gestión de Usuarios</h3>
+                            <h3 class="fw-bold mb-0 text-body-secondary">Equipo y permisos</h3>
                             <button class="btn btn-primary" onclick="prepareUserModal()"><i class="bi bi-person-plus-fill"></i> Nuevo Usuario</button>
                         </div>
                         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
@@ -435,18 +440,18 @@
         </div>
     </div>
 
-    <div class="modal fade" id="orderModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-primary text-white border-0"><h5 class="modal-title fw-bold" id="orderModalTitle">Nuevo Pedido</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="order-form"><input type="hidden" id="order-id"><div class="mb-4"><label class="form-label fw-bold small text-muted">Cliente</label><div class="input-group"><span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span><input type="text" id="client-search-input" class="form-control border-start-0" placeholder="Buscar por nombre o teléfono..." autocomplete="off"><input type="hidden" id="selected-client-id"><button class="btn btn-outline-primary" type="button" onclick="openClientModalFromOrder()"><i class="bi bi-person-plus-fill"></i> Nuevo</button></div><div id="client-search-results" class="list-group position-absolute w-100 shadow" style="z-index: 1050; display: none; max-height: 200px; overflow-y: auto;"></div><div id="selected-client-display" class="mt-2 p-2 bg-primary bg-opacity-10 border border-primary rounded d-none d-flex justify-content-between align-items-center"><span class="fw-bold text-primary" id="selected-client-name">-</span><button type="button" class="btn-close btn-sm" onclick="clearClientSelection()"></button></div></div><div class="mb-3"><label class="form-label fw-bold small text-muted">Dirección de Envío</label><select id="order-address-id" class="form-select" required><option value="">Selecciona cliente primero...</option></select></div><div class="mb-3"><label class="form-label fw-bold small text-muted">Notas / Observaciones</label><textarea id="order-note" class="form-control" rows="2"></textarea></div><hr><div class="text-muted small text-center mb-3">(Próximamente: Selector de Productos)</div><div class="d-flex justify-content-end"><button type="submit" class="btn btn-primary px-4">Crear Pedido</button></div></form></div></div></div></div>
-    <div class="modal fade" id="clientModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-dark text-white border-0"><h5 class="modal-title fw-bold">Nuevo Cliente</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="client-form"><h6 class="text-muted small fw-bold text-uppercase mb-3">Datos Personales</h6><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Nombre</label><input type="text" id="client-name" class="form-control" required placeholder="Ej: Eren"></div><div class="col-6"><label class="form-label small fw-bold">Apellido</label><input type="text" id="client-lastname" class="form-control" required placeholder="Ej: Jaeger"></div></div><div class="mb-3"><label class="form-label small fw-bold">Teléfono / Celular</label><input type="text" id="client-phone" class="form-control" required placeholder="Ej: 099123456"></div><hr class="my-4"><h6 class="text-muted small fw-bold text-uppercase mb-3">Dirección Principal</h6><div class="mb-3"><label class="form-label small fw-bold">Calle y Número</label><input type="text" id="client-addr-street" class="form-control" placeholder="Ej: Av. Muralla Maria 123" required></div><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Ciudad/Zona</label><input type="text" id="client-addr-city" class="form-control" value="Ciudad de la Costa"></div><div class="col-6"><label class="form-label small fw-bold">Etiqueta</label><input type="text" id="client-addr-label" class="form-control" value="Casa"></div></div><button type="submit" class="btn btn-primary w-100 py-2 fw-bold"><i class="bi bi-save me-2"></i> Guardar Cliente y Dirección</button></form></div></div></div></div>
+    <div class="modal fade" id="orderModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-primary text-white border-0"><h5 class="modal-title fw-bold" id="orderModalTitle">Nuevo Pedido</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="order-form"><input type="hidden" id="order-id"><div class="mb-4"><label class="form-label fw-bold small text-muted">Cliente</label><div class="input-group"><span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span><input type="text" id="client-search-input" class="form-control border-start-0" placeholder="Buscar por nombre o telefono..." autocomplete="off"><input type="hidden" id="selected-client-id"><button class="btn btn-outline-primary" type="button" onclick="openClientModalFromOrder()"><i class="bi bi-person-plus-fill"></i> Nuevo</button></div><div id="client-search-results" class="list-group position-absolute w-100 shadow" style="z-index: 1050; display: none; max-height: 200px; overflow-y: auto;"></div><div id="selected-client-display" class="mt-2 p-2 bg-primary bg-opacity-10 border border-primary rounded d-none d-flex justify-content-between align-items-center"><span class="fw-bold text-primary" id="selected-client-name">-</span><button type="button" class="btn-close btn-sm" onclick="clearClientSelection()"></button></div></div><div class="mb-3"><label class="form-label fw-bold small text-muted">Direccion de Envio</label><select id="order-address-id" class="form-select" required><option value="">Selecciona cliente primero...</option></select></div><div class="mb-3"><label class="form-label fw-bold small text-muted">Notas / Observaciones</label><textarea id="order-note" class="form-control" rows="2"></textarea></div><hr><div class="text-muted small text-center mb-3">(Proximamente: Selector de Productos)</div><div class="d-flex justify-content-end"><button type="submit" class="btn btn-primary px-4">Crear Pedido</button></div></form></div></div></div></div>
+    <div class="modal fade" id="clientModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-dark text-white border-0"><h5 class="modal-title fw-bold">Nuevo Cliente</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="client-form"><h6 class="text-muted small fw-bold text-uppercase mb-3">Datos Personales</h6><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Nombre</label><input type="text" id="client-name" class="form-control" required placeholder="Ej: Eren"></div><div class="col-6"><label class="form-label small fw-bold">Apellido</label><input type="text" id="client-lastname" class="form-control" required placeholder="Ej: Jaeger"></div></div><div class="mb-3"><label class="form-label small fw-bold">Telefono / Celular</label><input type="text" id="client-phone" class="form-control" required placeholder="Ej: 099123456"></div><hr class="my-4"><h6 class="text-muted small fw-bold text-uppercase mb-3">Direccion Principal</h6><div class="mb-3"><label class="form-label small fw-bold">Calle y Numero</label><input type="text" id="client-addr-street" class="form-control" placeholder="Ej: Av. Muralla Maria 123" required></div><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Ciudad/Zona</label><input type="text" id="client-addr-city" class="form-control" value="Ciudad de la Costa"></div><div class="col-6"><label class="form-label small fw-bold">Etiqueta</label><input type="text" id="client-addr-label" class="form-control" value="Casa"></div></div><button type="submit" class="btn btn-primary w-100 py-2 fw-bold"><i class="bi bi-save me-2"></i> Guardar Cliente y Direccion</button></form></div></div></div></div>
     <div class="modal fade" id="openRegisterModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold">Abrir Caja</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p class="text-muted">Ingresa el dinero con el que inicias el turno.</p><div class="mb-3"><label class="form-label fw-bold">Saldo Inicial ($)</label><input type="number" id="open-amount" class="form-control form-control-lg" placeholder="0" value="0"></div><button class="btn btn-primary w-100 py-2" onclick="confirmOpenRegister()">Iniciar Turno</button></div></div></div></div>
     <div class="modal fade" id="closeRegisterModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold">Cerrar Caja (Arqueo)</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-secondary text-center mb-3"><small>Esperado en Caja</small><h2 class="fw-bold mb-0" id="modal-expected-amount">$0</h2></div><div class="mb-3"><label class="form-label fw-bold">Dinero Real Contado ($)</label><input type="number" id="close-real-amount" class="form-control form-control-lg" placeholder="0"></div><div class="mb-3"><label class="form-label small text-muted">Observaciones</label><textarea id="close-notes" class="form-control" rows="2" placeholder="Sobra/Falta dinero porque..."></textarea></div><button class="btn btn-danger w-100 py-2" onclick="confirmCloseRegister()">Finalizar Turno</button></div></div></div></div>
-    <div class="modal fade" id="expenseModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-warning text-dark border-0"><h5 class="modal-title fw-bold"><i class="bi bi-cash-stack"></i> Registrar Movimiento</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><form id="expense-form"><div class="mb-3"><label class="form-label small fw-bold text-muted">Tipo de Movimiento</label><select class="form-select" id="expense-type" required><option value="OUT">🔴 Retiro / Gasto (Salida)</option><option value="IN">🟢 Ingreso Extra (Entrada)</option></select></div><div class="mb-3"><label class="form-label small fw-bold text-muted">Monto ($)</label><input type="number" class="form-control form-control-lg" id="expense-amount" min="1" step="0.01" required placeholder="0"></div><div class="mb-3"><label class="form-label small fw-bold text-muted">Descripción / Motivo</label><textarea class="form-control" id="expense-desc" rows="2" placeholder="Ej: Compra de hielo, Pago proveedor..." required></textarea></div><button type="submit" class="btn btn-dark w-100 py-2">Guardar Movimiento</button></form></div></div></div></div>
-    <div class="modal fade" id="categoryModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="catModalTitle">Categoría</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="category-form"><input type="hidden" id="cat-id"><div class="mb-3"><label class="form-label small fw-bold">Nombre</label><input type="text" id="cat-name" class="form-control" required></div><div class="mb-3"><label class="form-label small fw-bold">Descripción</label><textarea id="cat-desc" class="form-control" rows="2"></textarea></div><button type="submit" class="btn btn-primary w-100">Guardar</button></form></div></div></div></div>
-    <div class="modal fade" id="productModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="prodModalTitle">Producto</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="product-form"><input type="hidden" id="prod-id"><div class="row g-2"><div class="col-8 mb-3"><label class="form-label small fw-bold">Nombre</label><input type="text" id="prod-name" class="form-control" required></div><div class="col-4 mb-3"><label class="form-label small fw-bold">Precio</label><input type="number" id="prod-price" class="form-control" step="0.01" required></div></div><div class="mb-3"><label class="form-label small fw-bold">Categoría</label><select id="prod-category" class="form-select" required></select></div><div class="mb-3"><label class="form-label small fw-bold">Descripción</label><textarea id="prod-desc" class="form-control" rows="2"></textarea></div><div class="mb-3"><label class="form-label small fw-bold">URL Imagen</label><input type="text" id="prod-img" class="form-control"></div><button type="submit" class="btn btn-primary w-100">Guardar</button></form></div></div></div></div>
-    <div class="modal fade" id="stockModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="stockModalTitle">Ajustar Stock</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="stock-form"><input type="hidden"><div class="mb-3"><label class="form-label small fw-bold">Ingrediente</label><select id="stock-ingredient-id" class="form-select" required></select></div><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Cantidad</label><input type="number" id="stock-quantity" class="form-control" placeholder="0" min="0" step="0.01"></div><div class="col-6"><label class="form-label small fw-bold">Mínimo</label><input type="number" id="stock-min" class="form-control" placeholder="Opcional" min="0" step="0.01"></div></div><div class="mb-4"><label class="form-label small fw-bold">Tipo Movimiento</label><select id="stock-type" class="form-select"><option value="">Selecciona...</option><option value="IN">Entrada</option><option value="OUT">Salida</option></select></div><button type="submit" class="btn btn-primary w-100">Guardar</button></form></div></div></div></div>
-    <div class="modal fade" id="ingredientModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="ingModalTitle">Ingrediente</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="ingredient-form"><input type="hidden" id="ing-id"><div class="mb-3"><label class="form-label small fw-bold">Nombre</label><input type="text" id="ing-name" class="form-control" required></div><div class="mb-3"><label class="form-label small fw-bold">Unidad</label><input type="text" id="ing-unit" class="form-control" required></div><button type="submit" class="btn btn-primary w-100">Guardar</button></form></div></div></div></div>
+    <div class="modal fade" id="expenseModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-warning text-dark border-0"><h5 class="modal-title fw-bold"><i class="bi bi-cash-stack"></i> Registrar Movimiento</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><form id="expense-form"><div class="mb-3"><label class="form-label small fw-bold text-muted">Tipo de Movimiento</label><select class="form-select" id="expense-type" required><option value="OUT">Retiro / Gasto (Salida)</option><option value="IN">Ingreso Extra (Entrada)</option></select></div><div class="mb-3"><label class="form-label small fw-bold text-muted">Monto ($)</label><input type="number" class="form-control form-control-lg" id="expense-amount" min="1" step="0.01" required placeholder="0"></div><div class="mb-3"><label class="form-label small fw-bold text-muted">Descripcion / Motivo</label><textarea class="form-control" id="expense-desc" rows="2" placeholder="Ej: Compra de hielo, Pago proveedor..." required></textarea></div><button type="submit" class="btn btn-dark w-100 py-2">Guardar Movimiento</button></form></div></div></div></div>
+    <div class="modal fade" id="categoryModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="catModalTitle">Categoria</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="category-form"><input type="hidden" id="cat-id"><div class="mb-3"><label class="form-label small fw-bold">Nombre</label><input type="text" id="cat-name" class="form-control" required></div><div class="mb-3"><label class="form-label small fw-bold">Descripcion</label><textarea id="cat-desc" class="form-control" rows="2"></textarea></div><button type="submit" class="btn btn-primary w-100">Guardar</button></form></div></div></div></div>
+    <div class="modal fade" id="productModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="prodModalTitle">Producto</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="product-form"><input type="hidden" id="prod-id"><input type="hidden" id="prod-img"><div class="row g-2"><div class="col-8 mb-3"><label class="form-label small fw-bold">Nombre</label><input type="text" id="prod-name" class="form-control" required></div><div class="col-4 mb-3"><label class="form-label small fw-bold">Precio</label><input type="number" id="prod-price" class="form-control" step="0.01" required></div></div><div class="mb-3"><label class="form-label small fw-bold">Categoria</label><select id="prod-category" class="form-select" required></select></div><div class="mb-3"><label class="form-label small fw-bold">Descripcion</label><textarea id="prod-desc" class="form-control" rows="2"></textarea></div><div class="mb-4"><label class="form-label small fw-bold">Imagen</label><div class="image-uploader" id="prod-image-dropzone"><input type="file" id="prod-image-file" accept="image/png,image/jpeg,image/webp" hidden><div class="image-uploader__preview" id="prod-image-preview"><i class="bi bi-cloud-arrow-up fs-2"></i></div><div><strong>Arrastra o selecciona una imagen</strong><small>JPG, PNG o WEBP hasta 5 MB</small></div></div></div><button type="submit" class="btn btn-primary w-100">Guardar</button></form></div></div></div></div>
+    <div class="modal fade" id="stockModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="stockModalTitle">Ajustar Stock</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="stock-form"><input type="hidden"><div class="mb-3"><label class="form-label small fw-bold">Ingrediente</label><select id="stock-ingredient-id" class="form-select" required></select></div><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Cantidad</label><input type="number" id="stock-quantity" class="form-control" placeholder="0" min="0" step="0.01"></div><div class="col-6"><label class="form-label small fw-bold">Minimo</label><input type="number" id="stock-min" class="form-control" placeholder="Opcional" min="0" step="0.01"></div></div><div class="mb-4"><label class="form-label small fw-bold">Tipo Movimiento</label><select id="stock-type" class="form-select"><option value="">Selecciona...</option><option value="IN">Entrada</option><option value="OUT">Salida</option></select></div><button type="submit" class="btn btn-primary w-100">Guardar</button></form></div></div></div></div>
+    <div class="modal fade" id="ingredientModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="ingModalTitle">Ingrediente</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="ingredient-form"><input type="hidden" id="ing-id"><input type="hidden" id="ing-img"><div class="mb-3"><label class="form-label small fw-bold">Nombre</label><input type="text" id="ing-name" class="form-control" required></div><div class="mb-3"><label class="form-label small fw-bold">Unidad</label><input type="text" id="ing-unit" class="form-control" required></div><div class="mb-4"><label class="form-label small fw-bold">Imagen</label><div class="image-uploader" id="ing-image-dropzone"><input type="file" id="ing-image-file" accept="image/png,image/jpeg,image/webp" hidden><div class="image-uploader__preview" id="ing-image-preview"><i class="bi bi-cloud-arrow-up fs-2"></i></div><div><strong>Arrastra o selecciona una imagen</strong><small>JPG, PNG o WEBP hasta 5 MB</small></div></div></div><button type="submit" class="btn btn-primary w-100">Guardar</button></form></div></div></div></div>
     <div class="modal fade" id="recipeModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="recipeModalTitle">Receta</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="input-group mb-3"><select id="recipe-ingredient-select" class="form-select" style="max-width: 55%;"><option>Cargando...</option></select><input type="number" id="recipe-quantity" class="form-control" placeholder="Cant." step="0.01"><button class="btn btn-primary" onclick="addIngredientToRecipe()"><i class="bi bi-plus-lg"></i></button></div><div class="table-responsive border rounded-3" style="max-height: 250px;"><table class="table table-sm table-hover mb-0 align-middle"><thead class="bg-body-tertiary"><tr><th class="ps-3">Ingrediente</th><th>Cantidad</th><th></th></tr></thead><tbody id="recipe-table-body"></tbody></table></div></div></div></div></div>
-    <div class="modal fade" id="addressModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold">Agregar Dirección</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="address-form"><input type="hidden" id="addr-client-id"><div class="mb-3"><label class="form-label small fw-bold">Dirección</label><input type="text" id="addr-street" class="form-control" placeholder="Calle y número" required></div><div class="row g-2 mb-3"><div class="col-6"><input type="text" id="addr-city" class="form-control" placeholder="Ciudad" value="Ciudad de la Costa"></div><div class="col-6"><input type="text" id="addr-label" class="form-control" placeholder="Etiqueta" value="Casa"></div></div><button type="submit" class="btn btn-primary w-100">Guardar Dirección</button></form></div></div></div></div>
-    <div class="modal fade" id="userModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-dark text-white border-0"><h5 class="modal-title fw-bold" id="userModalTitle">Usuario</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="user-form"><input type="hidden" id="user-id"><div class="mb-3"><label class="form-label small fw-bold">Usuario (Login)</label><input type="text" id="user-username" class="form-control" required placeholder="Ej: admin_sucursal" autocomplete="off"><div class="form-text">Este es el nombre para iniciar sesión.</div></div><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Nombre</label><input type="text" id="user-name" class="form-control" required placeholder="Ej: Juan"></div><div class="col-6"><label class="form-label small fw-bold">Apellido</label><input type="text" id="user-lastname" class="form-control" required placeholder="Ej: Pérez"></div></div><div class="mb-3"><label class="form-label small fw-bold">Teléfono (Solo números)</label><input type="number" id="user-phone" class="form-control" required placeholder="099123456"></div><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Contraseña</label><input type="password" id="user-pass" class="form-control" placeholder="****" autocomplete="new-password"></div><div class="col-6"><label class="form-label small fw-bold">Rol</label><select id="user-role" class="form-select" required><option value="1">Administrador</option><option value="2">Cocina</option><option value="3">Delivery / Mozo</option></select></div></div><button type="submit" class="btn btn-primary w-100 py-2 fw-bold"><i class="bi bi-save me-2"></i> Guardar Usuario</button></form></div></div></div></div>
+    <div class="modal fade" id="addressModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold">Agregar Direccion</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="address-form"><input type="hidden" id="addr-client-id"><div class="mb-3"><label class="form-label small fw-bold">Direccion</label><input type="text" id="addr-street" class="form-control" placeholder="Calle y numero" required></div><div class="row g-2 mb-3"><div class="col-6"><input type="text" id="addr-city" class="form-control" placeholder="Ciudad" value="Ciudad de la Costa"></div><div class="col-6"><input type="text" id="addr-label" class="form-control" placeholder="Etiqueta" value="Casa"></div></div><button type="submit" class="btn btn-primary w-100">Guardar Direccion</button></form></div></div></div></div>
+    <div class="modal fade" id="userModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-dark text-white border-0"><h5 class="modal-title fw-bold" id="userModalTitle">Usuario</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="user-form"><input type="hidden" id="user-id"><div class="mb-3"><label class="form-label small fw-bold">Usuario (Login)</label><input type="text" id="user-username" class="form-control" required placeholder="Ej: admin_sucursal" autocomplete="off"><div class="form-text">Este es el nombre para iniciar sesion.</div></div><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Nombre</label><input type="text" id="user-name" class="form-control" required placeholder="Ej: Juan"></div><div class="col-6"><label class="form-label small fw-bold">Apellido</label><input type="text" id="user-lastname" class="form-control" required placeholder="Ej: Perez"></div></div><div class="mb-3"><label class="form-label small fw-bold">Telefono (Solo numeros)</label><input type="number" id="user-phone" class="form-control" required placeholder="099123456"></div><div class="row g-2 mb-3"><div class="col-6"><label class="form-label small fw-bold">Contrasena</label><input type="password" id="user-pass" class="form-control" placeholder="****" autocomplete="new-password"></div><div class="col-6"><label class="form-label small fw-bold">Rol</label><select id="user-role" class="form-select" required><option value="1">Administrador</option><option value="2">Cocina</option><option value="3">Delivery / Mozo</option></select></div></div><button type="submit" class="btn btn-primary w-100 py-2 fw-bold"><i class="bi bi-save me-2"></i> Guardar Usuario</button></form></div></div></div></div>
     <div class="modal fade" id="orderDetailModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content border-0 shadow-lg"><div class="modal-header border-0"><h5 class="modal-title fw-bold" id="detail-order-id">Cargando...</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body p-4"></div></div></div></div>
     <div class="modal fade" id="clientOrdersModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-xl"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-dark text-white border-0"><h5 class="modal-title" id="clientOrdersTitle">Historial de Pedidos</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="table-responsive"><table class="table table-hover align-middle"><thead class="table-light"><tr><th>ID</th><th>Fecha y Hora (Editar)</th><th>Estado</th><th>Total</th><th class="text-end">Acciones</th></tr></thead><tbody id="client-orders-table-body"></tbody></table></div></div></div></div></div>
 
@@ -463,7 +468,7 @@
                         <i class="bi bi-search text-secondary opacity-50"></i>
                     </div>
                     <h3 class="fw-bold text-primary" id="track-status">Buscando...</h3>
-                    <p class="text-muted small" id="track-msg">Esperando actualización en vivo...</p>
+                    <p class="text-muted small" id="track-msg">Esperando actualizacion en vivo...</p>
                 </div>
                 
                 <div class="progress mt-2" style="height: 8px;">
@@ -480,13 +485,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 
     <script>
-        // --- FUNCIÓN GLOBAL PARA EL MENÚ MÓVIL ---
+        // --- FUNCION GLOBAL PARA EL MENU MOVIL ---
         window.toggleSidebar = function () {
             const sidebar = document.querySelector('.sidebar');
             if (sidebar) sidebar.classList.toggle('show');
         };
 
-        // --- LÓGICA DE INTERFAZ ---
+        // --- LOGICA DE INTERFAZ ---
         document.addEventListener('DOMContentLoaded', function () {
             const sidebar = document.querySelector('.sidebar');
             const toggleBtn = document.getElementById('sidebar-toggle');
@@ -519,10 +524,10 @@
                         themeToggleBtn.classList.remove('active');
                     }
                 }
-                localStorage.setItem('omnigestor_theme', theme);
+                localStorage.setItem('kordena_theme', theme);
             }
 
-            const savedTheme = localStorage.getItem('omnigestor_theme') || 'light';
+            const savedTheme = localStorage.getItem('kordena_theme') || 'light';
             applyTheme(savedTheme);
 
             if (themeToggleBtn) {
@@ -533,7 +538,7 @@
             }
         });
 
-        // --- NAVEGACIÓN SPA ---
+        // --- NAVEGACION SPA ---
         function switchTab(tabName) {
             document.querySelectorAll('.content-view').forEach(el => el.classList.add('d-none'));
             const target = document.getElementById('view-' + tabName);
@@ -544,13 +549,13 @@
             let btn = event ? event.currentTarget : null;
             if (btn && btn.classList) btn.classList.add('active', 'bg-primary', 'bg-opacity-10', 'text-primary');
 
-            // Cerrar menú en móvil
+            // Cerrar menu en movil
             const sidebar = document.querySelector('.sidebar');
             if (window.innerWidth < 992 && sidebar && sidebar.classList.contains('show')) {
                 sidebar.classList.remove('show');
             }
 
-            // Recargar datos específicos
+            // Recargar datos especificos
             if (tabName === 'stock' && window.loadStock) window.loadStock();
             if (tabName === 'ingredients' && window.renderIngredients) window.renderIngredients();
             if (tabName === 'clients' && window.loadClients) window.loadClients();
@@ -564,3 +569,7 @@
     <script type="module" src="./js/app.js"></script>
 </body>
 </html>
+
+
+
+

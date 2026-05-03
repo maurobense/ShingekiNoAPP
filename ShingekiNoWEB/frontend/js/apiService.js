@@ -27,7 +27,8 @@ const getToken = () => localStorage.getItem('jwt_token');
 // ==========================================
 export const apiCall = async (endpoint, method = 'GET', data = null) => {
     const token = getToken();
-    const headers = { 'Content-Type': 'application/json' };
+    const isFormData = data instanceof FormData;
+    const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
 
     // 🛠️ Limpieza de barras: asegura que el endpoint no duplique la barra
@@ -37,7 +38,7 @@ export const apiCall = async (endpoint, method = 'GET', data = null) => {
     const config = {
         method,
         headers,
-        body: data ? JSON.stringify(data) : null,
+        body: data ? (isFormData ? data : JSON.stringify(data)) : null,
     };
 
     try {
@@ -71,6 +72,12 @@ export const apiCall = async (endpoint, method = 'GET', data = null) => {
         console.error("API Error details:", error);
         throw error;
     }
+};
+
+export const uploadImage = async (file, folder = 'products') => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return apiCall(`/files/images?folder=${encodeURIComponent(folder)}`, 'POST', formData);
 };
 
 // ==========================================

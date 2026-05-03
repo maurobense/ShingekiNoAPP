@@ -1,5 +1,6 @@
-import { apiCall } from './apiService.js';
+import { apiCall, uploadImage } from './apiService.js';
 import { logout } from './auth.js';
+import { confirmAction, escapeHtml, promptInput, setButtonLoading, showToast } from './ui.js';
 
 // ==========================================
 // 🛠️ UTILIDADES (FECHA Y HORA)
@@ -27,6 +28,17 @@ function formatFechaCompleta(fechaString) {
     });
 }
 
+function renderTableSkeleton(tableBodyId, rows = 5, cols = 4) {
+    const tbody = document.getElementById(tableBodyId);
+    if (!tbody) return;
+
+    tbody.innerHTML = Array.from({ length: rows }, () => `
+        <tr>
+            ${Array.from({ length: cols }, (_, index) => `<td class="${index === 0 ? 'ps-4' : ''}"><div class="skeleton"></div></td>`).join('')}
+        </tr>
+    `).join('');
+}
+
 // ==========================================
 // 🏛️ ESTADO GLOBAL
 // ==========================================
@@ -38,6 +50,8 @@ let currentClientIdForAddress = null;
 let currentProductIdForRecipe = null;
 let currentOrderStatus = 'Pending';
 let autoRefreshInterval = null;
+let selectedProductImageFile = null;
+let selectedIngredientImageFile = null;
 
 let catModal, prodModal, stockModal, ingModal, recipeModal, clientModal, addressModal, orderDetailModal, clientOrdersModal;
 
@@ -99,8 +113,8 @@ export const initAdmin = async () => {
 
     // EXPONER FUNCIONES
     window.prepareCategoryModal = (id = null) => { const f = document.getElementById('category-form'); if(f) f.reset(); document.getElementById('cat-id').value = id || ''; document.getElementById('catModalTitle').textContent = id ? 'Editar' : 'Nueva'; if(catModal) catModal.show(); };
-    window.prepareProductModal = (id = null) => { const f = document.getElementById('product-form'); if(f) f.reset(); document.getElementById('prod-id').value = id || ''; document.getElementById('prodModalTitle').textContent = id ? 'Editar' : 'Nuevo'; updateCategorySelect(allCategories); if(prodModal) prodModal.show(); };
-    window.prepareIngredientModal = (id = null) => { const f = document.getElementById('ingredient-form'); if(f) f.reset(); document.getElementById('ing-id').value = id || ''; document.getElementById('ingModalTitle').textContent = id ? 'Editar' : 'Nuevo'; if(ingModal) ingModal.show(); };
+    window.prepareProductModal = (id = null) => { const f = document.getElementById('product-form'); if(f) f.reset(); document.getElementById('prod-id').value = id || ''; document.getElementById('prodModalTitle').textContent = id ? 'Editar' : 'Nuevo'; updateCategorySelect(allCategories); resetProductImage(); if(prodModal) prodModal.show(); };
+    window.prepareIngredientModal = (id = null) => { const f = document.getElementById('ingredient-form'); if(f) f.reset(); document.getElementById('ing-id').value = id || ''; document.getElementById('ingModalTitle').textContent = id ? 'Editar' : 'Nuevo'; resetIngredientImage(); if(ingModal) ingModal.show(); };
     
     window.editCategory = editCategory; window.deleteCategory = deleteCategory;
     window.editProduct = editProduct; window.deleteProduct = deleteProduct;
@@ -142,6 +156,7 @@ export const initAdmin = async () => {
     setupClientSearch();
     await loadGlobalData(); 
     setupForms();
+    setupMediaUploaders();
     initCashView();
 
     if (typeof setupRoleViews === 'function') {
@@ -178,6 +193,10 @@ async function loadGlobalData() {
             loadOrders(); 
             return;
         }
+
+        renderTableSkeleton('categories-table', 4, 3);
+        renderTableSkeleton('products-table', 6, 5);
+        renderTableSkeleton('ingredients-table', 5, 4);
 
         const [categories, products, ingredients, clients] = await Promise.all([
             apiCall('/Categories'),
@@ -304,31 +323,37 @@ function createOrderCardHtml(order) {
     `;
 
     return `
-<div class="col-12 col-md-6 col-lg-4 mb-3 fade-in">
-            <div class="card h-100 order-card" data-order-id="${order.id}">
-                <div class="card-header border-0 d-flex justify-content-between align-items-center pt-3 bg-transparent">
-                    <span class="badge ${badgeClass}">${translateStatus(order.currentStatus)}${paymentLabel}</span>
-                    <small class="text-muted fw-bold">#${order.id}</small>
+        <div class="col-12 col-md-6 col-xl-4 fade-in">
+            <article class="card h-100 order-card" data-order-id="${order.id}">
+                <div class="card-header border-0 d-flex justify-content-between align-items-start gap-3 pt-3">
+                    <div>
+                        <small class="text-muted fw-bold">ORDEN #${order.id}</small>
+                        <div class="mt-1"><span class="badge ${badgeClass}">${translateStatus(order.currentStatus)}${paymentLabel}</span></div>
+                    </div>
+                    <span class="fw-bold fs-5 text-primary">$${Number(order.totalAmount || 0).toLocaleString('es-UY')}</span>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-muted small"><i class="bi bi-clock"></i> ${timeString}</span>
-                        <span class="fw-bold fs-5 text-primary">$${order.totalAmount}</span>
-                    </div>
-                    <div class="p-2 rounded small border" style="background-color: var(--bg-body);">
-                        <strong>${count} Ítems</strong>
-                    </div>
-                </div>
-                <div class="card-footer border-0 pb-3 bg-transparent">
-                    ${actionButtonHtml}
-                    <div class="row g-1">
-                        <div class="col-12">
-                            <button class="btn btn-outline-secondary w-100" onclick="openOrderDetailModal(${order.id})">Ver Detalle</button>
+                    <div class="order-meta">
+                        <div class="order-meta__item">
+                            <small class="text-muted d-block">Hora</small>
+                            <strong>${timeString}</strong>
+                        </div>
+                        <div class="order-meta__item">
+                            <small class="text-muted d-block">Items</small>
+                            <strong>${count}</strong>
                         </div>
                     </div>
-                    ${whatsappBtn}
                 </div>
-            </div>
+                <div class="card-footer border-0 pb-3">
+                    ${actionButtonHtml}
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-secondary" onclick="openOrderDetailModal(${order.id})">
+                            <i class="bi bi-layout-text-sidebar-reverse me-1"></i>Ver detalle
+                        </button>
+                        ${whatsappBtn}
+                    </div>
+                </div>
+            </article>
         </div>
     `;
 }
@@ -353,7 +378,7 @@ async function updateOrderStatus(orderId, nextStatus) {
              updateTrackingUI(orderId, translateStatus(statusToSend));
         }
     } catch (e) {
-        alert("Error al cambiar estado: " + e.message);
+        showToast("Error al cambiar estado: " + e.message, 'error');
         if (btn) { btn.disabled = false; btn.innerHTML = originalBtnText; }
     }
 }
@@ -365,7 +390,7 @@ function translateStatus(status) {
 }
 
 function translatePaymentMethod(method) {
-    const map = { 'Cash': '💵 Efectivo', 'MercadoPago': '📱 MercadoPago', 'Transfer': '🏦 Transferencia' };
+    const map = { 'Cash': 'Efectivo', 'MercadoPago': 'MercadoPago', 'Transfer': 'Transferencia' };
     return map[method] || method;
 }
 
@@ -428,16 +453,21 @@ async function openOrderDetailModal(orderId) {
 }
 
 async function cancelOrder(orderId) {
-    if (!confirm("⚠️ ¿Estás SEGURO de cancelar este pedido?")) return;
+    const confirmed = await confirmAction('Seguro que quieres cancelar este pedido?', {
+        title: 'Cancelar pedido',
+        confirmLabel: 'Cancelar pedido',
+        tone: 'danger'
+    });
+    if (!confirmed) return;
     const btn = document.getElementById('btn-cancel-dynamic');
     if (btn) { btn.disabled = true; btn.textContent = "Cancelando..."; }
     try {
         await apiCall(`/Orders/${orderId}/cancel`, 'POST');
-        alert("✅ Pedido cancelado.");
+        showToast('Pedido cancelado.');
         orderDetailModal.hide();
         loadGlobalData(); 
     } catch (e) {
-        alert("Error: " + e.message);
+        showToast(e.message, 'error');
         if (btn) { btn.disabled = false; btn.textContent = "Cancelar Pedido"; }
     }
 }
@@ -505,8 +535,8 @@ function editAddress(clientId, addressId) {
 }
 
 async function deleteAddress(clientId, addressId) {
-    if (!confirm("¿Borrar esta dirección?")) return;
-    try { await apiCall(`/Client/address/${addressId}`, 'DELETE'); await loadClients(); } catch (e) { alert("Error: " + e.message); }
+    if (!await confirmAction('Borrar esta direccion?', { title: 'Eliminar direccion' })) return;
+    try { await apiCall(`/Client/address/${addressId}`, 'DELETE'); await loadClients(); } catch (e) { showToast(e.message, 'error'); }
 }
 
 async function viewClientOrders(clientId) {
@@ -532,8 +562,8 @@ async function viewClientOrders(clientId) {
 
 async function updateOrderDateTime(orderId) {
     const input = document.getElementById(`date-order-${orderId}`);
-    if (!input || !input.value) return alert("Selecciona una fecha válida");
-    try { await apiCall(`/Orders/${orderId}/date`, 'PUT', { newDate: input.value }); alert("✅ Fecha actualizada"); if (window.loadDashboard) window.loadDashboard(); } catch (e) { alert("Error: " + e.message); }
+    if (!input || !input.value) return showToast('Selecciona una fecha valida.', 'warning');
+    try { await apiCall(`/Orders/${orderId}/date`, 'PUT', { newDate: input.value }); showToast('Fecha actualizada.'); if (window.loadDashboard) window.loadDashboard(); } catch (e) { showToast(e.message, 'error'); }
 }
 
 // ==========================================
@@ -597,12 +627,13 @@ async function loadRecipeItems(pid) {
 
 async function addIngredientToRecipe() {
     const iId = parseInt(document.getElementById('recipe-ingredient-select').value), qty = parseFloat(document.getElementById('recipe-quantity').value);
-    if (!iId || !qty) return alert("Datos inválidos");
-    try { await apiCall('/ProductIngredient', 'POST', { productId: currentProductIdForRecipe, ingredientId: iId, quantity: qty }); document.getElementById('recipe-quantity').value = ''; await loadRecipeItems(currentProductIdForRecipe); } catch (e) { alert(e.message); }
+    if (!iId || !qty) return showToast('Datos invalidos.', 'warning');
+    try { await apiCall('/ProductIngredient', 'POST', { productId: currentProductIdForRecipe, ingredientId: iId, quantity: qty }); document.getElementById('recipe-quantity').value = ''; await loadRecipeItems(currentProductIdForRecipe); } catch (e) { showToast(e.message, 'error'); }
 }
 
 async function removeIngredientFromRecipe(productId, ingredientId) {
-    if (confirm("¿Quitar ingrediente de la receta?")) try { await apiCall(`/ProductIngredient/product/${productId}/ingredient/${ingredientId}`, 'DELETE'); await loadRecipeItems(productId); } catch (e) { alert("Error: " + e.message); }
+    if (!await confirmAction('Quitar ingrediente de la receta?', { title: 'Editar receta', tone: 'warning' })) return;
+    try { await apiCall(`/ProductIngredient/product/${productId}/ingredient/${ingredientId}`, 'DELETE'); await loadRecipeItems(productId); } catch (e) { showToast(e.message, 'error'); }
 }
 
 // ==========================================
@@ -610,15 +641,150 @@ async function removeIngredientFromRecipe(productId, ingredientId) {
 // ==========================================
 window.renderCategoriesTable = () => { const tb = document.getElementById('categories-table'); if (tb) tb.innerHTML = allCategories.map(c => `<tr><td class="ps-4 fw-bold">${c.name}</td><td class="small">${c.description || '-'}</td><td class="text-end pe-4"><button class="btn btn-sm text-primary" onclick="editCategory(${c.id})"><i class="bi bi-pencil"></i></button> <button class="btn btn-sm text-danger" onclick="deleteCategory(${c.id})"><i class="bi bi-trash"></i></button></td></tr>`).join(''); };
 function editCategory(id) { const c = allCategories.find(x => x.id === id); if (c) { window.prepareCategoryModal(id); document.getElementById('cat-name').value = c.name; document.getElementById('cat-desc').value = c.description; catModal.show(); } }
-async function deleteCategory(id) { if (confirm("¿Eliminar?")) try { await apiCall(`/Categories/${id}`, 'DELETE'); await loadGlobalData(); } catch (e) { alert(e.message); } }
-function renderProducts() { const tb = document.getElementById('products-table'); if (tb) tb.innerHTML = allProducts.map(p => { const cName = allCategories.find(c => c.id == p.categoryId)?.name || '-'; return `<tr><td class="ps-4"><div style="width:40px;height:40px;background:#eee;border-radius:8px;overflow:hidden;">${p.imageUrl ? `<img src="${p.imageUrl}" style="width:100%;height:100%;object-fit:cover;">` : ''}</div></td><td class="fw-bold">${p.name}</td><td><span class="badge bg-light text-secondary border">${cName}</span></td><td class="fw-bold text-success">$${p.price}</td><td class="text-end pe-4"><button class="btn btn-sm me-1" onclick="openRecipeModal(${p.id})"><i class="bi bi-list-check"></i></button><button class="btn btn-sm text-primary" onclick="editProduct(${p.id})"><i class="bi bi-pencil"></i></button><button class="btn btn-sm text-danger" onclick="deleteProduct(${p.id})"><i class="bi bi-trash"></i></button></td></tr>`; }).join(''); }
-function editProduct(id) { const p = allProducts.find(x => x.id === id); if (p) { window.prepareProductModal(id); document.getElementById('prod-name').value = p.name; document.getElementById('prod-price').value = p.price; document.getElementById('prod-desc').value = p.description; document.getElementById('prod-img').value = p.imageUrl; document.getElementById('prod-category').value = p.categoryId; prodModal.show(); } }
-async function deleteProduct(id) { if (confirm("¿Eliminar?")) try { await apiCall(`/Products/${id}`, 'DELETE'); await loadGlobalData(); } catch (e) { alert(e.message); } }
-function renderIngredients() { const tb = document.getElementById('ingredients-table'); if (tb) tb.innerHTML = allIngredients.map(i => `<tr><td class="ps-4 fw-bold">${i.name}</td><td>${i.unitOfMeasure || ''}</td><td class="text-end pe-4"><button class="btn btn-sm text-primary" onclick="editIngredient(${i.id})"><i class="bi bi-pencil"></i></button><button class="btn btn-sm text-danger" onclick="deleteIngredient(${i.id})"><i class="bi bi-trash"></i></button></td></tr>`).join(''); }
-function editIngredient(id) { const i = allIngredients.find(x => x.id === id); if (i) { window.prepareIngredientModal(id); document.getElementById('ing-name').value = i.name; document.getElementById('ing-unit').value = i.unitOfMeasure || i.unit; ingModal.show(); } }
-async function deleteIngredient(id) { if (confirm("¿Eliminar?")) try { await apiCall(`/Ingredient/${id}`, 'DELETE'); await loadGlobalData(); } catch (e) { alert(e.message); } }
+async function deleteCategory(id) { if (!await confirmAction('Eliminar categoria?', { title: 'Eliminar categoria' })) return; try { await apiCall(`/Categories/${id}`, 'DELETE'); await loadGlobalData(); showToast('Categoria eliminada.'); } catch (e) { showToast(e.message, 'error'); } }
+function renderProducts() {
+    const tb = document.getElementById('products-table');
+    if (!tb) return;
+
+    tb.innerHTML = allProducts.map(p => {
+        const cName = allCategories.find(c => c.id == p.categoryId)?.name || '-';
+        const img = p.imageUrl
+            ? `<img src="${p.imageUrl}" alt="${escapeHtml(p.name)}">`
+            : '<i class="bi bi-image text-muted"></i>';
+
+        return `
+            <tr>
+                <td class="ps-4"><div class="table-thumb">${img}</div></td>
+                <td><div class="fw-bold">${escapeHtml(p.name)}</div><div class="small text-muted text-truncate table-desc">${escapeHtml(p.description || '')}</div></td>
+                <td><span class="badge rounded-pill badge-soft">${escapeHtml(cName)}</span></td>
+                <td class="fw-bold text-success">$${Number(p.price || 0).toLocaleString('es-UY')}</td>
+                <td class="text-end pe-4">
+                    <button class="btn btn-icon" onclick="openRecipeModal(${p.id})" title="Receta"><i class="bi bi-list-check"></i></button>
+                    <button class="btn btn-icon text-primary" onclick="editProduct(${p.id})" title="Editar"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-icon text-danger" onclick="deleteProduct(${p.id})" title="Eliminar"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>`;
+    }).join('');
+}
+function editProduct(id) {
+    const p = allProducts.find(x => x.id === id);
+    if (!p) return;
+
+    window.prepareProductModal(id);
+    document.getElementById('prod-name').value = p.name || '';
+    document.getElementById('prod-price').value = p.price || 0;
+    document.getElementById('prod-desc').value = p.description || '';
+    document.getElementById('prod-category').value = p.categoryId;
+    resetProductImage(p.imageUrl || '');
+    prodModal.show();
+}
+async function deleteProduct(id) { if (!await confirmAction('Eliminar producto?', { title: 'Eliminar producto' })) return; try { await apiCall(`/Products/${id}`, 'DELETE'); await loadGlobalData(); showToast('Producto eliminado.'); } catch (e) { showToast(e.message, 'error'); } }
+function renderIngredients() {
+    const tb = document.getElementById('ingredients-table');
+    if (!tb) return;
+
+    tb.innerHTML = allIngredients.map(i => {
+        const img = i.imageUrl
+            ? `<img src="${i.imageUrl}" alt="${escapeHtml(i.name)}">`
+            : '<i class="bi bi-image text-muted"></i>';
+
+        return `
+            <tr>
+                <td class="ps-4"><div class="table-thumb">${img}</div></td>
+                <td class="fw-bold">${escapeHtml(i.name)}</td>
+                <td>${escapeHtml(i.unitOfMeasure || i.unit || '')}</td>
+                <td class="text-end pe-4">
+                    <button class="btn btn-icon text-primary" onclick="editIngredient(${i.id})" title="Editar"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-icon text-danger" onclick="deleteIngredient(${i.id})" title="Eliminar"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>`;
+    }).join('');
+}
+function editIngredient(id) {
+    const i = allIngredients.find(x => x.id === id);
+    if (!i) return;
+
+    window.prepareIngredientModal(id);
+    document.getElementById('ing-name').value = i.name || '';
+    document.getElementById('ing-unit').value = i.unitOfMeasure || i.unit || '';
+    resetIngredientImage(i.imageUrl || '');
+    ingModal.show();
+}
+async function deleteIngredient(id) { if (!await confirmAction('Eliminar ingrediente?', { title: 'Eliminar ingrediente' })) return; try { await apiCall(`/Ingredient/${id}`, 'DELETE'); await loadGlobalData(); showToast('Ingrediente eliminado.'); } catch (e) { showToast(e.message, 'error'); } }
 function updateIngredientSelect(l) { const el = document.getElementById('stock-ingredient-id'); if (el) el.innerHTML = '<option value="">Selecciona...</option>' + l.map(i => `<option value="${i.id}">${i.name}</option>`).join(''); }
 function updateCategorySelect(l) { const el = document.getElementById('prod-category'); if (el) el.innerHTML = '<option value="">Selecciona...</option>' + l.map(c => `<option value="${c.id}">${c.name}</option>`).join(''); }
+
+function setupMediaUploaders() {
+    setupImageUploader({
+        dropzoneId: 'prod-image-dropzone',
+        inputId: 'prod-image-file',
+        previewId: 'prod-image-preview',
+        assignFile: file => selectedProductImageFile = file
+    });
+
+    setupImageUploader({
+        dropzoneId: 'ing-image-dropzone',
+        inputId: 'ing-image-file',
+        previewId: 'ing-image-preview',
+        assignFile: file => selectedIngredientImageFile = file
+    });
+}
+
+function setupImageUploader({ dropzoneId, inputId, previewId, assignFile }) {
+    const dropzone = document.getElementById(dropzoneId);
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
+    if (!dropzone || !input || !preview) return;
+
+    const selectFile = file => {
+        if (!file) return;
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+            showToast('Usa una imagen JPG, PNG o WEBP.', 'warning');
+            return;
+        }
+        assignFile(file);
+        preview.innerHTML = `<img src="${URL.createObjectURL(file)}" alt="Preview">`;
+    };
+
+    dropzone.addEventListener('click', () => input.click());
+    input.addEventListener('change', e => selectFile(e.target.files?.[0]));
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, e => {
+            e.preventDefault();
+            dropzone.classList.add('is-dragging');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, e => {
+            e.preventDefault();
+            dropzone.classList.remove('is-dragging');
+        });
+    });
+
+    dropzone.addEventListener('drop', e => selectFile(e.dataTransfer.files?.[0]));
+}
+
+function resetProductImage(url = '') {
+    selectedProductImageFile = null;
+    const hidden = document.getElementById('prod-img');
+    const preview = document.getElementById('prod-image-preview');
+    const input = document.getElementById('prod-image-file');
+    if (hidden) hidden.value = url;
+    if (input) input.value = '';
+    if (preview) preview.innerHTML = url ? `<img src="${url}" alt="Preview">` : '<i class="bi bi-cloud-arrow-up fs-2"></i>';
+}
+
+function resetIngredientImage(url = '') {
+    selectedIngredientImageFile = null;
+    const hidden = document.getElementById('ing-img');
+    const preview = document.getElementById('ing-image-preview');
+    const input = document.getElementById('ing-image-file');
+    if (hidden) hidden.value = url;
+    if (input) input.value = '';
+    if (preview) preview.innerHTML = url ? `<img src="${url}" alt="Preview">` : '<i class="bi bi-cloud-arrow-up fs-2"></i>';
+}
 
 // ==========================================
 // 📝 CONFIGURACIÓN DE FORMULARIOS
@@ -626,10 +792,73 @@ function updateCategorySelect(l) { const el = document.getElementById('prod-cate
 function setupForms() {
     const setup = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('submit', fn); };
     
-    setup('category-form', async (e) => { e.preventDefault(); const id = document.getElementById('cat-id').value; try { await apiCall(id ? `/Categories/${id}` : '/Categories', id ? 'PUT' : 'POST', { id: id ? parseInt(id) : 0, name: document.getElementById('cat-name').value, description: document.getElementById('cat-desc').value, branchId: 0 }); catModal.hide(); await loadGlobalData(); } catch (err) { alert(err.message); } });
-    setup('product-form', async (e) => { e.preventDefault(); const id = document.getElementById('prod-id').value; try { await apiCall(id ? `/Products/${id}` : '/Products', id ? 'PUT' : 'POST', { id: id ? parseInt(id) : 0, name: document.getElementById('prod-name').value, description: document.getElementById('prod-desc').value, price: parseFloat(document.getElementById('prod-price').value), imageUrl: document.getElementById('prod-img').value, categoryId: parseInt(document.getElementById('prod-category').value), isActive: true, branchId: 0 }); prodModal.hide(); await loadGlobalData(); } catch (err) { alert(err.message); } });
-    setup('ingredient-form', async (e) => { e.preventDefault(); const id = document.getElementById('ing-id').value; try { await apiCall(id ? `/Ingredient/${id}` : '/Ingredient', id ? 'PUT' : 'POST', { id: id ? parseInt(id) : 0, name: document.getElementById('ing-name').value, unitOfMeasure: document.getElementById('ing-unit').value, branchId: 0 }); ingModal.hide(); await loadGlobalData(); } catch (err) { alert(err.message); } });
-    setup('stock-form', async (e) => { e.preventDefault(); const qty = parseFloat(document.getElementById('stock-quantity').value) || 0; const min = document.getElementById('stock-min').value ? parseFloat(document.getElementById('stock-min').value) : null; const type = document.getElementById('stock-type').value; if (qty > 0 && !type) { alert('Selecciona tipo'); return; } if (qty === 0 && min === null) { alert('Ingresa datos'); return; } try { await apiCall('/BranchStock/movement', 'POST', { branchId: 0, ingredientId: parseInt(document.getElementById('stock-ingredient-id').value), quantity: qty, movementType: type || "IN", minimumStock: min }); stockModal.hide(); await window.loadStock(); } catch (e) { alert(e.message); } });
+    setup('category-form', async (e) => { e.preventDefault(); const id = document.getElementById('cat-id').value; const button = e.submitter; try { setButtonLoading(button, true); await apiCall(id ? `/Categories/${id}` : '/Categories', id ? 'PUT' : 'POST', { id: id ? parseInt(id) : 0, name: document.getElementById('cat-name').value.trim(), description: document.getElementById('cat-desc').value.trim(), branchId: 0 }); catModal.hide(); await loadGlobalData(); showToast(id ? 'Categoria actualizada.' : 'Categoria creada.'); } catch (err) { showToast(err.message, 'error'); } finally { setButtonLoading(button, false); } });
+    setup('product-form', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('prod-id').value;
+        const button = e.submitter;
+
+        try {
+            setButtonLoading(button, true);
+            let imageUrl = document.getElementById('prod-img').value;
+
+            if (selectedProductImageFile) {
+                const uploaded = await uploadImage(selectedProductImageFile, 'products');
+                imageUrl = uploaded.url;
+            }
+
+            await apiCall(id ? `/Products/${id}` : '/Products', id ? 'PUT' : 'POST', {
+                id: id ? parseInt(id) : 0,
+                name: document.getElementById('prod-name').value.trim(),
+                description: document.getElementById('prod-desc').value.trim(),
+                price: parseFloat(document.getElementById('prod-price').value),
+                imageUrl,
+                categoryId: parseInt(document.getElementById('prod-category').value),
+                isActive: true,
+                branchId: 0
+            });
+
+            prodModal.hide();
+            await loadGlobalData();
+            showToast(id ? 'Producto actualizado.' : 'Producto creado.');
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            setButtonLoading(button, false);
+        }
+    });
+    setup('ingredient-form', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('ing-id').value;
+        const button = e.submitter;
+
+        try {
+            setButtonLoading(button, true);
+            let imageUrl = document.getElementById('ing-img').value;
+
+            if (selectedIngredientImageFile) {
+                const uploaded = await uploadImage(selectedIngredientImageFile, 'ingredients');
+                imageUrl = uploaded.url;
+            }
+
+            await apiCall(id ? `/Ingredient/${id}` : '/Ingredient', id ? 'PUT' : 'POST', {
+                id: id ? parseInt(id) : 0,
+                name: document.getElementById('ing-name').value.trim(),
+                unitOfMeasure: document.getElementById('ing-unit').value.trim(),
+                imageUrl,
+                branchId: 0
+            });
+
+            ingModal.hide();
+            await loadGlobalData();
+            showToast(id ? 'Ingrediente actualizado.' : 'Ingrediente creado.');
+        } catch (err) {
+            showToast(err.message, 'error');
+        } finally {
+            setButtonLoading(button, false);
+        }
+    });
+    setup('stock-form', async (e) => { e.preventDefault(); const button = e.submitter; const qty = parseFloat(document.getElementById('stock-quantity').value) || 0; const min = document.getElementById('stock-min').value ? parseFloat(document.getElementById('stock-min').value) : null; const type = document.getElementById('stock-type').value; if (qty > 0 && !type) { showToast('Selecciona el tipo de movimiento.', 'warning'); return; } if (qty === 0 && min === null) { showToast('Ingresa una cantidad o minimo de stock.', 'warning'); return; } try { setButtonLoading(button, true); await apiCall('/BranchStock/movement', 'POST', { branchId: 0, ingredientId: parseInt(document.getElementById('stock-ingredient-id').value), quantity: qty, movementType: type || "IN", minimumStock: min }); stockModal.hide(); await window.loadStock(); showToast('Stock actualizado.'); } catch (e) { showToast(e.message, 'error'); } finally { setButtonLoading(button, false); } });
 
     setup('client-form', async (e) => {
         e.preventDefault();
@@ -639,15 +868,15 @@ function setupForms() {
             const newClient = await apiCall('/Client', 'POST', clientPayload);
             if (newClient && newClient.id) {
                 await apiCall(`/Client/${newClient.id}/addresses`, 'POST', addressPayload);
-                alert('¡Cliente guardado!');
+                showToast('Cliente guardado.');
                 clientModal.hide();
                 await loadGlobalData();
                 if (isCreatingOrderContext) { selectClientForOrder(newClient.id, `${newClient.name} ${newClient.lastName}`, newClient.phone); isCreatingOrderContext = false; }
             }
-        } catch (e) { alert("Error: " + e.message); }
+        } catch (e) { showToast(e.message, 'error'); }
     });
 
-    setup('address-form', async (e) => { e.preventDefault(); const clientId = document.getElementById('addr-client-id').value; if (!clientId) return; const payload = { street: document.getElementById('addr-street').value, city: document.getElementById('addr-city').value, region: 'Canelones', postalCode: '15000', country: 'UY', label: document.getElementById('addr-label').value }; try { if (editingAddressId) { await apiCall(`/Client/address/${editingAddressId}`, 'PUT', { ...payload, id: editingAddressId, clientId: parseInt(clientId) }); } else { await apiCall(`/Client/${clientId}/addresses`, 'POST', payload); } addressModal.hide(); await loadClients(); } catch (e) { alert("Error: " + e.message); } });
+    setup('address-form', async (e) => { e.preventDefault(); const clientId = document.getElementById('addr-client-id').value; if (!clientId) return; const payload = { street: document.getElementById('addr-street').value, city: document.getElementById('addr-city').value, region: 'Canelones', postalCode: '15000', country: 'UY', label: document.getElementById('addr-label').value }; try { if (editingAddressId) { await apiCall(`/Client/address/${editingAddressId}`, 'PUT', { ...payload, id: editingAddressId, clientId: parseInt(clientId) }); } else { await apiCall(`/Client/${clientId}/addresses`, 'POST', payload); } addressModal.hide(); await loadClients(); } catch (e) { showToast(e.message, 'error'); } });
 }
 
 // ==========================================
@@ -681,19 +910,19 @@ function animateValue(id, value, prefix = "") { const el = document.getElementBy
 function renderSalesChart(data) {
     const ctx = document.getElementById('salesChart'); if (!ctx) return;
     if (salesChartInstance) salesChartInstance.destroy();
-    salesChartInstance = new Chart(ctx, { type: 'bar', data: { labels: data.map(d => d.label), datasets: [{ label: 'Ventas ($)', data: data.map(d => d.value), backgroundColor: 'rgba(13, 110, 253, 0.7)', borderColor: '#0d6efd', borderWidth: 1, borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => '$ ' + c.raw.toLocaleString('es-UY') } } }, scales: { y: { beginAtZero: true } } } });
+    salesChartInstance = new Chart(ctx, { type: 'bar', data: { labels: data.map(d => d.label), datasets: [{ label: 'Ventas ($)', data: data.map(d => d.value), backgroundColor: 'rgba(40, 84, 232, 0.72)', borderColor: '#2854e8', borderWidth: 1, borderRadius: 6 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => '$ ' + c.raw.toLocaleString('es-UY') } } }, scales: { y: { beginAtZero: true } } } });
 }
 
 function renderTopProductsChart(data) {
     const ctx = document.getElementById('topProductsChart'); if (!ctx) return;
     if (topProductsChartInstance) topProductsChartInstance.destroy();
-    topProductsChartInstance = new Chart(ctx, { type: 'bar', data: { labels: data.map(d => d.label), datasets: [{ label: 'Unidades', data: data.map(d => d.value), backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff'], borderWidth: 1, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
+    topProductsChartInstance = new Chart(ctx, { type: 'bar', data: { labels: data.map(d => d.label), datasets: [{ label: 'Unidades', data: data.map(d => d.value), backgroundColor: ['#2854e8', '#0f9f8c', '#f3b233', '#e14f5a', '#667085'], borderWidth: 1, borderRadius: 6 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
 }
 
 function renderPeakHoursChart(data) {
     const ctx = document.getElementById('peakHoursChart'); if (!ctx) return;
     if (peakHoursChartInstance) peakHoursChartInstance.destroy();
-    peakHoursChartInstance = new Chart(ctx, { type: 'line', data: { labels: data.map(d => d.label), datasets: [{ label: 'Pedidos', data: data.map(d => d.value), borderColor: '#dc3545', backgroundColor: 'rgba(220, 53, 69, 0.1)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#fff', pointBorderColor: '#dc3545' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } } });
+    peakHoursChartInstance = new Chart(ctx, { type: 'line', data: { labels: data.map(d => d.label), datasets: [{ label: 'Pedidos', data: data.map(d => d.value), borderColor: '#0f9f8c', backgroundColor: 'rgba(15, 159, 140, 0.12)', fill: true, tension: 0.42, pointRadius: 4, pointBackgroundColor: '#fff', pointBorderColor: '#0f9f8c' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } } });
 }
 
 // ==========================================
@@ -723,31 +952,31 @@ function renderCashUI() {
 }
 
 async function confirmOpenRegister() {
-    try { await apiCall('/CashRegister/open', 'POST', { initialBalance: parseFloat(document.getElementById('open-amount').value) || 0, openTime: new Date().toISOString(), operationalDate: getOperationalDate().toISOString() }); const m = bootstrap.Modal.getInstance(document.getElementById('openRegisterModal')); if (m) m.hide(); await loadCashInfo(); alert("✅ Caja Abierta."); } catch (e) { alert("Error: " + e.message); }
+    try { await apiCall('/CashRegister/open', 'POST', { initialBalance: parseFloat(document.getElementById('open-amount').value) || 0, openTime: new Date().toISOString(), operationalDate: getOperationalDate().toISOString() }); const m = bootstrap.Modal.getInstance(document.getElementById('openRegisterModal')); if (m) m.hide(); await loadCashInfo(); showToast('Caja abierta.'); } catch (e) { showToast(e.message, 'error'); }
 }
 
 function prepareCloseRegister() { document.getElementById('modal-expected-amount').textContent = document.getElementById('cash-expected').textContent; document.getElementById('close-real-amount').value = ''; document.getElementById('close-notes').value = ''; new bootstrap.Modal(document.getElementById('closeRegisterModal')).show(); }
 
 async function confirmCloseRegister() {
     const real = parseFloat(document.getElementById('close-real-amount').value) || 0; const diff = real - (parseFloat(document.getElementById('modal-expected-amount').textContent.replace('$', '')) || 0);
-    try { await apiCall('/CashRegister/close', 'POST', { finalBalance: real, notes: document.getElementById('close-notes').value, closeTime: new Date().toISOString() }); const m = bootstrap.Modal.getInstance(document.getElementById('closeRegisterModal')); if (m) m.hide(); await loadCashInfo(); alert(`✅ Caja Cerrada.${diff < 0 ? `\n⚠️ Faltante: $${Math.abs(diff)}` : (diff > 0 ? `\n🤑 Sobrante: $${diff}` : '')}`); } catch (e) { alert("Error: " + e.message); }
+    try { await apiCall('/CashRegister/close', 'POST', { finalBalance: real, notes: document.getElementById('close-notes').value, closeTime: new Date().toISOString() }); const m = bootstrap.Modal.getInstance(document.getElementById('closeRegisterModal')); if (m) m.hide(); await loadCashInfo(); showToast(diff < 0 ? `Caja cerrada. Faltante: $${Math.abs(diff)}` : (diff > 0 ? `Caja cerrada. Sobrante: $${diff}` : 'Caja cerrada.')); } catch (e) { showToast(e.message, 'error'); }
 }
 
 window.openExpenseModal = function () { const m = document.getElementById('expenseModal'); if (m) { document.getElementById('expense-amount').value = ''; document.getElementById('expense-desc').value = ''; bootstrap.Modal.getOrCreateInstance(m).show(); } };
 
 async function addCashMovement() {
-    const amt = parseFloat(document.getElementById('expense-amount').value); const desc = document.getElementById('expense-desc').value; if (!amt || !desc) return alert("Ingresa monto y descripción");
-    try { await apiCall('/CashRegister/movement', 'POST', { type: document.getElementById('expense-type').value || "OUT", amount: amt, description: desc }); const m = bootstrap.Modal.getInstance(document.getElementById('expenseModal')); if (m) m.hide(); await loadCashInfo(); alert("Movimiento registrado."); } catch (e) { alert("Error: " + e.message); }
+    const amt = parseFloat(document.getElementById('expense-amount').value); const desc = document.getElementById('expense-desc').value; if (!amt || !desc) return showToast('Ingresa monto y descripcion.', 'warning');
+    try { await apiCall('/CashRegister/movement', 'POST', { type: document.getElementById('expense-type').value || "OUT", amount: amt, description: desc }); const m = bootstrap.Modal.getInstance(document.getElementById('expenseModal')); if (m) m.hide(); await loadCashInfo(); showToast('Movimiento registrado.'); } catch (e) { showToast(e.message, 'error'); }
 }
 
 async function toggleHistoryView() { const s = document.getElementById('cash-history-section'); if (s.classList.contains('d-none')) { s.classList.remove('d-none'); await loadCashHistoryTable(); } else s.classList.add('d-none'); }
 
 async function loadCashHistoryTable() {
     const tbody = document.getElementById('cash-history-table'); tbody.innerHTML = '<tr><td colspan="6" class="text-center">Cargando...</td></tr>';
-    try { const history = await apiCall('/CashRegister/history'); if (!history || !history.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No hay cierres.</td></tr>'; return; } tbody.innerHTML = history.map(h => `<tr><td class="fw-bold">#${h.id}</td><td>${formatFechaCompleta(h.openTime)}</td><td>${formatFechaCompleta(h.closeTime)}</td><td class="fw-bold">$${h.finalBalance}</td><td class="${h.difference < 0 ? 'text-danger' : (h.difference > 0 ? 'text-success' : 'text-muted')}">${h.difference < 0 ? '📉' : (h.difference > 0 ? '📈' : '✅')} $${h.difference}</td><td><button class="btn btn-sm btn-outline-primary" onclick="loadPastSession(${h.id})">Detalle</button></td></tr>`).join(''); } catch (e) { tbody.innerHTML = `<tr><td colspan="6" class="text-danger text-center">Error: ${e.message}</td></tr>`; }
+    try { const history = await apiCall('/CashRegister/history'); if (!history || !history.length) { tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No hay cierres.</td></tr>'; return; } tbody.innerHTML = history.map(h => `<tr><td class="fw-bold">#${h.id}</td><td>${formatFechaCompleta(h.openTime)}</td><td>${formatFechaCompleta(h.closeTime)}</td><td class="fw-bold">$${h.finalBalance}</td><td class="${h.difference < 0 ? 'text-danger' : (h.difference > 0 ? 'text-success' : 'text-muted')}">$${h.difference}</td><td><button class="btn btn-sm btn-outline-primary" onclick="loadPastSession(${h.id})">Detalle</button></td></tr>`).join(''); } catch (e) { tbody.innerHTML = `<tr><td colspan="6" class="text-danger text-center">Error: ${e.message}</td></tr>`; }
 }
 
-async function loadPastSession(id) { try { cashStatus = await apiCall(`/CashRegister/session/${id}`); document.getElementById('cash-history-section').classList.add('d-none'); document.getElementById('history-warning-banner').classList.remove('d-none'); document.getElementById('hist-date-lbl').textContent = formatFechaCompleta(cashStatus.closeTime); renderCashUI(); } catch (e) { alert("Error: " + e.message); } }
+async function loadPastSession(id) { try { cashStatus = await apiCall(`/CashRegister/session/${id}`); document.getElementById('cash-history-section').classList.add('d-none'); document.getElementById('history-warning-banner').classList.remove('d-none'); document.getElementById('hist-date-lbl').textContent = formatFechaCompleta(cashStatus.closeTime); renderCashUI(); } catch (e) { showToast(e.message, 'error'); } }
 
 // ==========================================
 // 🔍 BUSCADOR DE CLIENTES
@@ -783,7 +1012,12 @@ function setupRoleViews(role) {
 // 🕵️ RASTREO MANUAL
 // ==========================================
 window.promptForTracking = async function() {
-    const input = prompt("🔍 Ingresa el ID del pedido a rastrear:"); if (!input) return; currentlyTrackingId = parseInt(input);
+    const input = await promptInput('ID del pedido a rastrear', {
+        title: 'Rastreo manual',
+        placeholder: 'Ej: 128'
+    });
+    if (!input) return;
+    currentlyTrackingId = parseInt(input);
     const m = document.getElementById('trackingModal'); if(m) new bootstrap.Modal(m).show();
     if(document.getElementById('track-order-id')) document.getElementById('track-order-id').textContent = currentlyTrackingId;
     window.updateTrackingUI(null, 'Searching'); 
@@ -808,6 +1042,17 @@ window.updateTrackingUI = function(orderId, status) {
     const s = sMap[status]; if(s) { lbl.innerText = s.l; icon.innerHTML = s.i; bar.className = `progress-bar ${s.bc}`; bar.style.width = s.w; msg.innerText = s.m; }
 };
 
-window.copyDriverLink = function(link) { navigator.clipboard.writeText(link).then(() => alert("✅ Link para Repartidor copiado.")).catch(() => prompt("Copia el link manually:", link)); };
+async function copyDriverLink(link) {
+    try {
+        await navigator.clipboard.writeText(link);
+        showToast('Link para repartidor copiado.');
+    } catch {
+        await promptInput('Copia el link manualmente', {
+            title: 'Link para repartidor',
+            value: link,
+            confirmLabel: 'Cerrar'
+        });
+    }
+}
 
 window.confirmOpenRegister = confirmOpenRegister; window.confirmCloseRegister = confirmCloseRegister; window.prepareCloseRegister = prepareCloseRegister; window.initCashView = initCashView; window.toggleHistoryView = toggleHistoryView; window.loadPastSession = loadPastSession; window.cancelOrder = cancelOrder; window.openExpenseModal = openExpenseModal; window.openClientModalFromOrder = openClientModalFromOrder; window.selectClientForOrder = selectClientForOrder; window.clearClientSelection = clearClientSelection; window.promptForTracking = promptForTracking; window.updateTrackingUI = updateTrackingUI; window.updateOrderStatus = updateOrderStatus; window.openOrderDetailModal = openOrderDetailModal; window.copyDriverLink = copyDriverLink;

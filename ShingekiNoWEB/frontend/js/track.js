@@ -145,9 +145,9 @@ async function loadOrderData(code, isUpdate = false) {
 
 function translatePayment(method) {
     const map = {
-        'Cash': { label: 'Efectivo', text: 'Efectivo 💵' },
-        'MercadoPago': { label: 'MercadoPago', text: 'MercadoPago 📱' },
-        'Transfer': { label: 'Transferencia', text: 'Transferencia Bancaria 🏦' }
+        'Cash': { label: 'Efectivo', text: 'Efectivo' },
+        'MercadoPago': { label: 'MercadoPago', text: 'MercadoPago' },
+        'Transfer': { label: 'Transferencia', text: 'Transferencia Bancaria' }
     };
     return map[method] || { label: method, text: method };
 }
@@ -160,13 +160,13 @@ function updateUI(status) {
     let icon = 'bi-circle', text = status, color = 'secondary', width = '0%';
 
     // Mapeo de Estados
-    if (status === 'Pending') { icon='bi-clock-history'; text='Esperando Confirmación'; color='warning'; width='10%'; }
+    if (status === 'Pending') { icon='bi-clock-history'; text='Esperando confirmacion'; color='warning'; width='10%'; }
     else if (status === 'Confirmed') { icon='bi-check-circle'; text='Confirmado'; color='info'; width='25%'; }
-    else if (status === 'Cooking') { icon='bi-fire'; text='En Cocina 🔥'; color='danger'; width='50%'; }
+    else if (status === 'Cooking') { icon='bi-fire'; text='En cocina'; color='danger'; width='50%'; }
     else if (status === 'Ready') { icon='bi-box-seam'; text='Listo para Salir'; color='success'; width='75%'; }
     
     else if (status === 'OnTheWay') { 
-        icon='bi-scooter'; text='En Camino 🛵'; color='primary'; width='90%'; 
+        icon='bi-scooter'; text='En camino'; color='primary'; width='90%'; 
         
         /* 🚧 FUTURO: MOSTRAR MAPA
            Descomentar esto cuando la App del Repartidor esté lista
@@ -182,7 +182,7 @@ function updateUI(status) {
     }
     
     else if (status === 'Delivered') { 
-        icon='bi-emoji-smile-fill'; text='¡Entregado!'; color='success'; width='100%'; 
+        icon='bi-check-circle-fill'; text='Entregado'; color='success'; width='100%'; 
         if(mapSection) mapSection.style.display = 'none';
     }
     else if (status === 'Cancelled') { 
@@ -197,7 +197,7 @@ function updateUI(status) {
                 <i class="bi ${icon}"></i>
             </div>
             <h2 class="fw-bold text-${color} mb-0">${text}</h2>
-            <p class="text-muted small mt-2">Actualización en tiempo real</p>
+            <p class="text-muted small mt-2">Actualizacion en tiempo real</p>
         `;
     }
 

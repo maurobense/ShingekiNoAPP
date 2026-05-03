@@ -4,143 +4,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso | OmniGestor</title>
+    <title>Acceso | Kordena</title>
+    <meta name="theme-color" content="#08111f">
+    <link rel="icon" href="./kordena-icon.svg" type="image/svg+xml">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
-
-    <style>
-        /* Estilos específicos para la transición del login */
-        .auth-container {
-            max-width: 400px;
-            width: 100%;
-            padding: 15px;
-        }
-
-        .form-toggle {
-            cursor: pointer;
-            transition: color 0.2s;
-            text-decoration: none;
-        }
-
-        .form-toggle:hover {
-            color: var(--bs-primary) !important;
-            text-decoration: underline;
-        }
-    </style>
 </head>
 
-<body class="bg-body-tertiary d-flex align-items-center justify-content-center" style="height: 100vh; margin: 0;">
+<body class="auth-page">
+    <main class="auth-shell fade-in">
+        <section class="auth-visual">
+            <div class="auth-visual__content">
+                <a class="brand-lockup" href="index.html" aria-label="Kordena">
+                    <span class="brand-mark">K</span>
+                    <span>
+                        <span class="brand-title">Kordena</span>
+                        <span class="brand-subtitle">Control operativo</span>
+                    </span>
+                </a>
 
-    <div class="auth-container">
-        <div class="text-center mb-4 fade-in">
-            <div class="d-inline-block bg-primary bg-opacity-10 p-3 rounded-circle mb-2">
-                <i class="bi bi-box-seam text-primary" style="font-size: 3rem;"></i>
+                <p class="auth-kicker">Gestion empresarial</p>
+                <h1 class="auth-title">Tu operacion, inventario y ventas en una sola consola.</h1>
+                <p class="auth-copy">
+                    Kordena ordena pedidos, caja, stock, equipo y clientes con una interfaz precisa para trabajar rapido.
+                </p>
+
+                <div class="auth-preview" aria-hidden="true">
+                    <div class="auth-preview__tile">
+                        <span class="auth-preview__label">Ventas hoy</span>
+                        <span class="auth-preview__value">$12.4k</span>
+                    </div>
+                    <div class="auth-preview__tile">
+                        <span class="auth-preview__label">Pedidos</span>
+                        <span class="auth-preview__value">38</span>
+                    </div>
+                    <div class="auth-preview__tile">
+                        <span class="auth-preview__label">Stock critico</span>
+                        <span class="auth-preview__value">04</span>
+                    </div>
+                </div>
             </div>
-            <h2 class="fw-bold mb-1">OmniGestor</h2>
-            <p class="text-muted small">Panel de Gestión Comercial</p>
-        </div>
+        </section>
 
-        <div id="login-view" class="card border-0 shadow-sm rounded-4 p-4 fade-in">
-            <form id="login-form">
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">Usuario</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-person"></i></span>
-                        <input type="text" id="login-username" class="form-control border-start-0 bg-light" required placeholder="Ej: admin">
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label small fw-bold text-muted">Contraseña</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock"></i></span>
-                        <input type="password" id="login-password" class="form-control border-start-0 bg-light" required placeholder="••••••••">
-                    </div>
-                </div>
-                
-                <div id="login-error" class="alert alert-danger small d-none py-2 text-center border-0 bg-danger bg-opacity-10 text-danger fw-bold"></div>
-                
-                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Ingresar</button>
-                
-                <div class="text-center mt-4">
-                    <span class="text-muted small">¿No tienes cuenta?</span> 
-                    <a href="#" id="go-to-register" class="small fw-bold form-toggle text-primary">Regístrate aquí</a>
-                </div>
-            </form>
-        </div>
+        <section class="auth-panel">
+            <div class="mb-4">
+                <span class="brand-subtitle">Acceso seguro</span>
+                <h2 class="fw-bold mb-1">Bienvenido de nuevo</h2>
+                <p class="text-muted mb-0">Ingresa con tu usuario para continuar.</p>
+            </div>
 
-        <div id="register-view" class="card border-0 shadow-sm rounded-4 p-4 d-none fade-in">
-            <form id="register-form">
-                <h5 class="fw-bold text-center mb-3">Crear Cuenta</h5>
-                <div class="row g-2 mb-2">
-                    <div class="col-6">
-                        <label class="form-label small fw-bold text-muted">Nombre</label>
-                        <input type="text" id="reg-name" class="form-control form-control-sm bg-light" required>
+            <div id="login-view" class="auth-card card fade-in">
+                <form id="login-form">
+                    <div class="mb-3">
+                        <label class="form-label">Usuario</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0"><i class="bi bi-person"></i></span>
+                            <input type="text" id="login-username" class="form-control border-start-0" required placeholder="admin" autocomplete="username">
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <label class="form-label small fw-bold text-muted">Apellido</label>
-                        <input type="text" id="reg-lastname" class="form-control form-control-sm bg-light" required>
-                    </div>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label small fw-bold text-muted">Teléfono</label>
-                    <input type="number" id="reg-phone" class="form-control form-control-sm bg-light" required>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label small fw-bold text-muted">Usuario (Login)</label>
-                    <input type="text" id="reg-username" class="form-control form-control-sm bg-light" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">Contraseña</label>
-                    <input type="password" id="reg-password" class="form-control form-control-sm bg-light" required>
-                </div>
-                
-                <div id="reg-error" class="alert alert-danger small d-none py-2 text-center mb-2 border-0 bg-danger bg-opacity-10 text-danger"></div>
-                <div id="reg-success" class="alert alert-success small d-none py-2 text-center mb-2 border-0 bg-success bg-opacity-10 text-success fw-bold"><i class="bi bi-check-circle-fill"></i> ¡Registro exitoso!</div>
-                
-                <button type="submit" class="btn btn-dark w-100 py-2 fw-bold">Crear Cuenta</button>
-                
-                <div class="text-center mt-3">
-                    <span class="text-muted small">¿Ya tienes cuenta?</span> 
-                    <a href="#" id="go-to-login" class="small fw-bold form-toggle text-primary">Inicia Sesión</a>
-                </div>
-            </form>
-        </div>
 
-        <p class="text-center mt-4 text-muted small opacity-50">&copy; 2026 OmniGestor Tech</p>
-    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Contrasena</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0"><i class="bi bi-shield-lock"></i></span>
+                            <input type="password" id="login-password" class="form-control border-start-0" required placeholder="********" autocomplete="current-password">
+                        </div>
+                    </div>
+
+                    <div id="login-error" class="alert alert-danger small d-none py-2 text-center"></div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2">Ingresar</button>
+
+                    <div class="text-center mt-4">
+                        <span class="text-muted small">No tienes cuenta?</span>
+                        <a href="#" id="go-to-register" class="small fw-bold text-decoration-none">Crear cuenta</a>
+                    </div>
+                </form>
+            </div>
+
+            <div id="register-view" class="auth-card card d-none fade-in">
+                <form id="register-form">
+                    <div class="mb-3">
+                        <h5 class="fw-bold mb-1">Crear cuenta</h5>
+                        <p class="text-muted small mb-0">El perfil queda listo para operar en el panel.</p>
+                    </div>
+
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" id="reg-name" class="form-control" required autocomplete="given-name">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Apellido</label>
+                            <input type="text" id="reg-lastname" class="form-control" required autocomplete="family-name">
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label">Telefono</label>
+                        <input type="number" id="reg-phone" class="form-control" required autocomplete="tel">
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label">Usuario</label>
+                        <input type="text" id="reg-username" class="form-control" required autocomplete="username">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Contrasena</label>
+                        <input type="password" id="reg-password" class="form-control" required autocomplete="new-password">
+                    </div>
+
+                    <div id="reg-error" class="alert alert-danger small d-none py-2 text-center mb-2"></div>
+                    <div id="reg-success" class="alert alert-success small d-none py-2 text-center mb-2">
+                        Registro creado correctamente.
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2">Crear cuenta</button>
+
+                    <div class="text-center mt-3">
+                        <span class="text-muted small">Ya tienes cuenta?</span>
+                        <a href="#" id="go-to-login" class="small fw-bold text-decoration-none">Iniciar sesion</a>
+                    </div>
+                </form>
+            </div>
+
+            <p class="auth-footer text-center mt-4 mb-0">Kordena Cloud Suite 2026</p>
+        </section>
+    </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const loginView = document.getElementById('login-view');
-            const registerView = document.getElementById('register-view');
-            const goToRegisterBtn = document.getElementById('go-to-register');
-            const goToLoginBtn = document.getElementById('go-to-login');
-
-            // Cargar tema guardado usando la nueva clave de OmniGestor
-            const savedTheme = localStorage.getItem('omnigestor_theme') || 'light';
+            const savedTheme = localStorage.getItem('kordena_theme') || 'light';
             document.documentElement.setAttribute('data-bs-theme', savedTheme);
             if (savedTheme === 'dark') {
                 document.body.setAttribute('data-theme', 'dark');
             }
-
-            // Alternar a Registro
-            goToRegisterBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                loginView.classList.add('d-none');
-                registerView.classList.remove('d-none');
-            });
-
-            // Alternar a Login
-            goToLoginBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                registerView.classList.add('d-none');
-                loginView.classList.remove('d-none');
-            });
         });
     </script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script type="module" src="./js/app.js"></script>
 </body>

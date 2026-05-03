@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title>Kordena</title>
+  <defs>
+    <linearGradient id="g" x1="92" y1="64" x2="420" y2="448" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2854e8"/>
+      <stop offset="1" stop-color="#0f9f8c"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="72" fill="#08111f"/>
+  <path d="M132 116h88v116l108-116h108L314 247l132 149H334L220 264v132h-88V116Z" fill="url(#g)"/>
+  <path d="M91 78h330v42H91V78ZM91 392h330v42H91v-42Z" fill="#f3b233"/>
+</svg>

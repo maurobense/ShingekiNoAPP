@@ -1,4 +1,5 @@
 import { apiCall } from './apiService.js';
+import { escapeHtml, showToast } from './ui.js';
 
 // ==========================================
 // 🛒 ESTADO GLOBAL DEL MENÚ
@@ -35,7 +36,7 @@ export const initMenu = async () => {
     window.updateGlobalDiscount = updateGlobalDiscount;
     window.updateItemDiscount = updateItemDiscount; 
     window.updatePaymentMethod = updatePaymentMethod; 
-    window.filterProducts = filterProducts;
+    window.filterProducts = filterProductsPremium;
     
     // Funciones del Buscador de Clientes (Carrito)
     window.selectClientForCart = selectClientForCart;
@@ -70,13 +71,13 @@ async function loadData() {
         allProducts = prods || [];
         allClients = clients || []; // Importante para el buscador
 
-        renderCategories();
-        renderProducts(); 
+        renderCategoriesPremium();
+        renderProductsPremium();
 
     } catch (error) {
         console.error("Error cargando menú:", error);
         const grid = document.getElementById('product-grid');
-        if(grid) grid.innerHTML = '<div class="col-12 text-center text-danger">Error al cargar el menú.</div>';
+        if(grid) grid.innerHTML = '<div class="col-12 text-center text-danger">Error al cargar el menu.</div>';
     }
 }
 
@@ -147,6 +148,61 @@ function renderProducts(categoryId = null) {
 // ==========================================
 // 🛒 LÓGICA DEL CARRITO
 // ==========================================
+function renderCategoriesPremium() {
+    const container = document.getElementById('category-filters');
+    if (!container) return;
+
+    let html = `<button class="btn btn-dark category-btn active" onclick="filterProducts(null, this)">Todos</button>`;
+    html += allCategories.map(c =>
+        `<button class="btn btn-outline-dark category-btn" onclick="filterProducts(${c.id}, this)">${escapeHtml(c.name)}</button>`
+    ).join('');
+
+    container.innerHTML = html;
+}
+
+function filterProductsPremium(categoryId, btnElement) {
+    document.querySelectorAll('.category-btn').forEach(b => {
+        b.classList.remove('btn-dark', 'active');
+        b.classList.add('btn-outline-dark');
+    });
+    btnElement.classList.remove('btn-outline-dark');
+    btnElement.classList.add('btn-dark', 'active');
+    renderProductsPremium(categoryId);
+}
+
+function renderProductsPremium(categoryId = null) {
+    const grid = document.getElementById('product-grid');
+    if (!grid) return;
+
+    let filtered = allProducts;
+    if (categoryId) {
+        filtered = allProducts.filter(p => p.categoryId === categoryId);
+    }
+
+    if (filtered.length === 0) {
+        grid.innerHTML = '<div class="col-12 text-center text-muted py-5"><i class="bi bi-inbox fs-1 opacity-50 d-block mb-2"></i>No hay productos en esta categoria.</div>';
+        return;
+    }
+
+    grid.innerHTML = filtered.map(p => `
+        <div class="col-6 col-md-4 col-lg-3">
+            <article class="card catalog-card" onclick="addToCart(${p.id})">
+                <div class="catalog-card__media">
+                    ${p.imageUrl ? `<img src="${p.imageUrl}" alt="${escapeHtml(p.name)}" class="product-card-img">` : '<i class="bi bi-image fs-1"></i>'}
+                    <span class="catalog-card__price">$${Number(p.price || 0).toLocaleString('es-UY')}</span>
+                    <button class="btn btn-primary btn-icon catalog-card__add" type="button" aria-label="Agregar">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+                <div class="card-body p-3">
+                    <h6 class="fw-bold mb-1 text-truncate">${escapeHtml(p.name)}</h6>
+                    <p class="text-muted small mb-0 text-truncate">${escapeHtml(p.description || 'Disponible')}</p>
+                </div>
+            </article>
+        </div>
+    `).join('');
+}
+
 function updateCartPersistence() { localStorage.setItem('cart', JSON.stringify(cart)); }
 
 function addToCart(productId) {
@@ -450,7 +506,7 @@ function setupNewClientForm() {
             }
         } catch (err) {
             console.error(err);
-            alert("Error: " + err.message); // Solo mostramos alerta si falla
+            showToast('Error: ' + err.message, 'error'); // Solo mostramos alerta si falla
         } finally {
             btn.disabled = false;
             btn.textContent = "Guardar y Seleccionar";
@@ -462,14 +518,14 @@ function setupNewClientForm() {
 // 📨 ENVIAR PEDIDO
 // ==========================================
 async function submitOrder() {
-    if(cart.length === 0) return alert("El carrito está vacío.");
+    if(cart.length === 0) return showToast('El carrito esta vacio.', 'warning');
 
     // OBTENER ID DESDE EL INPUT OCULTO, NO DEL SELECT VIEJO
     const clientId = document.getElementById('cart-selected-client-id').value;
     const addressId = document.getElementById('cart-address-select').value;
     
     if (!clientId) {
-        return alert("⚠️ Por favor selecciona un cliente usando el buscador.");
+        return showToast('Selecciona un cliente usando el buscador.', 'warning');
     }
 
     const itemsPayload = cart.map(item => {
@@ -513,7 +569,7 @@ async function submitOrder() {
 
     try {
         const response = await apiCall('/Orders', 'POST', orderPayload);
-        alert(`✅ ¡Pedido Confirmado! ID: #${response.orderId}`);
+        showToast(`Pedido confirmado #${response.orderId}`);
         
         cart = [];
         globalDiscountPercent = 0;
@@ -528,7 +584,7 @@ async function submitOrder() {
 
     } catch (error) {
         console.error(error);
-        alert("Error al enviar pedido: " + error.message);
+        showToast('Error al enviar pedido: ' + error.message, 'error');
     } finally {
         if(btn) { btn.disabled = false; btn.textContent = "Confirmar Pedido"; }
     }

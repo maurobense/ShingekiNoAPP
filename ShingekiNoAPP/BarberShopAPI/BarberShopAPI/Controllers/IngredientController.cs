@@ -37,6 +37,8 @@ namespace ShingekiNoAPPI.Controllers
                     {
                         i.Id,
                         i.Name,
+                        i.UnitOfMeasure,
+                        i.ImageUrl,
                         i.BranchId
                         // Si tenés más propiedades simples (como precio o unidad), agregalas acá.
                         // ❌ NUNCA pongas acá propiedades de navegación (colecciones o clases virtuales).
@@ -68,6 +70,8 @@ namespace ShingekiNoAPPI.Controllers
                 {
                     ingredient.Id,
                     ingredient.Name,
+                    ingredient.UnitOfMeasure,
+                    ingredient.ImageUrl,
                     ingredient.BranchId
                 });
             }
@@ -94,6 +98,8 @@ namespace ShingekiNoAPPI.Controllers
                 {
                     id = ingredient.Id,
                     name = ingredient.Name,
+                    unitOfMeasure = ingredient.UnitOfMeasure,
+                    imageUrl = ingredient.ImageUrl,
                     branchId = ingredient.BranchId
                 };
 
@@ -121,7 +127,8 @@ namespace ShingekiNoAPPI.Controllers
 
                 // Actualizamos solo los campos de texto/valores
                 existingIngredient.Name = ingredient.Name;
-                // existingIngredient.UnitOfMeasure = ingredient.UnitOfMeasure; // Descomentá si usas esta propiedad
+                existingIngredient.UnitOfMeasure = ingredient.UnitOfMeasure;
+                existingIngredient.ImageUrl = ingredient.ImageUrl;
 
                 _repoIngredient.Update(existingIngredient);
                 _repoIngredient.Save();

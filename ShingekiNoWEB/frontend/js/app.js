@@ -2,6 +2,7 @@ import { login, register, logout } from './auth.js';
 import { apiCall, initSignalR } from './apiService.js';
 import { initAdmin } from './adminModule.js';
 import { initMenu } from './menuModule.js';
+import { confirmAction, showToast } from './ui.js';
 
 // ==========================================
 // 🧠 ROUTER (El Cerebro)
@@ -21,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         await initSignalR({
             onNewOrder: (orderId) => {
                 console.log("🔔 Pedido recibido:", orderId);
-                alert(`🔔 ¡NUEVO PEDIDO RECIBIDO! #${orderId}`);
+                showToast(`Nuevo pedido recibido #${orderId}`, 'info');
                 if (window.loadOrders) window.loadOrders();
             },
             onStatusUpdate: (orderId, newStatus) => {
@@ -127,7 +128,7 @@ function initAuthLogic() {
                     errorDiv.classList.remove('d-none');
                 }
                 btn.disabled = false;
-                btn.textContent = "Registrar";
+                btn.textContent = "Crear cuenta";
             }
         });
     }
@@ -242,18 +243,18 @@ function initUserLogic() {
     
         } catch (error) {
             console.error(error);
-            alert('Error al cargar usuario.');
+            showToast('Error al cargar usuario.', 'error');
         }
     };
 
     window.deleteUser = async function(id) {
-        if(!confirm('¿Seguro que quieres eliminar este usuario?')) return;
+        if(!await confirmAction('Eliminar este usuario?', { title: 'Eliminar usuario' })) return;
         try {
             await apiCall(`/User/${id}`, 'DELETE');
             window.loadUsers();
         } catch (error) {
             console.error(error);
-            alert('Error al eliminar: ' + error.message);
+            showToast('Error al eliminar: ' + error.message, 'error');
         }
     };
 
@@ -288,9 +289,9 @@ function initUserLogic() {
                 const modal = bootstrap.Modal.getInstance(modalEl);
                 if (modal) modal.hide();
                 window.loadUsers();
-                alert('Usuario guardado correctamente.');
+                showToast('Usuario guardado correctamente.');
             } catch (error) {
-                alert('Error: ' + error.message);
+                showToast('Error: ' + error.message, 'error');
             }
         });
     }

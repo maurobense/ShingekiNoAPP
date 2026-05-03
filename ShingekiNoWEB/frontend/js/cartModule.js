@@ -1,8 +1,9 @@
 import { apiCall } from './apiService.js';
+import { confirmAction, showToast } from './ui.js';
 
 // 1. CARGAR CARRITO AL INICIAR
 // Intentamos leer del localStorage, si no hay nada, array vacío.
-let cart = JSON.parse(localStorage.getItem('shingeki_cart')) || [];
+let cart = JSON.parse(localStorage.getItem('kordena_cart')) || [];
 
 // Actualizar UI inicial por si había algo guardado
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Función interna para guardar
 const saveCart = () => {
-    localStorage.setItem('shingeki_cart', JSON.stringify(cart));
+    localStorage.setItem('kordena_cart', JSON.stringify(cart));
     updateCartUI();
 };
 
@@ -104,7 +105,7 @@ window.submitOrder = async () => {
     const selectedClientId = clientSelect ? clientSelect.value : null;
 
     if (!selectedClientId) {
-        alert("⚠️ Por favor, selecciona un cliente para el pedido.");
+        showToast('Selecciona un cliente para el pedido.', 'warning');
         return;
     }
 
@@ -120,11 +121,12 @@ window.submitOrder = async () => {
     };
 
     try {
-        if(!confirm(`¿Confirmar pedido por $${cart.reduce((s,i)=>s+(i.price*i.quantity),0)}?`)) return;
+        const total = cart.reduce((s, i) => s + (i.price * i.quantity), 0);
+        if(!await confirmAction(`Confirmar pedido por $${total}?`, { title: 'Confirmar pedido', tone: 'primary' })) return;
         
         const response = await apiCall('/Orders', 'POST', payload);
         
-        alert('¡Pedido enviado! ID: ' + (response.orderId || 'OK'));
+        showToast('Pedido enviado. ID: ' + (response.orderId || 'OK'));
         
         // 3. LIMPIAR CARRITO Y STORAGE
         cart = [];
@@ -137,6 +139,6 @@ window.submitOrder = async () => {
         }
 
     } catch (error) {
-        alert('Error al enviar pedido: ' + error.message);
+        showToast('Error al enviar pedido: ' + error.message, 'error');
     }
 };
