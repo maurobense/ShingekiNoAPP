@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Business.BusinessInterfaces;
 using Microsoft.Extensions.Options;
 using ShingekiNoAPPI.Options;
 
@@ -25,11 +26,13 @@ namespace ShingekiNoAPPI.Services.Storage
 
         private readonly IAmazonS3 _s3;
         private readonly S3StorageOptions _options;
+        private readonly ITenantService _tenantService;
 
-        public S3FileStorageService(IAmazonS3 s3, IOptions<S3StorageOptions> options)
+        public S3FileStorageService(IAmazonS3 s3, IOptions<S3StorageOptions> options, ITenantService tenantService)
         {
             _s3 = s3;
             _options = options.Value;
+            _tenantService = tenantService;
         }
 
         public async Task<string> UploadImageAsync(IFormFile file, string folder, CancellationToken cancellationToken = default)
@@ -45,7 +48,8 @@ namespace ShingekiNoAPPI.Services.Storage
             var safeFolder = Regex.Replace(folder ?? "uploads", @"[^a-zA-Z0-9/_-]", string.Empty).Trim('/');
             if (string.IsNullOrWhiteSpace(safeFolder)) safeFolder = "uploads";
 
-            var key = $"{safeFolder}/{DateTime.UtcNow:yyyy/MM}/{Guid.NewGuid():N}{extension}";
+            var tenantFolder = NormalizeTenantFolder(_tenantService.GetTenantFolder());
+            var key = $"{tenantFolder}/{safeFolder}/{DateTime.UtcNow:yyyy/MM}/{Guid.NewGuid():N}{extension}";
 
             await using var stream = file.OpenReadStream();
             var request = new PutObjectRequest
@@ -87,6 +91,15 @@ namespace ShingekiNoAPPI.Services.Storage
             {
                 throw new ArgumentException("Formato no permitido. Usa JPG, PNG o WEBP.");
             }
+        }
+
+        private static string NormalizeTenantFolder(string tenantFolder)
+        {
+            var safeTenant = Regex.Replace(tenantFolder ?? "platform", @"[^a-zA-Z0-9/_-]", string.Empty).Trim('/');
+            if (string.IsNullOrWhiteSpace(safeTenant)) safeTenant = "platform";
+            return safeTenant.StartsWith("tenants/", StringComparison.OrdinalIgnoreCase)
+                ? safeTenant
+                : $"tenants/{safeTenant}";
         }
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Amazon.S3;
 using ShingekiNoAPPI.Services.Storage;
 
 namespace ShingekiNoAPPI.Controllers
@@ -32,6 +33,14 @@ namespace ShingekiNoAPPI.Controllers
             catch (InvalidOperationException ex)
             {
                 return StatusCode(500, new { error = ex.Message });
+            }
+            catch (AmazonS3Exception ex)
+            {
+                var message = ex.ErrorCode == "AccessDenied"
+                    ? "AWS S3 rechazo la subida. Revisa que el usuario IAM tenga permiso s3:PutObject sobre el bucket configurado."
+                    : "No se pudo subir la imagen a AWS S3.";
+
+                return StatusCode(502, new { error = message, awsError = ex.ErrorCode });
             }
         }
     }

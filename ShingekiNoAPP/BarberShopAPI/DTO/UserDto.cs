@@ -16,6 +16,8 @@ namespace DTO
         public int Phone { get; set; }
         public string Picture { get; set; }
         public long BranchId { get; set; }
+        public string TenantSlug { get; set; } = string.Empty;
+        public string TenantFolder { get; set; } = string.Empty;
 
         // Constructor vacío (necesario para serialización en algunos casos)
         public UserDTO() { }

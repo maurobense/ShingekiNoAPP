@@ -12,5 +12,9 @@ namespace DTO
         public string Username { get; set; } // Puede ser el nombre o el email
         public string Token { get; set; }
         public string Role { get; set; } // <--- NECESARIO para el frontend
+        public long BranchId { get; set; }
+        public string TenantSlug { get; set; }
+        public string TenantFolder { get; set; }
+        public string PublicOrderingUrl { get; set; }
     }
 }

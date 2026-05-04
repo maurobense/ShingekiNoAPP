@@ -10,6 +10,8 @@ namespace Business.BusinessEntities
     {
         Admin = 1,
         Kitchen = 2,
-        Delivery = 3
+        Delivery = 3,
+        BranchManager = 4,
+        SuperAdmin = 99
     }
 }

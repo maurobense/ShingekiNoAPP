@@ -48,7 +48,9 @@ namespace ShingekiNoAPPI.Controllers
             )
             {
                 Username = user.Username,
-                BranchId = user.BranchId
+                BranchId = user.BranchId,
+                TenantSlug = user.Branch?.Slug ?? string.Empty,
+                TenantFolder = user.Branch?.TenantFolder ?? string.Empty
             };
 
             string userRoleString = user.Role.ToString();
@@ -59,7 +61,11 @@ namespace ShingekiNoAPPI.Controllers
                 Id = user.Id,
                 Username = user.Username,
                 Token = tokenString,
-                Role = userRoleString
+                Role = userRoleString,
+                BranchId = user.BranchId,
+                TenantSlug = user.Branch?.Slug ?? string.Empty,
+                TenantFolder = user.Branch?.TenantFolder ?? string.Empty,
+                PublicOrderingUrl = $"/order.html?tenant={Uri.EscapeDataString(user.Branch?.Slug ?? string.Empty)}"
             });
         }
 

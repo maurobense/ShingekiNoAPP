@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido online | Kordena</title>
+    <meta name="theme-color" content="#111827">
+    <link rel="icon" href="./kordena-icon.svg" type="image/svg+xml">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body class="public-order-page">
+    <header class="public-order-hero">
+        <div class="public-order-shell">
+            <nav class="public-order-nav">
+                <div class="brand-lockup">
+                    <span class="brand-mark brand-mark--sm" id="tenant-mark">K</span>
+                    <span>
+                        <span class="brand-title" id="tenant-name">Cargando...</span>
+                        <span class="brand-subtitle" id="tenant-subtitle">Pedido online</span>
+                    </span>
+                </div>
+                <a class="btn btn-light btn-sm" id="track-last-link" href="track.html" hidden>
+                    <i class="bi bi-receipt-cutoff me-1"></i>Ver ultimo pedido
+                </a>
+            </nav>
+
+            <div class="public-order-intro">
+                <img id="tenant-logo" class="public-order-logo" alt="" hidden>
+                <div>
+                    <p class="brand-subtitle mb-2">Carta digital</p>
+                    <h1 id="tenant-heading">Elegí, confirmá y seguí tu pedido en vivo.</h1>
+                    <p id="tenant-description">El menú se está preparando.</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="public-order-shell public-order-layout">
+        <section>
+            <div class="category-scroll mb-3" id="public-category-filters"></div>
+            <div class="row g-3" id="public-product-grid">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+            </div>
+        </section>
+
+        <aside class="public-cart-panel">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <span class="brand-subtitle">Tu pedido</span>
+                    <h2 class="h5 fw-bold mb-0">Carrito</h2>
+                </div>
+                <span class="badge rounded-pill text-bg-dark" id="public-cart-count">0</span>
+            </div>
+
+            <div id="public-cart-items" class="public-cart-items"></div>
+            <div id="public-cart-empty" class="text-muted text-center py-4">
+                <i class="bi bi-bag fs-1 opacity-50"></i>
+                <p class="mb-0 mt-2">Agregá productos para empezar.</p>
+            </div>
+
+            <div class="public-checkout">
+                <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
+                    <span>Total</span>
+                    <span id="public-cart-total">$0</span>
+                </div>
+
+                <form id="public-order-form">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label">Nombre</label>
+                            <input class="form-control" id="public-name" required autocomplete="given-name">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Apellido</label>
+                            <input class="form-control" id="public-lastname" autocomplete="family-name">
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <label class="form-label">Telefono</label>
+                        <input class="form-control" id="public-phone" required inputmode="tel" autocomplete="tel">
+                    </div>
+                    <div class="mt-2">
+                        <label class="form-label">Direccion</label>
+                        <input class="form-control" id="public-street" required autocomplete="street-address">
+                    </div>
+                    <div class="row g-2 mt-0">
+                        <div class="col-7">
+                            <label class="form-label">Ciudad/Zona</label>
+                            <input class="form-control" id="public-city" required>
+                        </div>
+                        <div class="col-5">
+                            <label class="form-label">Pago</label>
+                            <select class="form-select" id="public-payment">
+                                <option value="Cash">Efectivo</option>
+                                <option value="MercadoPago">MercadoPago</option>
+                                <option value="Transfer">Transferencia</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <label class="form-label">Nota</label>
+                        <textarea class="form-control" id="public-note" rows="2" placeholder="Apto, timbre, sin contacto..."></textarea>
+                    </div>
+                    <button class="btn btn-primary w-100 mt-3 py-2" type="submit">
+                        <i class="bi bi-check2-circle me-2"></i>Confirmar pedido
+                    </button>
+                </form>
+
+                <div class="alert alert-success mt-3 d-none" id="public-order-result"></div>
+            </div>
+        </aside>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="./js/publicOrder.js"></script>
+</body>
+
+</html>

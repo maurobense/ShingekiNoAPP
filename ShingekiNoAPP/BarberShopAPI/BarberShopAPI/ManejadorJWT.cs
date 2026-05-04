@@ -28,7 +28,9 @@ namespace WebAPI
                     new Claim(ClaimTypes.Role, role),
 
                     // 🔥 NUEVO: Inyectamos el ID de la Sucursal para la arquitectura Multi-Tenant
-                    new Claim("BranchId", usu.BranchId.ToString())
+                    new Claim("BranchId", usu.BranchId.ToString()),
+                    new Claim("TenantSlug", usu.TenantSlug ?? string.Empty),
+                    new Claim("TenantFolder", usu.TenantFolder ?? string.Empty)
                 }),
                 // Duración del token: 7 días
                 Expires = DateTime.UtcNow.AddDays(7),

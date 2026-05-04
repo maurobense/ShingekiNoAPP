@@ -49,6 +49,7 @@ namespace Datos.Repositories
             // Esto es vital para que admin2 (Sucursal 2) pueda loguearse aunque el sistema esté en Sucursal 1
             var user = _context.Users
                                .IgnoreQueryFilters()
+                               .Include(u => u.Branch)
                                .FirstOrDefault(u => u.Username == username && !u.IsDeleted);
 
             // 2. Si no existe, cortamos acá

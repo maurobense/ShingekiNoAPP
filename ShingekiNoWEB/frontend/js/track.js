@@ -11,7 +11,7 @@ let driverMarker = null;
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. Obtener GUID de la URL (?code=XXXX... o ?id=XXXX...)
     const params = new URLSearchParams(window.location.search);
-    const code = params.get('code') || params.get('id'); 
+    const code = params.get('code') || params.get('tracking') || params.get('id'); 
 
     if (!code) {
         const statusContainer = document.getElementById('status-container');

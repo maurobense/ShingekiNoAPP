@@ -1,0 +1,34 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ListLegacyAndKordenaTenantPrefixes",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::multi-saas-bucket",
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": [
+            "tenisclub",
+            "tenisclub/*",
+            "tenants",
+            "tenants/*"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "ManageLegacyAndKordenaTenantObjects",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::multi-saas-bucket/tenisclub/*",
+        "arn:aws:s3:::multi-saas-bucket/tenants/*"
+      ]
+    }
+  ]
+}

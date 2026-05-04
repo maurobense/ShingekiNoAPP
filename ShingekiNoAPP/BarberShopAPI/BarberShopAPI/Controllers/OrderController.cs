@@ -163,6 +163,7 @@ namespace ShingekiNoAPPI.Controllers
                     Message = "¡Pedido Enviado a la Cocina!",
                     OrderId = newOrder.Id,
                     Tracking = newOrder.TrackingNumber,
+                    TrackingUrl = BuildFrontendUrl($"/track.html?code={Uri.EscapeDataString(newOrder.TrackingNumber.ToString())}"),
                     Total = newOrder.TotalAmount,
                     ItemsCount = newOrder.OrderItems.Count
                 });
@@ -401,6 +402,17 @@ namespace ShingekiNoAPPI.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        private string BuildFrontendUrl(string path)
+        {
+            var origin = Request.Headers.Referer.FirstOrDefault();
+            if (!string.IsNullOrWhiteSpace(origin) && Uri.TryCreate(origin, UriKind.Absolute, out var referer))
+            {
+                return $"{referer.Scheme}://{referer.Authority}{path}";
+            }
+
+            return path;
         }
     }
 }

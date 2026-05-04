@@ -56,6 +56,20 @@ namespace Datos.EF
             modelBuilder.Entity<OrderItem>().HasQueryFilter(x => CurrentBranchId == 0 || x.Order.BranchId == CurrentBranchId);
 
             // --- CONFIGURACIÓN USUARIO ---
+            modelBuilder.Entity<Branch>(entity =>
+            {
+                entity.HasIndex(e => e.Slug).IsUnique();
+                entity.HasIndex(e => e.TenantFolder).IsUnique();
+                entity.Property(e => e.MembershipPlan).HasConversion<string>();
+                entity.Property(e => e.MembershipStatus).HasConversion<string>();
+                entity.Property(e => e.Slug).HasDefaultValue(string.Empty);
+                entity.Property(e => e.TenantFolder).HasDefaultValue(string.Empty);
+                entity.Property(e => e.PrimaryColor).HasDefaultValue("#111827");
+                entity.Property(e => e.SecondaryColor).HasDefaultValue("#f59e0b");
+                entity.Property(e => e.AccentColor).HasDefaultValue("#10b981");
+                entity.Property(e => e.PublicOrderingEnabled).HasDefaultValue(true);
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasIndex(e => e.Username).IsUnique();

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superadmin | Kordena</title>
+    <link rel="icon" href="./kordena-icon.svg" type="image/svg+xml">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body class="bg-body-tertiary superadmin-page">
+    <nav class="navbar navbar-dark fixed-top">
+        <div class="container-fluid px-3">
+            <a class="navbar-brand brand-lockup" href="superadmin.html">
+                <span class="brand-mark brand-mark--sm">K</span>
+                <span>
+                    <span class="brand-title">Kordena HQ</span>
+                    <span class="brand-subtitle">Superadmin SaaS</span>
+                </span>
+            </a>
+            <button class="btn btn-sm btn-outline-light" id="logout-btn">
+                <i class="bi bi-box-arrow-right me-1"></i>Salir
+            </button>
+        </div>
+    </nav>
+
+    <main class="container-fluid" style="padding-top: 92px;">
+        <div class="row g-4">
+            <section class="col-12 col-xl-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <span class="brand-subtitle">Alta comercial</span>
+                        <h1 class="h4 fw-bold mb-3">Nuevo restaurante</h1>
+
+                        <form id="restaurant-form">
+                            <div class="mb-3">
+                                <label class="form-label">Nombre comercial</label>
+                                <input class="form-control" id="restaurant-name" required placeholder="Ej: Titan Burger">
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-7">
+                                    <label class="form-label">Slug publico</label>
+                                    <input class="form-control" id="restaurant-slug" placeholder="titan-burger">
+                                </div>
+                                <div class="col-5">
+                                    <label class="form-label">Plan</label>
+                                    <select class="form-select" id="restaurant-plan">
+                                        <option value="Starter">Starter</option>
+                                        <option value="Growth">Growth</option>
+                                        <option value="Pro">Pro</option>
+                                        <option value="Enterprise">Enterprise</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row g-2 mt-0">
+                                <div class="col-6">
+                                    <label class="form-label">Estado</label>
+                                    <select class="form-select" id="restaurant-status">
+                                        <option value="Trial">Trial</option>
+                                        <option value="Active">Active</option>
+                                        <option value="PastDue">PastDue</option>
+                                        <option value="Paused">Paused</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Limite pedidos/mes</label>
+                                    <input type="number" class="form-control" id="restaurant-limit" value="0" min="0">
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-label">Color primario</label>
+                                    <input type="color" class="form-control form-control-color w-100" id="restaurant-primary" value="#111827">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Color acento</label>
+                                    <input type="color" class="form-control form-control-color w-100" id="restaurant-accent" value="#10b981">
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label">Logo URL</label>
+                                <input class="form-control" id="restaurant-logo" placeholder="https://...">
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label">Descripcion publica</label>
+                                <textarea class="form-control" id="restaurant-description" rows="2"></textarea>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-label">Ciudad</label>
+                                    <input class="form-control" id="restaurant-city" value="Ciudad de la Costa">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Telefono</label>
+                                    <input type="number" class="form-control" id="restaurant-phone" value="0">
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label">Direccion</label>
+                                <input class="form-control" id="restaurant-address" placeholder="Calle y numero">
+                            </div>
+                            <div class="mt-3">
+                                <label class="form-label">Email facturacion</label>
+                                <input type="email" class="form-control" id="restaurant-billing" placeholder="admin@restaurante.com">
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-label">Admin nombre</label>
+                                    <input class="form-control" id="admin-name-input" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Admin apellido</label>
+                                    <input class="form-control" id="admin-lastname-input" required>
+                                </div>
+                            </div>
+                            <div class="row g-2 mt-0">
+                                <div class="col-6">
+                                    <label class="form-label">Usuario admin</label>
+                                    <input class="form-control" id="admin-username-input" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Password inicial</label>
+                                    <input type="password" class="form-control" id="admin-password-input" required>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary w-100 mt-4 py-2" type="submit">
+                                <i class="bi bi-building-add me-2"></i>Crear restaurante
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <section class="col-12 col-xl-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <span class="brand-subtitle">Portfolio</span>
+                                <h2 class="h4 fw-bold mb-0">Restaurantes</h2>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm" id="refresh-restaurants">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Restaurante</th>
+                                        <th>Plan</th>
+                                        <th>Estado</th>
+                                        <th>S3</th>
+                                        <th class="text-end">Links</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="restaurants-table">
+                                    <tr><td colspan="5" class="text-center py-4">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="./js/superAdmin.js"></script>
+</body>
+
+</html>

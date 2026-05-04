@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using ShingekiNoAPPI.Services;
 using Amazon;
+using Amazon.Runtime;
 using Amazon.S3;
 using ShingekiNoAPPI.Options;
 using ShingekiNoAPPI.Services.Storage;
@@ -59,8 +60,17 @@ builder.Services.Configure<S3StorageOptions>(builder.Configuration.GetSection("S
 builder.Services.AddSingleton<IAmazonS3>(sp =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
-    var regionName = configuration["S3:Region"] ?? "us-east-1";
-    return new AmazonS3Client(RegionEndpoint.GetBySystemName(regionName));
+    var regionName = configuration["AWS:Region"] ?? configuration["S3:Region"] ?? "us-east-1";
+    var region = RegionEndpoint.GetBySystemName(regionName);
+    var accessKey = configuration["AWS:AccessKey"];
+    var secretKey = configuration["AWS:SecretKey"];
+
+    if (!string.IsNullOrWhiteSpace(accessKey) && !string.IsNullOrWhiteSpace(secretKey))
+    {
+        return new AmazonS3Client(new BasicAWSCredentials(accessKey, secretKey), region);
+    }
+
+    return new AmazonS3Client(region);
 });
 builder.Services.AddScoped<IFileStorageService, S3FileStorageService>();
 

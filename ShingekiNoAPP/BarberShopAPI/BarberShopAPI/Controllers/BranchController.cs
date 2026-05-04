@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace ShingekiNoAPPI.Controllers
 {
@@ -36,7 +37,21 @@ namespace ShingekiNoAPPI.Controllers
                     Name = b.Name,
                     FullAddress = $"{b.Address}, {b.City}, {b.Country}",
                     Phone = b.Phone.ToString(),
-                    HomePage = b.HomePage
+                    HomePage = b.HomePage,
+                    Slug = b.Slug,
+                    TenantFolder = b.TenantFolder,
+                    BrandName = b.BrandName ?? b.Name,
+                    PublicDescription = b.PublicDescription ?? string.Empty,
+                    LogoUrl = b.LogoUrl ?? string.Empty,
+                    PrimaryColor = b.PrimaryColor,
+                    SecondaryColor = b.SecondaryColor,
+                    AccentColor = b.AccentColor,
+                    BillingEmail = b.BillingEmail ?? string.Empty,
+                    MembershipPlan = b.MembershipPlan.ToString(),
+                    MembershipStatus = b.MembershipStatus.ToString(),
+                    PublicOrderingEnabled = b.PublicOrderingEnabled,
+                    MonthlyOrderLimit = b.MonthlyOrderLimit,
+                    PublicOrderingUrl = $"/order.html?tenant={Uri.EscapeDataString(b.Slug)}"
                 });
 
                 return Ok(dtos);
@@ -62,7 +77,21 @@ namespace ShingekiNoAPPI.Controllers
                 Name = branch.Name,
                 FullAddress = $"{branch.Address}, {branch.City}, {branch.Country}",
                 Phone = branch.Phone.ToString(),
-                HomePage = branch.HomePage
+                HomePage = branch.HomePage,
+                Slug = branch.Slug,
+                TenantFolder = branch.TenantFolder,
+                BrandName = branch.BrandName ?? branch.Name,
+                PublicDescription = branch.PublicDescription ?? string.Empty,
+                LogoUrl = branch.LogoUrl ?? string.Empty,
+                PrimaryColor = branch.PrimaryColor,
+                SecondaryColor = branch.SecondaryColor,
+                AccentColor = branch.AccentColor,
+                BillingEmail = branch.BillingEmail ?? string.Empty,
+                MembershipPlan = branch.MembershipPlan.ToString(),
+                MembershipStatus = branch.MembershipStatus.ToString(),
+                PublicOrderingEnabled = branch.PublicOrderingEnabled,
+                MonthlyOrderLimit = branch.MonthlyOrderLimit,
+                PublicOrderingUrl = $"/order.html?tenant={Uri.EscapeDataString(branch.Slug)}"
             };
 
             return Ok(dto);
@@ -84,8 +113,20 @@ namespace ShingekiNoAPPI.Controllers
                     Country = dto.Country,
                     Phone = dto.Phone,
                     HomePage = dto.HomePage,
+                    Slug = NormalizeSlug(dto.Slug ?? dto.Name),
+                    TenantFolder = NormalizeSlug(dto.Slug ?? dto.Name),
+                    BrandName = string.IsNullOrWhiteSpace(dto.BrandName) ? dto.Name : dto.BrandName,
+                    PublicDescription = dto.PublicDescription,
+                    LogoUrl = dto.LogoUrl,
+                    PrimaryColor = string.IsNullOrWhiteSpace(dto.PrimaryColor) ? "#111827" : dto.PrimaryColor,
+                    SecondaryColor = string.IsNullOrWhiteSpace(dto.SecondaryColor) ? "#f59e0b" : dto.SecondaryColor,
+                    AccentColor = string.IsNullOrWhiteSpace(dto.AccentColor) ? "#10b981" : dto.AccentColor,
+                    BillingEmail = dto.BillingEmail,
+                    PublicOrderingEnabled = dto.PublicOrderingEnabled,
+                    MonthlyOrderLimit = dto.MonthlyOrderLimit,
                     IsDeleted = false
                 };
+                ApplyMembership(newBranch, dto);
 
                 // Validar (si la lógica está en la entidad)
                 // newBranch.Validate(); 
@@ -119,6 +160,18 @@ namespace ShingekiNoAPPI.Controllers
                 branch.Country = dto.Country;
                 branch.Phone = dto.Phone;
                 branch.HomePage = dto.HomePage;
+                branch.Slug = NormalizeSlug(dto.Slug ?? dto.Name);
+                branch.TenantFolder = NormalizeSlug(dto.Slug ?? dto.Name);
+                branch.BrandName = string.IsNullOrWhiteSpace(dto.BrandName) ? dto.Name : dto.BrandName;
+                branch.PublicDescription = dto.PublicDescription;
+                branch.LogoUrl = dto.LogoUrl;
+                branch.PrimaryColor = string.IsNullOrWhiteSpace(dto.PrimaryColor) ? branch.PrimaryColor : dto.PrimaryColor;
+                branch.SecondaryColor = string.IsNullOrWhiteSpace(dto.SecondaryColor) ? branch.SecondaryColor : dto.SecondaryColor;
+                branch.AccentColor = string.IsNullOrWhiteSpace(dto.AccentColor) ? branch.AccentColor : dto.AccentColor;
+                branch.BillingEmail = dto.BillingEmail;
+                branch.PublicOrderingEnabled = dto.PublicOrderingEnabled;
+                branch.MonthlyOrderLimit = dto.MonthlyOrderLimit;
+                ApplyMembership(branch, dto);
 
                 _repoBranch.Update(branch);
                 _repoBranch.Save(); // ✅ Guardar cambios
@@ -148,6 +201,27 @@ namespace ShingekiNoAPPI.Controllers
             {
                 return StatusCode(500, $"Error al eliminar: {ex.Message}");
             }
+        }
+
+        private static void ApplyMembership(Branch branch, BranchCreateDto dto)
+        {
+            if (!string.IsNullOrWhiteSpace(dto.MembershipPlan) &&
+                Enum.TryParse<MembershipPlan>(dto.MembershipPlan, true, out var plan))
+            {
+                branch.MembershipPlan = plan;
+            }
+
+            if (!string.IsNullOrWhiteSpace(dto.MembershipStatus) &&
+                Enum.TryParse<MembershipStatus>(dto.MembershipStatus, true, out var status))
+            {
+                branch.MembershipStatus = status;
+            }
+        }
+
+        private static string NormalizeSlug(string value)
+        {
+            var slug = Regex.Replace((value ?? string.Empty).Trim().ToLowerInvariant(), @"[^a-z0-9]+", "-").Trim('-');
+            return string.IsNullOrWhiteSpace(slug) ? $"tenant-{Guid.NewGuid():N}".Substring(0, 16) : slug;
         }
     }
 }

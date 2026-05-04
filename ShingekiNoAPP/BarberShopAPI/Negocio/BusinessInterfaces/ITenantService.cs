@@ -9,5 +9,7 @@ namespace Business.BusinessInterfaces
     public interface ITenantService
     {
         long GetBranchId();
+        string GetTenantSlug();
+        string GetTenantFolder();
     }
 }

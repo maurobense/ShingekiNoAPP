@@ -12,13 +12,22 @@ export const login = async (username, password) => {
             localStorage.setItem('user_role', data.role);
             localStorage.setItem('user_name', data.username);
             localStorage.setItem('user_id', data.id);
+            localStorage.setItem('branch_id', data.branchId || '');
+            localStorage.setItem('tenant_slug', data.tenantSlug || '');
+            localStorage.setItem('tenant_folder', data.tenantFolder || '');
+            localStorage.setItem('public_ordering_url', data.publicOrderingUrl || '');
             
             console.log("✅ Login OK. Rol:", data.role);
 
             const role = String(data.role).toUpperCase();
 
+            if (['SUPERADMIN', '99'].includes(role)) {
+                window.location.href = 'superadmin.html';
+                return true;
+            }
+
             // 🔥 CORRECCIÓN: Agregamos '3', 'WAITER', 'DELIVERY' para que vayan al Admin
-            const dashboardRoles = ['ADMIN', '1', 'KITCHEN', '2', 'BRANCHMANAGER', 'WAITER', 'DELIVERY', '3'];
+            const dashboardRoles = ['ADMIN', '1', 'KITCHEN', '2', 'BRANCHMANAGER', '4', 'WAITER', 'DELIVERY', '3'];
 
             if (dashboardRoles.includes(role)) {
                 window.location.href = 'admin.html'; 
