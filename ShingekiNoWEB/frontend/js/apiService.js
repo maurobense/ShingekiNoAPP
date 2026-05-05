@@ -8,8 +8,8 @@ if (isLocal) {
     BASE_URL = 'http://localhost:5019/api';
     HUB_URL = 'http://localhost:5019/deliveryHub';
 } else {
-    console.log('Modo Produccion Detectado (Netlify proxy)');
-    BASE_URL = '/api';
+    console.log('Modo Produccion Detectado (Somee API directa)');
+    BASE_URL = 'https://www.shingekinoappi.somee.com/api';
     HUB_URL = 'https://www.shingekinoappi.somee.com/deliveryHub';
 }
 
@@ -35,19 +35,24 @@ export const apiCall = async (endpoint, method = 'GET', data = null, options = {
         const response = await fetch(url, config);
 
         if (response.status === 401) {
-            if (options.token) {
-                throw new Error('Unauthorized');
+            const errorText = await response.text();
+            const message = errorText || 'Credenciales incorrectas o sesion vencida.';
+            const path = window.location.pathname;
+            const isInternalLogin = path.endsWith('index.html') || path === '/';
+            const isPublicCustomerFlow =
+                options.skipAuth ||
+                options.token ||
+                path.includes('order.html') ||
+                path.includes('customer.html') ||
+                path.includes('track.html');
+
+            if (isInternalLogin || isPublicCustomerFlow) {
+                throw new Error(message);
             }
 
-            if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
-                throw new Error('Unauthorized');
-            }
-
-            if (!window.location.pathname.includes('track.html')) {
-                console.error('ALERTA 401: Token vencido o invalido. Redirigiendo al login...');
-                localStorage.removeItem('jwt_token');
-                window.location.href = 'index.html';
-            }
+            console.error('ALERTA 401: Token interno vencido o invalido. Redirigiendo al login...');
+            localStorage.removeItem('jwt_token');
+            window.location.href = 'index.html';
             return null;
         }
 

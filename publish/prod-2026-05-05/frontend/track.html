@@ -65,7 +65,7 @@
                         <span data-status="Pending">Recibido</span>
                         <span data-status="Cooking">Cocina</span>
                         <span data-status="Ready">Listo</span>
-                        <span data-status="OnTheWay">En camino</span>
+                        <span data-status="OnTheWay">Camino</span>
                         <span data-status="Delivered">Entregado</span>
                     </div>
                 </div>
@@ -100,7 +100,7 @@
 
                 <div id="map-container"></div>
 
-                <div class="track-map-overlay track-map-overlay--status">
+                <div class="track-map-overlay track-map-overlay--status" hidden>
                     <span class="track-pulse-dot" id="signal-dot"></span>
                     <div>
                         <small id="driver-signal-label">Sin GPS activo</small>
@@ -108,7 +108,7 @@
                     </div>
                 </div>
 
-                <div class="track-map-overlay track-map-overlay--metrics">
+                <div class="track-map-overlay track-map-overlay--metrics" hidden>
                     <div>
                         <small>Ultima senal</small>
                         <strong id="driver-updated">-</strong>

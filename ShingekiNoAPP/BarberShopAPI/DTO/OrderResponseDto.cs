@@ -24,6 +24,12 @@ namespace DTO
         public string BranchName { get; set; }
         public string TenantSlug { get; set; }
         public string PublicOrderingUrl { get; set; }
+        public string? DeliveryAddressText { get; set; }
+        public string? DeliveryAddressLabel { get; set; }
+        public string? DeliveryStreet { get; set; }
+        public string? DeliveryCity { get; set; }
+        public string? DeliveryRegion { get; set; }
+        public string? DeliveryCountry { get; set; }
         public double? DriverLatitude { get; set; }
         public double? DriverLongitude { get; set; }
         public double? DriverAccuracyMeters { get; set; }

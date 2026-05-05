@@ -200,6 +200,9 @@ async function submitPublicOrder(event) {
 
     const payload = {
         ...addressPayload,
+        customerName: customerProfile.name || '',
+        customerLastName: customerProfile.lastName || '',
+        customerPhone: String(customerProfile.phone || ''),
         paymentMethod: document.getElementById('public-payment').value,
         note: document.getElementById('public-note').value,
         items: cart.map(item => ({ productId: item.productId, quantity: item.quantity, observation: '' }))
@@ -531,7 +534,15 @@ function buildAddressPayload() {
             showToast('Elegí una direccion de entrega.', 'warning');
             return null;
         }
-        return { clientAddressId: selected.id };
+        return {
+            clientAddressId: selected.id,
+            street: selected.street || '',
+            city: selected.city || tenant?.city || '',
+            region: selected.region || '',
+            postalCode: selected.postalCode || 0,
+            country: selected.country || '',
+            addressLabel: selected.label || 'Entrega'
+        };
     }
 
     const street = document.getElementById('public-street')?.value.trim();

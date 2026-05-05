@@ -8,6 +8,9 @@ let accuracyCircle = null;
 let routeLine = null;
 let routeGlow = null;
 let livePulse = null;
+let destinationMarker = null;
+let destinationPoint = null;
+let lastDestinationKey = '';
 let animationFrame = null;
 let lastDriverPoint = null;
 let routePoints = [];
@@ -15,6 +18,7 @@ let routeDistanceMeters = 0;
 let lastOrderStatus = null;
 
 const DEFAULT_CENTER = [-34.8941, -56.0675];
+const DRIVER_SIGNAL_STALE_MS = 2 * 60 * 1000;
 
 document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
@@ -22,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('recenter-map')?.addEventListener('click', () => {
         if (lastDriverPoint && map) map.flyTo(lastDriverPoint, Math.max(map.getZoom(), 15), { duration: 0.7 });
+        else if (destinationPoint && map) map.flyTo(destinationPoint, Math.max(map.getZoom(), 15), { duration: 0.7 });
     });
 
     initMap();
@@ -59,7 +64,7 @@ async function connectRealtime(code) {
         });
 
         await connection.invoke('JoinTrackingGroup', code);
-        updateLiveChip(true);
+        if (!lastDriverPoint) updateLiveChip(false, 'Sin GPS');
     } catch (error) {
         updateLiveChip(false);
         console.warn('SignalR no conectado. Usando polling.', error);
@@ -92,6 +97,7 @@ async function loadOrderData(code, isUpdate = false) {
         renderPayment(order.paymentMethod);
         renderItems(order, isUpdate);
         renderTotals(order);
+        await renderDestination(order);
 
         const driverLocation = extractDriverLocation(order);
         updateUI(order.status, Boolean(driverLocation));
@@ -99,7 +105,9 @@ async function loadOrderData(code, isUpdate = false) {
         if (driverLocation) {
             updateMapLocation(driverLocation, { fromPolling: isUpdate });
         } else {
+            clearDriverSignal();
             updateDriverPanel(null, getWaitingMapMessage(order.status));
+            if (!isUpdate) fitMapToActivePoints();
         }
     } catch (error) {
         console.error(error);
@@ -140,6 +148,85 @@ function renderItems(order, isUpdate) {
 
 function renderTotals(order) {
     setText('order-total', `$${formatMoney(order.totalAmount)}`);
+}
+
+async function renderDestination(order) {
+    const destination = extractDestination(order);
+    const title = document.getElementById('map-title');
+
+    if (title && !lastDriverPoint) {
+        title.innerText = destination?.label
+            ? `Entrega: ${destination.label}`
+            : 'Esperando salida del pedido';
+    }
+
+    if (!destination?.query || !map) return;
+    if (destination.query === lastDestinationKey && destinationMarker) return;
+
+    lastDestinationKey = destination.query;
+
+    const point = await geocodeDestination(destination.query);
+    if (!point) return;
+
+    destinationPoint = point;
+    if (!destinationMarker) {
+        destinationMarker = L.marker(point, {
+            icon: createDestinationIcon(),
+            zIndexOffset: 600
+        }).addTo(map);
+    } else {
+        destinationMarker.setLatLng(point);
+    }
+
+    destinationMarker.bindTooltip(destination.label || 'Destino de entrega', {
+        direction: 'top',
+        offset: [0, -18],
+        opacity: 0.92
+    });
+
+    fitMapToActivePoints();
+}
+
+function extractDestination(order) {
+    const street = order.deliveryStreet || '';
+    const city = order.deliveryCity || '';
+    const region = order.deliveryRegion || '';
+    const country = order.deliveryCountry || 'Uruguay';
+    const addressText = order.deliveryAddressText || [street, city, region, country]
+        .filter(Boolean)
+        .join(', ');
+
+    if (!addressText.trim()) return null;
+
+    return {
+        query: addressText,
+        label: order.deliveryAddressLabel
+            ? `${order.deliveryAddressLabel}: ${addressText}`
+            : addressText
+    };
+}
+
+async function geocodeDestination(query) {
+    try {
+        const params = new URLSearchParams({
+            format: 'jsonv2',
+            limit: '1',
+            countrycodes: 'uy',
+            q: query
+        });
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
+            headers: { 'Accept': 'application/json' }
+        });
+        if (!response.ok) return null;
+        const results = await response.json();
+        const first = Array.isArray(results) ? results[0] : null;
+        const lat = Number(first?.lat);
+        const lng = Number(first?.lon);
+        return Number.isFinite(lat) && Number.isFinite(lng) ? [lat, lng] : null;
+    } catch (error) {
+        console.warn('No se pudo ubicar la direccion de entrega.', error);
+        return null;
+    }
 }
 
 function renderNotFound() {
@@ -291,7 +378,7 @@ function updateMapLocation(rawLocation, options = {}) {
             opacity: 0.38,
             weight: 2
         }).addTo(map);
-        map.flyTo(nextPoint, 15, { duration: 0.9 });
+        fitMapToActivePoints();
     } else if (previousPoint && !samePoint(previousPoint, nextPoint)) {
         animateMarker(previousPoint, nextPoint, 900);
     } else {
@@ -300,8 +387,23 @@ function updateMapLocation(rawLocation, options = {}) {
     }
 
     if (!options.fromPolling || routePoints.length <= 2) {
-        map.flyTo(nextPoint, Math.max(map.getZoom(), 15), { duration: 0.75 });
+        fitMapToActivePoints();
     }
+}
+
+function clearDriverSignal() {
+    if (animationFrame) cancelAnimationFrame(animationFrame);
+    animationFrame = null;
+    driverMarker?.remove();
+    livePulse?.remove();
+    accuracyCircle?.remove();
+    driverMarker = null;
+    livePulse = null;
+    accuracyCircle = null;
+    lastDriverPoint = null;
+    routePoints = [];
+    routeDistanceMeters = 0;
+    updateRouteLine();
 }
 
 function animateMarker(from, to, duration) {
@@ -360,6 +462,16 @@ function updateDriverPanel(location, emptyMessage = 'Esperando primera ubicacion
     const signalDot = document.getElementById('signal-dot');
     const signalLabel = document.getElementById('driver-signal-label');
     const signal = document.getElementById('driver-signal');
+    const statusOverlay = document.querySelector('.track-map-overlay--status');
+    const metricsOverlay = document.querySelector('.track-map-overlay--metrics');
+    const recenterButton = document.getElementById('recenter-map');
+
+    if (statusOverlay) statusOverlay.hidden = !hasLocation;
+    if (metricsOverlay) metricsOverlay.hidden = !hasLocation;
+    if (recenterButton) {
+        recenterButton.disabled = !hasLocation && !destinationPoint;
+        recenterButton.title = hasLocation ? 'Centrar repartidor' : 'Centrar destino';
+    }
 
     signalDot?.classList.toggle('is-live', hasLocation);
     setText('driver-updated', hasLocation ? formatTime(location.locationAtUtc) : '-');
@@ -390,10 +502,25 @@ function createDriverIcon() {
     });
 }
 
+function createDestinationIcon() {
+    return L.divIcon({
+        html: `
+            <span class="destination-marker">
+                <span class="destination-marker__core"><i class="bi bi-house-door-fill"></i></span>
+                <span class="destination-marker__pin"></span>
+            </span>
+        `,
+        className: 'destination-marker-host',
+        iconSize: [48, 58],
+        iconAnchor: [24, 52]
+    });
+}
+
 function extractDriverLocation(order) {
     const latitude = Number(order.driverLatitude);
     const longitude = Number(order.driverLongitude);
     if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+    if (!isFreshSignal(order.driverLocationAtUtc)) return null;
 
     return {
         latitude,
@@ -403,6 +530,13 @@ function extractDriverLocation(order) {
         headingDegrees: Number(order.driverHeadingDegrees),
         locationAtUtc: order.driverLocationAtUtc
     };
+}
+
+function isFreshSignal(value) {
+    if (!value) return false;
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return false;
+    return Date.now() - date.getTime() <= DRIVER_SIGNAL_STALE_MS;
 }
 
 function normalizeLocation(location) {
@@ -428,6 +562,27 @@ function renderSteps(status) {
         step.classList.toggle('is-active', stepIndex <= currentIndex && currentIndex >= 0);
         step.classList.toggle('is-current', step.dataset.status === status);
     });
+}
+
+function fitMapToActivePoints() {
+    if (!map) return;
+
+    const points = [];
+    if (destinationPoint) points.push(destinationPoint);
+    if (lastDriverPoint) points.push(lastDriverPoint);
+
+    if (points.length >= 2) {
+        map.fitBounds(L.latLngBounds(points), {
+            paddingTopLeft: [40, 94],
+            paddingBottomRight: [40, 40],
+            maxZoom: 15
+        });
+        return;
+    }
+
+    if (points.length === 1) {
+        map.flyTo(points[0], 15, { duration: 0.75 });
+    }
 }
 
 function getStatusData(status) {

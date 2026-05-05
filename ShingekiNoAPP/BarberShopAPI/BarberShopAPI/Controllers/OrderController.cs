@@ -222,6 +222,12 @@ namespace ShingekiNoAPPI.Controllers
                 BranchName = order.Branch != null ? order.Branch.Name : "N/A",
                 TenantSlug = order.Branch == null ? string.Empty : GetPublicHandle(order.Branch),
                 PublicOrderingUrl = order.Branch == null ? string.Empty : BuildFrontendUrl($"/order.html?negocio={Uri.EscapeDataString(GetPublicHandle(order.Branch))}"),
+                DeliveryAddressText = BuildDeliveryAddressText(order.DeliveryAddress),
+                DeliveryAddressLabel = order.DeliveryAddress?.Label,
+                DeliveryStreet = order.DeliveryAddress?.Street,
+                DeliveryCity = order.DeliveryAddress?.City,
+                DeliveryRegion = order.DeliveryAddress?.Region,
+                DeliveryCountry = order.DeliveryAddress?.Country,
                 DriverLatitude = order.LastDriverLatitude,
                 DriverLongitude = order.LastDriverLongitude,
                 DriverAccuracyMeters = order.LastDriverAccuracyMeters,
@@ -252,6 +258,7 @@ namespace ShingekiNoAPPI.Controllers
             var order = _repoOrder.GetAll()
                 .Include(o => o.Client)
                 .Include(o => o.Branch)
+                .Include(o => o.DeliveryAddress)
                 .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Product)
                 .FirstOrDefault(o => o.TrackingNumber == trackingNumber);
@@ -272,6 +279,12 @@ namespace ShingekiNoAPPI.Controllers
                 BranchName = order.Branch?.Name ?? "Central",
                 TenantSlug = order.Branch == null ? string.Empty : GetPublicHandle(order.Branch),
                 PublicOrderingUrl = order.Branch == null ? string.Empty : BuildFrontendUrl($"/order.html?negocio={Uri.EscapeDataString(GetPublicHandle(order.Branch))}"),
+                DeliveryAddressText = BuildDeliveryAddressText(order.DeliveryAddress),
+                DeliveryAddressLabel = order.DeliveryAddress?.Label,
+                DeliveryStreet = order.DeliveryAddress?.Street,
+                DeliveryCity = order.DeliveryAddress?.City,
+                DeliveryRegion = order.DeliveryAddress?.Region,
+                DeliveryCountry = order.DeliveryAddress?.Country,
                 DriverLatitude = order.LastDriverLatitude,
                 DriverLongitude = order.LastDriverLongitude,
                 DriverAccuracyMeters = order.LastDriverAccuracyMeters,
@@ -576,6 +589,23 @@ namespace ShingekiNoAPPI.Controllers
             if (!slug.StartsWith("tenant-", StringComparison.OrdinalIgnoreCase)) return slug;
 
             return NormalizePublicHandle(branch.BrandName ?? branch.Name);
+        }
+
+        private static string BuildDeliveryAddressText(ClientAddress? address)
+        {
+            if (address == null) return string.Empty;
+
+            var parts = new[]
+            {
+                address.Street,
+                address.City,
+                address.Region,
+                address.Country
+            }
+            .Where(part => !string.IsNullOrWhiteSpace(part))
+            .Select(part => part.Trim());
+
+            return string.Join(", ", parts);
         }
 
         private static string NormalizePublicHandle(string? value)

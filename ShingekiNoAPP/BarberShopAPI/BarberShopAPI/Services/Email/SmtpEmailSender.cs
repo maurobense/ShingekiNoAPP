@@ -20,8 +20,8 @@ namespace ShingekiNoAPPI.Services.Email
         {
             if (string.IsNullOrWhiteSpace(_options.Username) || string.IsNullOrWhiteSpace(_options.Password))
             {
-                _logger.LogWarning("SMTP no configurado. Codigo de verificacion para {Email}: {Code}", toEmail, code);
-                return;
+                _logger.LogError("SMTP no configurado. No se puede enviar codigo de verificacion a {Email}.", toEmail);
+                throw new InvalidOperationException("SMTP no configurado.");
             }
 
             using var message = new MailMessage
