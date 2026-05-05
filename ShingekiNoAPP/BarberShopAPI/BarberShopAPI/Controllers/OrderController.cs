@@ -10,6 +10,7 @@ using ShingekiNoAPPI.Hubs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -221,6 +222,12 @@ namespace ShingekiNoAPPI.Controllers
                 BranchName = order.Branch != null ? order.Branch.Name : "N/A",
                 TenantSlug = order.Branch == null ? string.Empty : GetPublicHandle(order.Branch),
                 PublicOrderingUrl = order.Branch == null ? string.Empty : BuildFrontendUrl($"/order.html?negocio={Uri.EscapeDataString(GetPublicHandle(order.Branch))}"),
+                DriverLatitude = order.LastDriverLatitude,
+                DriverLongitude = order.LastDriverLongitude,
+                DriverAccuracyMeters = order.LastDriverAccuracyMeters,
+                DriverSpeedMetersPerSecond = order.LastDriverSpeedMetersPerSecond,
+                DriverHeadingDegrees = order.LastDriverHeadingDegrees,
+                DriverLocationAtUtc = order.LastDriverLocationAtUtc,
                 Items = order.OrderItems.Select(oi => new OrderItemResponseDto
                 {
                     ProductName = oi.Product?.Name ?? "Producto Desconocido",
@@ -265,6 +272,12 @@ namespace ShingekiNoAPPI.Controllers
                 BranchName = order.Branch?.Name ?? "Central",
                 TenantSlug = order.Branch == null ? string.Empty : GetPublicHandle(order.Branch),
                 PublicOrderingUrl = order.Branch == null ? string.Empty : BuildFrontendUrl($"/order.html?negocio={Uri.EscapeDataString(GetPublicHandle(order.Branch))}"),
+                DriverLatitude = order.LastDriverLatitude,
+                DriverLongitude = order.LastDriverLongitude,
+                DriverAccuracyMeters = order.LastDriverAccuracyMeters,
+                DriverSpeedMetersPerSecond = order.LastDriverSpeedMetersPerSecond,
+                DriverHeadingDegrees = order.LastDriverHeadingDegrees,
+                DriverLocationAtUtc = order.LastDriverLocationAtUtc,
                 Items = order.OrderItems.Select(oi => new OrderItemResponseDto
                 {
                     ProductName = oi.Product?.Name ?? "Ítem",
@@ -277,6 +290,126 @@ namespace ShingekiNoAPPI.Controllers
             };
 
             return Ok(responseDto);
+        }
+
+        [HttpPost("track/{trackingNumber}/driver-location")]
+        [Authorize(Roles = "Delivery,Admin,BranchManager")]
+        public async Task<IActionResult> UpdateDriverLocation(Guid trackingNumber, [FromBody] DriverLocationUpdateDto dto)
+        {
+            if (!IsValidCoordinate(dto.Latitude, dto.Longitude))
+                return BadRequest("Coordenadas invalidas.");
+
+            var order = _repoOrder.GetAll()
+                .FirstOrDefault(o => o.TrackingNumber == trackingNumber);
+
+            if (order == null) return NotFound("Pedido no encontrado.");
+
+            if (order.CurrentStatus is OrderStatus.Delivered or OrderStatus.Cancelled)
+                return BadRequest("No se puede transmitir ubicacion para un pedido finalizado.");
+
+            order.LastDriverLatitude = dto.Latitude;
+            order.LastDriverLongitude = dto.Longitude;
+            order.LastDriverAccuracyMeters = dto.AccuracyMeters;
+            order.LastDriverSpeedMetersPerSecond = dto.SpeedMetersPerSecond;
+            order.LastDriverHeadingDegrees = dto.HeadingDegrees;
+            order.LastDriverLocationAtUtc = DateTime.UtcNow;
+            order.LastDriverUserId = GetCurrentUserId();
+
+            _repoOrder.Update(order);
+            _repoOrder.Save();
+
+            await _hubContext.Clients.Group(order.TrackingNumber.ToString())
+                .SendAsync("ReceiveDriverLocation", dto.Latitude, dto.Longitude);
+
+            await _hubContext.Clients.Group(order.TrackingNumber.ToString())
+                .SendAsync("ReceiveDriverLocationDetails", new
+                {
+                    latitude = dto.Latitude,
+                    longitude = dto.Longitude,
+                    accuracyMeters = dto.AccuracyMeters,
+                    speedMetersPerSecond = dto.SpeedMetersPerSecond,
+                    headingDegrees = dto.HeadingDegrees,
+                    locationAtUtc = order.LastDriverLocationAtUtc,
+                    orderId = order.Id
+                });
+
+            return Ok(new
+            {
+                orderId = order.Id,
+                trackingNumber = order.TrackingNumber,
+                latitude = dto.Latitude,
+                longitude = dto.Longitude,
+                locationAtUtc = order.LastDriverLocationAtUtc
+            });
+        }
+
+        [HttpPost("track/driver-location/batch")]
+        [Authorize(Roles = "Delivery,Admin,BranchManager")]
+        public async Task<IActionResult> UpdateDriverLocationBatch([FromBody] DriverLocationBatchUpdateDto dto)
+        {
+            if (dto.TrackingNumbers == null || dto.TrackingNumbers.Count == 0)
+                return BadRequest("Debe indicar al menos un pedido para transmitir ubicacion.");
+
+            if (!IsValidCoordinate(dto.Latitude, dto.Longitude))
+                return BadRequest("Coordenadas invalidas.");
+
+            var trackingNumbers = dto.TrackingNumbers
+                .Where(value => value != Guid.Empty)
+                .Distinct()
+                .Take(12)
+                .ToList();
+
+            var orders = _repoOrder.GetAll()
+                .Where(o => trackingNumbers.Contains(o.TrackingNumber))
+                .ToList();
+
+            if (orders.Count == 0) return NotFound("No se encontraron pedidos para transmitir ubicacion.");
+
+            var now = DateTime.UtcNow;
+            var activeOrders = orders
+                .Where(o => o.CurrentStatus != OrderStatus.Delivered && o.CurrentStatus != OrderStatus.Cancelled)
+                .ToList();
+
+            foreach (var order in activeOrders)
+            {
+                order.LastDriverLatitude = dto.Latitude;
+                order.LastDriverLongitude = dto.Longitude;
+                order.LastDriverAccuracyMeters = dto.AccuracyMeters;
+                order.LastDriverSpeedMetersPerSecond = dto.SpeedMetersPerSecond;
+                order.LastDriverHeadingDegrees = dto.HeadingDegrees;
+                order.LastDriverLocationAtUtc = now;
+                order.LastDriverUserId = GetCurrentUserId();
+                _repoOrder.Update(order);
+            }
+
+            _repoOrder.Save();
+
+            foreach (var order in activeOrders)
+            {
+                await _hubContext.Clients.Group(order.TrackingNumber.ToString())
+                    .SendAsync("ReceiveDriverLocation", dto.Latitude, dto.Longitude);
+
+                await _hubContext.Clients.Group(order.TrackingNumber.ToString())
+                    .SendAsync("ReceiveDriverLocationDetails", new
+                    {
+                        latitude = dto.Latitude,
+                        longitude = dto.Longitude,
+                        accuracyMeters = dto.AccuracyMeters,
+                        speedMetersPerSecond = dto.SpeedMetersPerSecond,
+                        headingDegrees = dto.HeadingDegrees,
+                        locationAtUtc = order.LastDriverLocationAtUtc,
+                        orderId = order.Id
+                    });
+            }
+
+            return Ok(new
+            {
+                updatedOrders = activeOrders.Count,
+                ignoredOrders = orders.Count - activeOrders.Count,
+                latitude = dto.Latitude,
+                longitude = dto.Longitude,
+                locationAtUtc = now
+            });
         }
 
         // =========================================================
@@ -449,6 +582,17 @@ namespace ShingekiNoAPPI.Controllers
         {
             var slug = Regex.Replace((value ?? string.Empty).Trim().ToLowerInvariant(), @"[^a-z0-9]+", "-").Trim('-');
             return string.IsNullOrWhiteSpace(slug) ? "negocio" : slug;
+        }
+
+        private long? GetCurrentUserId()
+        {
+            var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return long.TryParse(id, out var userId) ? userId : null;
+        }
+
+        private static bool IsValidCoordinate(double lat, double lng)
+        {
+            return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
         }
     }
 }

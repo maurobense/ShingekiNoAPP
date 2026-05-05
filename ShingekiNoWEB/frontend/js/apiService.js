@@ -5,8 +5,8 @@ let HUB_URL;
 
 if (isLocal) {
     console.log('Modo Desarrollo Detectado (Localhost)');
-    BASE_URL = 'https://localhost:7200/api';
-    HUB_URL = 'https://localhost:7200/deliveryHub';
+    BASE_URL = 'http://localhost:5019/api';
+    HUB_URL = 'http://localhost:5019/deliveryHub';
 } else {
     console.log('Modo Produccion Detectado (Netlify proxy)');
     BASE_URL = '/api';

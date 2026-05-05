@@ -36,66 +36,94 @@
         </div>
     </header>
 
-    <main class="track-shell">
-        <section class="track-hero">
-            <div class="d-flex flex-column flex-md-row justify-content-between gap-3 align-items-md-center">
-                <div>
-                    <span class="brand-subtitle">Seguimiento en vivo</span>
-                    <h1 class="h3 fw-bold mb-1">Pedido #<span id="display-id">...</span></h1>
-                    <p class="text-muted mb-0">El estado se actualiza automaticamente durante la preparacion y entrega.</p>
-                </div>
-                <span class="badge bg-light text-dark border" id="order-date">-/-</span>
+    <main class="track-shell track-shell--wide">
+        <section class="track-hero track-hero--live">
+            <div>
+                <span class="brand-subtitle">Seguimiento en vivo</span>
+                <h1>Pedido #<span id="display-id">...</span></h1>
+                <p id="track-hero-copy">Estamos conectando con el local para mostrarte el avance del pedido.</p>
+            </div>
+            <div class="track-hero__meta">
+                <span class="track-live-chip" id="live-chip"><i class="bi bi-broadcast-pin"></i> Conectando</span>
+                <span class="track-date-pill" id="order-date">-/-</span>
             </div>
         </section>
 
-        <div class="row g-4 justify-content-center">
-            <div class="col-12 col-lg-5 col-xl-4">
-                <div class="card mb-3 text-center p-4">
-                    <div id="status-container" class="py-3">
+        <section class="track-layout">
+            <aside class="track-sidebar">
+                <div class="track-card track-status-card">
+                    <div id="status-container" class="track-status-main">
                         <div class="spinner-border text-primary" role="status"></div>
                         <p class="text-muted mt-2 mb-0">Conectando con Kordena...</p>
                     </div>
 
-                    <div class="progress mt-2" style="height: 8px;">
-                        <div id="status-bar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div>
+                    <div class="track-progress">
+                        <div id="status-bar"></div>
+                    </div>
+
+                    <div class="track-steps" id="status-steps">
+                        <span data-status="Pending">Recibido</span>
+                        <span data-status="Cooking">Cocina</span>
+                        <span data-status="Ready">Listo</span>
+                        <span data-status="OnTheWay">En camino</span>
+                        <span data-status="Delivered">Entregado</span>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header fw-bold pt-3 d-flex justify-content-between">
+                <div class="track-card track-ticket-card">
+                    <div class="track-card__head">
                         <span><i class="bi bi-receipt me-2 text-primary"></i>Ticket</span>
-                        <span class="badge bg-success bg-opacity-10 text-success border border-success" id="payment-method-badge">...</span>
+                        <span class="track-payment-pill" id="payment-method-badge">...</span>
                     </div>
-                    <div class="card-body">
-                        <div class="mb-3 border-bottom pb-2">
-                            <small class="text-muted d-block">Cliente</small>
-                            <span class="fw-bold" id="client-name">-</span>
-                        </div>
-
-                        <ul class="list-group list-group-flush mb-3 small" id="order-items"></ul>
-
-                        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
-                            <span class="text-muted">Total</span>
-                            <span class="fs-4 fw-bold" id="order-total">$0</span>
-                        </div>
+                    <div class="track-client">
+                        <small>Cliente</small>
+                        <strong id="client-name">-</strong>
+                    </div>
+                    <ul class="track-items" id="order-items"></ul>
+                    <div class="track-total">
+                        <span>Total</span>
+                        <strong id="order-total">$0</strong>
                     </div>
                 </div>
-            </div>
+            </aside>
 
-            <div class="col-12 col-lg-7 col-xl-6" id="map-section" style="display: none;">
-                <div class="card h-100">
-                    <div class="card-body p-2 position-relative">
-                        <div id="map-container"></div>
+            <section class="track-map-card" id="map-section">
+                <div class="track-map-toolbar">
+                    <div>
+                        <small>Mapa de entrega</small>
+                        <strong id="map-title">Esperando senal del repartidor</strong>
+                    </div>
+                    <button class="track-map-button" id="recenter-map" type="button" title="Centrar repartidor">
+                        <i class="bi bi-crosshair"></i>
+                    </button>
+                </div>
 
-                        <div class="position-absolute top-0 start-0 m-3 p-2 bg-white rounded shadow-sm" style="z-index: 999; opacity: 0.92;">
-                            <small class="fw-bold text-danger">
-                                <i class="bi bi-record-circle-fill"></i> EN VIVO
-                            </small>
-                        </div>
+                <div id="map-container"></div>
+
+                <div class="track-map-overlay track-map-overlay--status">
+                    <span class="track-pulse-dot" id="signal-dot"></span>
+                    <div>
+                        <small id="driver-signal-label">Sin GPS activo</small>
+                        <strong id="driver-signal">Esperando primera ubicacion</strong>
                     </div>
                 </div>
-            </div>
-        </div>
+
+                <div class="track-map-overlay track-map-overlay--metrics">
+                    <div>
+                        <small>Ultima senal</small>
+                        <strong id="driver-updated">-</strong>
+                    </div>
+                    <div>
+                        <small>Recorrido</small>
+                        <strong id="driver-distance">0 m</strong>
+                    </div>
+                    <div>
+                        <small>Movimiento</small>
+                        <strong id="driver-speed">-</strong>
+                    </div>
+                </div>
+            </section>
+        </section>
     </main>
 
     <script>

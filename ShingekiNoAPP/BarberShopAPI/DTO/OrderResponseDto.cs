@@ -24,6 +24,13 @@ namespace DTO
         public string BranchName { get; set; }
         public string TenantSlug { get; set; }
         public string PublicOrderingUrl { get; set; }
+        public double? DriverLatitude { get; set; }
+        public double? DriverLongitude { get; set; }
+        public double? DriverAccuracyMeters { get; set; }
+        public double? DriverSpeedMetersPerSecond { get; set; }
+        public double? DriverHeadingDegrees { get; set; }
+        public DateTime? DriverLocationAtUtc { get; set; }
+        public bool HasDriverLocation => DriverLatitude.HasValue && DriverLongitude.HasValue;
         public List<OrderItemResponseDto> Items { get; set; }
     }
 }

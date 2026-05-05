@@ -177,4 +177,3 @@ C:\Software\ShingekiNoAPP\.buildcheck\ShingekiNoAPPI.deps.json
 C:\Software\ShingekiNoAPP\.buildcheck\ShingekiNoAPPI.runtimeconfig.json
 C:\Software\ShingekiNoAPP\.buildcheck\ShingekiNoAPPI.dll
 C:\Software\ShingekiNoAPP\.buildcheck\ShingekiNoAPPI.pdb
-C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\BarberShopAPI\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

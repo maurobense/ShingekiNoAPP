@@ -1,48 +1,120 @@
-﻿using Microsoft.AspNetCore.SignalR;
+using Business.BusinessEntities;
+using Datos.EF;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ShingekiNoAPPI.Hubs
 {
     public class DeliveryHub : Hub
     {
-        // -------------------------------------------------------------
-        // 1. COCINA / ADMIN (Dashboard)
-        // -------------------------------------------------------------
-        // La pantalla de Admin se une aquí para escuchar "ReceiveNewOrder" y actualizaciones globales.
+        private readonly ShingekiContext _context;
+
+        public DeliveryHub(ShingekiContext context)
+        {
+            _context = context;
+        }
+
         public async Task JoinKitchenGroup()
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, "Kitchen");
         }
 
-        // -------------------------------------------------------------
-        // 2. CLIENTE (Rastreo Interno / Legacy)
-        // -------------------------------------------------------------
-        // Se une usando el ID numérico (Ej: "1050"). 
-        // Útil si usas el rastreo desde dentro de la app logueada.
         public async Task JoinOrderGroup(string orderId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, orderId);
         }
 
-        // -------------------------------------------------------------
-        // 3. CLIENTE PÚBLICO (Rastreo Seguro con Link)
-        // -------------------------------------------------------------
-        // Se une usando el GUID (Ej: "550e8400-e29b...").
-        // Esto lo usa track.html para escuchar cambios de estado y ubicación.
         public async Task JoinTrackingGroup(string trackingNumber)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, trackingNumber);
         }
 
-        // -------------------------------------------------------------
-        // 4. REPARTIDOR (GPS en Tiempo Real)
-        // -------------------------------------------------------------
-        // El celular del repartidor llama a este método cada 5 segundos.
-        // El Hub recibe la lat/lng y la REENVÍA a quien esté mirando ese pedido específico.
+        [Authorize(Roles = "Delivery,Admin,BranchManager")]
         public async Task SendDriverLocation(string trackingNumber, double lat, double lng)
         {
-            // Enviamos el evento "ReceiveDriverLocation" solo al grupo de ese pedido
+            if (!Guid.TryParse(trackingNumber, out var trackingGuid)) return;
+            if (!IsValidCoordinate(lat, lng)) return;
+
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.TrackingNumber == trackingGuid);
+            if (order == null) return;
+
+            order.LastDriverLatitude = lat;
+            order.LastDriverLongitude = lng;
+            order.LastDriverLocationAtUtc = DateTime.UtcNow;
+            order.LastDriverUserId = GetUserId();
+            await _context.SaveChangesAsync();
+
             await Clients.Group(trackingNumber).SendAsync("ReceiveDriverLocation", lat, lng);
+            await Clients.Group(trackingNumber).SendAsync("ReceiveDriverLocationDetails", new
+            {
+                latitude = lat,
+                longitude = lng,
+                locationAtUtc = order.LastDriverLocationAtUtc,
+                orderId = order.Id
+            });
+        }
+
+        [Authorize(Roles = "Delivery,Admin,BranchManager")]
+        public async Task SendDriverLocationToMany(IEnumerable<string> trackingNumbers, double lat, double lng)
+        {
+            if (trackingNumbers == null || !IsValidCoordinate(lat, lng)) return;
+
+            var trackingGuids = trackingNumbers
+                .Select(value => Guid.TryParse(value, out var guid) ? guid : Guid.Empty)
+                .Where(value => value != Guid.Empty)
+                .Distinct()
+                .Take(12)
+                .ToList();
+
+            if (trackingGuids.Count == 0) return;
+
+            var orders = await _context.Orders
+                .Where(o => trackingGuids.Contains(o.TrackingNumber))
+                .ToListAsync();
+
+            var activeOrders = orders
+                .Where(o => o.CurrentStatus != OrderStatus.Delivered && o.CurrentStatus != OrderStatus.Cancelled)
+                .ToList();
+
+            foreach (var order in activeOrders)
+            {
+                order.LastDriverLatitude = lat;
+                order.LastDriverLongitude = lng;
+                order.LastDriverLocationAtUtc = DateTime.UtcNow;
+                order.LastDriverUserId = GetUserId();
+            }
+
+            await _context.SaveChangesAsync();
+
+            foreach (var order in activeOrders)
+            {
+                var trackingNumber = order.TrackingNumber.ToString();
+                await Clients.Group(trackingNumber).SendAsync("ReceiveDriverLocation", lat, lng);
+                await Clients.Group(trackingNumber).SendAsync("ReceiveDriverLocationDetails", new
+                {
+                    latitude = lat,
+                    longitude = lng,
+                    locationAtUtc = order.LastDriverLocationAtUtc,
+                    orderId = order.Id
+                });
+            }
+        }
+
+        private long? GetUserId()
+        {
+            var id = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return long.TryParse(id, out var userId) ? userId : null;
+        }
+
+        private static bool IsValidCoordinate(double lat, double lng)
+        {
+            return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
         }
     }
 }

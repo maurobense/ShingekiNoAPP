@@ -36,6 +36,14 @@ namespace Business.BusinessEntities
         public long? ClientId { get; set; }
         public Client? Client { get; set; }
 
+        public double? LastDriverLatitude { get; set; }
+        public double? LastDriverLongitude { get; set; }
+        public double? LastDriverAccuracyMeters { get; set; }
+        public double? LastDriverSpeedMetersPerSecond { get; set; }
+        public double? LastDriverHeadingDegrees { get; set; }
+        public DateTime? LastDriverLocationAtUtc { get; set; }
+        public long? LastDriverUserId { get; set; }
+
         // Colecciones
         [JsonIgnore]
         public ICollection<OrderItem> OrderItems { get; set; }
