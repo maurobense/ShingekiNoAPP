@@ -4,7 +4,7 @@ export const login = async (username, password) => {
     const data = await apiCall('/User/login', 'POST', { username, password });
 
     if (!data || !data.token) {
-        return false;
+        throw new Error('La API no devolvio el token de login.');
     }
 
     localStorage.setItem('jwt_token', data.token);

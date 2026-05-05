@@ -3,7 +3,7 @@ import { confirmAction, showToast } from './ui.js';
 
 // 1. CARGAR CARRITO AL INICIAR
 // Intentamos leer del localStorage, si no hay nada, array vacío.
-let cart = JSON.parse(localStorage.getItem('kordena_cart')) || [];
+let cart = JSON.parse(localStorage.getItem('kordena_cart') || '[]');
 
 // Actualizar UI inicial por si había algo guardado
 document.addEventListener('DOMContentLoaded', () => {

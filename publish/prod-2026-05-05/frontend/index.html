@@ -48,34 +48,44 @@
         </section>
 
         <section class="auth-panel">
-            <div class="mb-4">
-                <span class="brand-subtitle">Acceso seguro</span>
-                <h2 class="fw-bold mb-1">Bienvenido de nuevo</h2>
-                <p class="text-muted mb-0">Ingresa con tu usuario para continuar.</p>
+            <div class="auth-panel-brand">
+                <span class="brand-mark brand-mark--sm">K</span>
+                <div>
+                    <strong>Kordena</strong>
+                    <small>Operations OS</small>
+                </div>
             </div>
 
-            <div id="login-view" class="auth-card card fade-in">
-                <form id="login-form">
-                    <div class="mb-3">
-                        <label class="form-label">Usuario</label>
-                        <div class="input-group">
-                            <span class="input-group-text border-end-0"><i class="bi bi-person"></i></span>
-                            <input type="text" id="login-username" class="form-control border-start-0" required placeholder="admin" autocomplete="username">
+            <div class="auth-login-stack">
+                <div class="auth-heading">
+                    <span class="brand-subtitle">Acceso seguro</span>
+                    <h2>Bienvenido de nuevo</h2>
+                    <p>Ingresa con tu usuario para continuar.</p>
+                </div>
+
+                <div id="login-view" class="auth-card card fade-in">
+                    <form id="login-form">
+                        <div class="mb-3">
+                            <label class="form-label">Usuario</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0"><i class="bi bi-person"></i></span>
+                                <input type="text" id="login-username" class="form-control border-start-0" required placeholder="admin" autocomplete="username">
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="mb-4">
-                        <label class="form-label">Contrasena</label>
-                        <div class="input-group">
-                            <span class="input-group-text border-end-0"><i class="bi bi-shield-lock"></i></span>
-                            <input type="password" id="login-password" class="form-control border-start-0" required placeholder="********" autocomplete="current-password">
+                        <div class="mb-4">
+                            <label class="form-label">Contrasena</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0"><i class="bi bi-shield-lock"></i></span>
+                                <input type="password" id="login-password" class="form-control border-start-0" required placeholder="********" autocomplete="current-password">
+                            </div>
                         </div>
-                    </div>
 
-                    <div id="login-error" class="alert alert-danger small d-none py-2 text-center"></div>
+                        <div id="login-error" class="alert alert-danger small d-none py-2 text-center"></div>
 
-                    <button type="submit" class="btn btn-primary w-100 py-2">Ingresar</button>
-                </form>
+                        <button type="submit" class="btn btn-primary w-100 py-2">Ingresar</button>
+                    </form>
+                </div>
             </div>
 
             <p class="auth-footer text-center mt-4 mb-0">Kordena Cloud Suite 2026</p>

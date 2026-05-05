@@ -1,37 +1,27 @@
-// ==========================================
-// ⚙️ CONFIGURACIÓN DE CONEXIÓN
-// ==========================================
-
-// Detecta automáticamente si estás en tu PC o en Netlify
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 let BASE_URL;
 let HUB_URL;
 
 if (isLocal) {
-    console.log("🏠 Modo Desarrollo Detectado (Localhost)");
+    console.log('Modo Desarrollo Detectado (Localhost)');
     BASE_URL = 'https://localhost:7200/api';
     HUB_URL = 'https://localhost:7200/deliveryHub';
 } else {
-    // ☁️ MODO PRODUCCIÓN (Apuntando directo a Somee con HTTPS)
-    console.log("☁️ Modo Producción Detectado (Directo a Somee)");
-    BASE_URL = 'https://www.shingekinoappi.somee.com/api'; 
+    console.log('Modo Produccion Detectado (Netlify proxy)');
+    BASE_URL = '/api';
     HUB_URL = 'https://www.shingekinoappi.somee.com/deliveryHub';
 }
 
 export let connection = null;
 const getToken = () => localStorage.getItem('jwt_token');
 
-// ==========================================
-// 📡 API CALL (Fetch Wrapper)
-// ==========================================
 export const apiCall = async (endpoint, method = 'GET', data = null, options = {}) => {
     const token = options.token ?? getToken();
     const isFormData = data instanceof FormData;
     const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
-    if (token && !options.skipAuth) headers['Authorization'] = `Bearer ${token}`;
+    if (token && !options.skipAuth) headers.Authorization = `Bearer ${token}`;
 
-    // 🛠️ Limpieza de barras: asegura que el endpoint no duplique la barra
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
     const url = `${BASE_URL}${cleanEndpoint}`;
 
@@ -43,37 +33,43 @@ export const apiCall = async (endpoint, method = 'GET', data = null, options = {
 
     try {
         const response = await fetch(url, config);
-        
+
         if (response.status === 401) {
             if (options.token) {
-                throw new Error("Unauthorized");
+                throw new Error('Unauthorized');
             }
 
             if (window.location.pathname.endsWith('index.html') || window.location.pathname === '/') {
-                 throw new Error("Unauthorized");
+                throw new Error('Unauthorized');
             }
-            
+
             if (!window.location.pathname.includes('track.html')) {
-                console.error("🚨 ALERTA 401: Token vencido o inválido. Redirigiendo al login...");
-                // 🔥 Como ahora apuntamos directo a Somee, si da 401 es porque el token caducó.
-                // Limpiamos y mandamos al login.
+                console.error('ALERTA 401: Token vencido o invalido. Redirigiendo al login...');
                 localStorage.removeItem('jwt_token');
                 window.location.href = 'index.html';
             }
-            return;
+            return null;
         }
 
         if (!response.ok) {
             const errorText = await response.text();
-            // Esto te ayudará a ver el error real en la consola si el servidor devuelve detalles
             throw new Error(errorText || `Error HTTP: ${response.status}`);
         }
 
         if (response.status === 204) return null;
-        return await response.json(); 
 
+        const responseText = await response.text();
+        if (!responseText) {
+            throw new Error(`La API respondio ${response.status} sin contenido para ${cleanEndpoint}. Revisar despliegue del backend.`);
+        }
+
+        try {
+            return JSON.parse(responseText);
+        } catch {
+            throw new Error(`La API no devolvio JSON valido para ${cleanEndpoint}: ${responseText.slice(0, 180)}`);
+        }
     } catch (error) {
-        console.error("API Error details:", error);
+        console.error('API Error details:', error);
         throw error;
     }
 };
@@ -88,25 +84,22 @@ export const uploadImage = async (file, folder = 'products', options = {}) => {
     return apiCall(`/files/images?${params.toString()}`, 'POST', formData);
 };
 
-// ==========================================
-// 🔥 SIGNALR (WebSockets en Tiempo Real)
-// ==========================================
 export const initSignalR = async (callbacks = {}) => {
     if (typeof signalR === 'undefined') {
         if (!window.location.pathname.endsWith('index.html') && window.location.pathname !== '/') {
-            console.error("⚠️ SignalR no cargado.");
+            console.error('SignalR no cargado.');
         }
         return;
     }
 
     if (connection && connection.state === signalR.HubConnectionState.Connected) {
         if (callbacks.onNewOrder) {
-            connection.off("ReceiveNewOrder");
-            connection.on("ReceiveNewOrder", callbacks.onNewOrder);
+            connection.off('ReceiveNewOrder');
+            connection.on('ReceiveNewOrder', callbacks.onNewOrder);
         }
         if (callbacks.onStatusUpdate) {
-            connection.off("ReceiveStatusUpdate");
-            connection.on("ReceiveStatusUpdate", callbacks.onStatusUpdate);
+            connection.off('ReceiveStatusUpdate');
+            connection.on('ReceiveStatusUpdate', callbacks.onStatusUpdate);
         }
         return;
     }
@@ -121,14 +114,14 @@ export const initSignalR = async (callbacks = {}) => {
             .build();
     }
 
-    if (callbacks.onNewOrder) connection.on("ReceiveNewOrder", callbacks.onNewOrder);
-    if (callbacks.onStatusUpdate) connection.on("ReceiveStatusUpdate", callbacks.onStatusUpdate);
+    if (callbacks.onNewOrder) connection.on('ReceiveNewOrder', callbacks.onNewOrder);
+    if (callbacks.onStatusUpdate) connection.on('ReceiveStatusUpdate', callbacks.onStatusUpdate);
 
     try {
         await connection.start();
-        console.log("🟢 SignalR Conectado a:", HUB_URL);
+        console.log('SignalR conectado a:', HUB_URL);
     } catch (err) {
-        console.error("🔴 Error conectando SignalR:", err);
+        console.error('Error conectando SignalR:', err);
         setTimeout(() => initSignalR(callbacks), 5000);
     }
 };
@@ -136,7 +129,7 @@ export const initSignalR = async (callbacks = {}) => {
 export const stopSignalR = async () => {
     if (connection) {
         await connection.stop();
-        console.log("🔴 SignalR Desconectado");
+        console.log('SignalR desconectado');
         connection = null;
     }
 };

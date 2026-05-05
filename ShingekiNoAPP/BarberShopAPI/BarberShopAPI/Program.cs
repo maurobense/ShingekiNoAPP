@@ -22,15 +22,34 @@ var builder = WebApplication.CreateBuilder(args);
 // ⚠️ Clave Secreta para JWT
 var claveSecreta = "ZWRpw6fDo28gZW0gY29tcHV0YWRvcmE=";
 
+var allowedCorsOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .GetChildren()
+    .Select(section => section.Value)
+    .Where(origin => !string.IsNullOrWhiteSpace(origin))
+    .Select(origin => origin!)
+    .Distinct(StringComparer.OrdinalIgnoreCase)
+    .ToArray();
+
+if (allowedCorsOrigins.Length == 0)
+{
+    allowedCorsOrigins =
+    [
+        "https://kordena.netlify.app",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500"
+    ];
+}
+
 // =========================================================
 // 🌍 1. CONFIGURACIÓN DE CORS (SOLUCIÓN SIGNALR)
 // =========================================================
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
+    options.AddPolicy("FrontendCors",
         policy =>
         {
-            policy.SetIsOriginAllowed(origin => true)
+            policy.WithOrigins(allowedCorsOrigins)
                   .AllowAnyMethod()
                   .AllowAnyHeader()
                   .AllowCredentials();
@@ -167,16 +186,16 @@ app.UseSwaggerUI(c =>
 app.UseHttpsRedirection();
 
 // ⚠️ EL ORDEN ES CRÍTICO
-app.UseCors("AllowAll");
+app.UseCors("FrontendCors");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSession();
 
-app.MapControllers();
+app.MapControllers().RequireCors("FrontendCors");
 
 // ✅ MAPEO DEL HUB DE SIGNALR
-app.MapHub<DeliveryHub>("/deliveryHub");
+app.MapHub<DeliveryHub>("/deliveryHub").RequireCors("FrontendCors");
 
 app.Run();
