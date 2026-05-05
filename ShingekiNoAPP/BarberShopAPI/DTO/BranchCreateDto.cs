@@ -28,5 +28,14 @@ namespace DTO
         public string? MembershipStatus { get; set; }
         public bool PublicOrderingEnabled { get; set; } = true;
         public int MonthlyOrderLimit { get; set; }
+        public int OpeningHour { get; set; } = 18;
+        public int ClosingHour { get; set; } = 2;
+        public bool DayShiftEnabled { get; set; } = true;
+        public int DayOpeningHour { get; set; } = 10;
+        public int DayClosingHour { get; set; } = 16;
+        public bool NightShiftEnabled { get; set; } = true;
+        public int NightOpeningHour { get; set; } = 21;
+        public int NightClosingHour { get; set; } = 2;
+        public string? TimeZoneId { get; set; }
     }
 }

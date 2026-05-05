@@ -7,7 +7,7 @@ namespace ShingekiNoAPPI.Controllers
 {
     [Route("api/files")]
     [ApiController]
-    [Authorize(Roles = "Admin,BranchManager")]
+    [Authorize(Roles = "Admin,BranchManager,SuperAdmin")]
     public sealed class FilesController : ControllerBase
     {
         private readonly IFileStorageService _storage;
@@ -18,12 +18,18 @@ namespace ShingekiNoAPPI.Controllers
         }
 
         [HttpPost("images")]
-        [RequestSizeLimit(6_000_000)]
-        public async Task<IActionResult> UploadImage([FromForm] IFormFile file, [FromQuery] string folder = "products", CancellationToken cancellationToken = default)
+        [RequestSizeLimit(15_000_000)]
+        [RequestFormLimits(MultipartBodyLengthLimit = 15_000_000)]
+        public async Task<IActionResult> UploadImage(
+            [FromForm] IFormFile file,
+            [FromQuery] string folder = "products",
+            [FromQuery] string? tenantFolder = null,
+            CancellationToken cancellationToken = default)
         {
             try
             {
-                var url = await _storage.UploadImageAsync(file, folder, cancellationToken);
+                var tenantOverride = User.IsInRole("SuperAdmin") ? tenantFolder : null;
+                var url = await _storage.UploadImageAsync(file, folder, tenantOverride, cancellationToken);
                 return Ok(new { url });
             }
             catch (ArgumentException ex)

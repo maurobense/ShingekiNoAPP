@@ -35,7 +35,7 @@ namespace ShingekiNoAPPI.Services.Storage
             _tenantService = tenantService;
         }
 
-        public async Task<string> UploadImageAsync(IFormFile file, string folder, CancellationToken cancellationToken = default)
+        public async Task<string> UploadImageAsync(IFormFile file, string folder, string? tenantFolderOverride = null, CancellationToken cancellationToken = default)
         {
             Validate(file);
 
@@ -48,7 +48,9 @@ namespace ShingekiNoAPPI.Services.Storage
             var safeFolder = Regex.Replace(folder ?? "uploads", @"[^a-zA-Z0-9/_-]", string.Empty).Trim('/');
             if (string.IsNullOrWhiteSpace(safeFolder)) safeFolder = "uploads";
 
-            var tenantFolder = NormalizeTenantFolder(_tenantService.GetTenantFolder());
+            var tenantFolder = NormalizeTenantFolder(string.IsNullOrWhiteSpace(tenantFolderOverride)
+                ? _tenantService.GetTenantFolder()
+                : tenantFolderOverride);
             var key = $"{tenantFolder}/{safeFolder}/{DateTime.UtcNow:yyyy/MM}/{Guid.NewGuid():N}{extension}";
 
             await using var stream = file.OpenReadStream();

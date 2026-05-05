@@ -169,4 +169,12 @@ C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\BarberShopAPI\obj\Debug\ne
 C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\BarberShopAPI\obj\Debug\net8.0\Shingeki.8025BFEF.Up2Date
 C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\BarberShopAPI\obj\Debug\net8.0\ShingekiNoAPPI.genruntimeconfig.cache
 C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\BarberShopAPI\obj\Debug\net8.0\ref\ShingekiNoAPPI.dll
+C:\Software\ShingekiNoAPP\.buildcheck\appsettings.Development.json
+C:\Software\ShingekiNoAPP\.buildcheck\appsettings.json
+C:\Software\ShingekiNoAPP\.buildcheck\ShingekiNoAPPI.staticwebassets.endpoints.json
+C:\Software\ShingekiNoAPP\.buildcheck\ShingekiNoAPPI.exe
+C:\Software\ShingekiNoAPP\.buildcheck\ShingekiNoAPPI.deps.json
+C:\Software\ShingekiNoAPP\.buildcheck\ShingekiNoAPPI.runtimeconfig.json
+C:\Software\ShingekiNoAPP\.buildcheck\ShingekiNoAPPI.dll
+C:\Software\ShingekiNoAPP\.buildcheck\ShingekiNoAPPI.pdb
 C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\BarberShopAPI\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

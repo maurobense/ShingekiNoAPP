@@ -50,3 +50,7 @@ C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Datos\obj\Debug\net8.0\ref
 C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Datos\obj\Debug\net8.0\Datos.pdb
 C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Datos\obj\Debug\net8.0\Datos.genruntimeconfig.cache
 C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Datos\obj\Debug\net8.0\ref\Datos.dll
+C:\Software\ShingekiNoAPP\.buildcheck\Datos.deps.json
+C:\Software\ShingekiNoAPP\.buildcheck\Datos.runtimeconfig.json
+C:\Software\ShingekiNoAPP\.buildcheck\Datos.dll
+C:\Software\ShingekiNoAPP\.buildcheck\Datos.pdb

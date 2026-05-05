@@ -20,6 +20,9 @@ namespace DTO
         public List<ChartDataDto> Last7DaysSales { get; set; } // Evolución
         public List<ChartDataDto> SalesByCategory { get; set; } // ¿Qué vendemos?
         public List<ChartDataDto> PeakHours { get; set; }      // ¿A qué hora nos preparmos?
+        public List<ChartDataDto> PaymentMix { get; set; }
+        public List<ChartDataDto> StatusMix { get; set; }
+        public string OperatingHoursLabel { get; set; }
 
         // Stock Crítico (Resumen)
         public int LowStockCount { get; set; }

@@ -10,6 +10,7 @@ namespace Business.BusinessEntities
     {
         Cash = 1,        // Efectivo
         MercadoPago = 2, // MercadoPago
-        Transfer = 3     // Transferencia
+        Transfer = 3,    // Transferencia
+        Pos = 4          // POS al entregar
     }
 }

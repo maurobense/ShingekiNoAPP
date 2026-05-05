@@ -68,6 +68,15 @@ namespace Datos.EF
                 entity.Property(e => e.SecondaryColor).HasDefaultValue("#f59e0b");
                 entity.Property(e => e.AccentColor).HasDefaultValue("#10b981");
                 entity.Property(e => e.PublicOrderingEnabled).HasDefaultValue(true);
+                entity.Property(e => e.OpeningHour).HasDefaultValue(18);
+                entity.Property(e => e.ClosingHour).HasDefaultValue(2);
+                entity.Property(e => e.DayShiftEnabled).HasDefaultValue(true);
+                entity.Property(e => e.DayOpeningHour).HasDefaultValue(10);
+                entity.Property(e => e.DayClosingHour).HasDefaultValue(16);
+                entity.Property(e => e.NightShiftEnabled).HasDefaultValue(true);
+                entity.Property(e => e.NightOpeningHour).HasDefaultValue(21);
+                entity.Property(e => e.NightClosingHour).HasDefaultValue(2);
+                entity.Property(e => e.TimeZoneId).HasDefaultValue("America/Montevideo");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -75,6 +84,21 @@ namespace Datos.EF
                 entity.HasIndex(e => e.Username).IsUnique();
                 entity.Property(e => e.Role).HasConversion<string>();
                 entity.Property(e => e.Username).HasDefaultValue(" ");
+            });
+
+            modelBuilder.Entity<Client>(entity =>
+            {
+                entity.HasIndex(e => new { e.BranchId, e.Phone })
+                    .IsUnique()
+                    .HasFilter("[IsDeleted] = 0 AND [Phone] > 0");
+                entity.HasIndex(e => new { e.BranchId, e.Email })
+                    .IsUnique()
+                    .HasFilter("[IsDeleted] = 0 AND [Email] IS NOT NULL");
+                entity.Property(e => e.Email).HasMaxLength(256);
+                entity.Property(e => e.PasswordHash).HasMaxLength(512);
+                entity.Property(e => e.EmailVerificationCodeHash).HasMaxLength(128);
+                entity.Property(e => e.IsEmailVerified).HasDefaultValue(false);
+                entity.Property(e => e.EmailVerificationFailedAttempts).HasDefaultValue(0);
             });
 
             // --- DECIMALES ---

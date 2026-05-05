@@ -22,6 +22,8 @@ namespace DTO
         public decimal Discount { get; set; }
         public string TrackingNumber { get; set; }
         public string BranchName { get; set; }
+        public string TenantSlug { get; set; }
+        public string PublicOrderingUrl { get; set; }
         public List<OrderItemResponseDto> Items { get; set; }
     }
 }

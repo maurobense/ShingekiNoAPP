@@ -1,6 +1,7 @@
 ﻿using Business.BusinessEntities;
 using Business.RepositoryInterfaces;
 using DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace ShingekiNoAPPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,BranchManager")]
     public class ClientController : ControllerBase
     {
         private readonly IRepositoryClient _repoClient;
@@ -92,6 +94,21 @@ namespace ShingekiNoAPPI.Controllers
         {
             try
             {
+                if (dto.Phone <= 0)
+                {
+                    return BadRequest("El telefono del cliente es obligatorio.");
+                }
+
+                var existingClient = _repoClient.FindByPhone(dto.Phone).FirstOrDefault(c => !c.IsDeleted);
+                if (existingClient != null)
+                {
+                    return Conflict(new
+                    {
+                        message = "Este cliente ya existe para este restaurante.",
+                        clientId = existingClient.Id
+                    });
+                }
+
                 var newClient = new Client
                 {
                     Name = dto.Name,

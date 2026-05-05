@@ -36,6 +36,52 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "ShingekiNoAPPI.Controllers.BranchSettingsController",
+    "Method": "GetCurrent",
+    "RelativePath": "api/branch-settings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "DTO.BranchSettingsDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ShingekiNoAPPI.Controllers.BranchSettingsController",
+    "Method": "UpdateCurrent",
+    "RelativePath": "api/branch-settings",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "DTO.BranchSettingsDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DTO.BranchSettingsDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "ShingekiNoAPPI.Controllers.BranchController",
     "Method": "Get",
     "RelativePath": "api/Branch/{id}",
@@ -163,7 +209,23 @@
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   },
   {
@@ -989,6 +1051,180 @@
       {
         "Name": "slug",
         "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ShingekiNoAPPI.Controllers.PublicController",
+    "Method": "LoginCustomer",
+    "RelativePath": "api/public/tenants/{slug}/customers/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "DTO.CustomerLoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ShingekiNoAPPI.Controllers.PublicController",
+    "Method": "GetCustomerProfile",
+    "RelativePath": "api/public/tenants/{slug}/customers/me",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ShingekiNoAPPI.Controllers.PublicController",
+    "Method": "UpdateCustomerProfile",
+    "RelativePath": "api/public/tenants/{slug}/customers/me",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "DTO.CustomerProfileUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ShingekiNoAPPI.Controllers.PublicController",
+    "Method": "GetCustomerAddresses",
+    "RelativePath": "api/public/tenants/{slug}/customers/me/addresses",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ShingekiNoAPPI.Controllers.PublicController",
+    "Method": "ChangeCustomerPassword",
+    "RelativePath": "api/public/tenants/{slug}/customers/me/change-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "DTO.CustomerChangePasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ShingekiNoAPPI.Controllers.PublicController",
+    "Method": "GetCustomerOrders",
+    "RelativePath": "api/public/tenants/{slug}/customers/me/orders",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ShingekiNoAPPI.Controllers.PublicController",
+    "Method": "RegisterCustomer",
+    "RelativePath": "api/public/tenants/{slug}/customers/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "DTO.CustomerRegisterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ShingekiNoAPPI.Controllers.PublicController",
+    "Method": "ResendCustomerCode",
+    "RelativePath": "api/public/tenants/{slug}/customers/resend-code",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "DTO.CustomerResendCodeDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ShingekiNoAPPI.Controllers.PublicController",
+    "Method": "VerifyCustomerEmail",
+    "RelativePath": "api/public/tenants/{slug}/customers/verify",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "slug",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "DTO.CustomerVerifyEmailDto",
         "IsRequired": true
       }
     ],

@@ -35,3 +35,6 @@ C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Debug\net8.0\B
 C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Debug\net8.0\refint\Business.dll
 C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Debug\net8.0\Business.pdb
 C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\Negocio\obj\Debug\net8.0\ref\Business.dll
+C:\Software\ShingekiNoAPP\.buildcheck\Business.deps.json
+C:\Software\ShingekiNoAPP\.buildcheck\Business.dll
+C:\Software\ShingekiNoAPP\.buildcheck\Business.pdb

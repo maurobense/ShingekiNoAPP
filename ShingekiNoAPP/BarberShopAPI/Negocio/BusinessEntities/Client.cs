@@ -15,6 +15,14 @@ namespace Business.BusinessEntities
         public string Name { get; set; }
         public string LastName { get; set; }
         public int Phone { get; set; }
+        public string? Email { get; set; }
+        public string? PasswordHash { get; set; }
+        public bool IsEmailVerified { get; set; } = false;
+        public string? EmailVerificationCodeHash { get; set; }
+        public DateTime? EmailVerificationCodeExpiresAt { get; set; }
+        public DateTime? EmailVerificationLastSentAt { get; set; }
+        public int EmailVerificationFailedAttempts { get; set; } = 0;
+        public DateTime? LastLoginAt { get; set; }
         [JsonIgnore]
         public ICollection<ClientAddress> Addresses { get; set; }
         [JsonIgnore]

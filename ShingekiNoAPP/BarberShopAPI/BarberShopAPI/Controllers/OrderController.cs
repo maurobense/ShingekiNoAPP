@@ -10,6 +10,7 @@ using ShingekiNoAPPI.Hubs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ShingekiNoAPPI.Controllers
@@ -59,6 +60,23 @@ namespace ShingekiNoAPPI.Controllers
             };
         }
 
+        private static DateTime GetBusinessNow()
+        {
+            try
+            {
+                var timeZone = TimeZoneInfo.FindSystemTimeZoneById("Montevideo Standard Time");
+                return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                return DateTime.UtcNow.AddHours(-3);
+            }
+            catch (InvalidTimeZoneException)
+            {
+                return DateTime.UtcNow.AddHours(-3);
+            }
+        }
+
         // =========================================================
         // 🛍️ POST: CREAR PEDIDO
         // =========================================================
@@ -80,7 +98,7 @@ namespace ShingekiNoAPPI.Controllers
                 BranchId = 0, // 🔥 El ShingekiContext pondrá la correcta
                 ClientAddressId = dto.ClientAddressId,
                 Note = dto.Note,
-                OrderDate = DateTime.UtcNow,
+                OrderDate = GetBusinessNow(),
                 CurrentStatus = OrderStatus.Pending,
                 TrackingNumber = Guid.NewGuid(),
                 OrderItems = new List<OrderItem>(),
@@ -201,6 +219,8 @@ namespace ShingekiNoAPPI.Controllers
                 Discount = order.Discount,
                 TrackingNumber = order.TrackingNumber.ToString(),
                 BranchName = order.Branch != null ? order.Branch.Name : "N/A",
+                TenantSlug = order.Branch == null ? string.Empty : GetPublicHandle(order.Branch),
+                PublicOrderingUrl = order.Branch == null ? string.Empty : BuildFrontendUrl($"/order.html?negocio={Uri.EscapeDataString(GetPublicHandle(order.Branch))}"),
                 Items = order.OrderItems.Select(oi => new OrderItemResponseDto
                 {
                     ProductName = oi.Product?.Name ?? "Producto Desconocido",
@@ -243,6 +263,8 @@ namespace ShingekiNoAPPI.Controllers
                 Discount = order.Discount,
                 TrackingNumber = order.TrackingNumber.ToString(),
                 BranchName = order.Branch?.Name ?? "Central",
+                TenantSlug = order.Branch == null ? string.Empty : GetPublicHandle(order.Branch),
+                PublicOrderingUrl = order.Branch == null ? string.Empty : BuildFrontendUrl($"/order.html?negocio={Uri.EscapeDataString(GetPublicHandle(order.Branch))}"),
                 Items = order.OrderItems.Select(oi => new OrderItemResponseDto
                 {
                     ProductName = oi.Product?.Name ?? "Ítem",
@@ -413,6 +435,20 @@ namespace ShingekiNoAPPI.Controllers
             }
 
             return path;
+        }
+
+        private static string GetPublicHandle(Branch branch)
+        {
+            var slug = NormalizePublicHandle(branch.Slug);
+            if (!slug.StartsWith("tenant-", StringComparison.OrdinalIgnoreCase)) return slug;
+
+            return NormalizePublicHandle(branch.BrandName ?? branch.Name);
+        }
+
+        private static string NormalizePublicHandle(string? value)
+        {
+            var slug = Regex.Replace((value ?? string.Empty).Trim().ToLowerInvariant(), @"[^a-z0-9]+", "-").Trim('-');
+            return string.IsNullOrWhiteSpace(slug) ? "negocio" : slug;
         }
     }
 }

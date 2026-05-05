@@ -8,6 +8,7 @@ namespace DTO
         public string CustomerName { get; set; }
         public string CustomerLastName { get; set; }
         public string CustomerPhone { get; set; }
+        public long? ClientAddressId { get; set; }
         public string Street { get; set; }
         public string City { get; set; }
         public string? Region { get; set; }

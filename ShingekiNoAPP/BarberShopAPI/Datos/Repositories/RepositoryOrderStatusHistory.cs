@@ -11,6 +11,23 @@ namespace Datos.Repositories
     {
         public RepositoryOrderStatusHistory(ShingekiContext ctx) : base(ctx) { }
 
+        private static System.DateTime GetBusinessNow()
+        {
+            try
+            {
+                var timeZone = System.TimeZoneInfo.FindSystemTimeZoneById("Montevideo Standard Time");
+                return System.TimeZoneInfo.ConvertTimeFromUtc(System.DateTime.UtcNow, timeZone);
+            }
+            catch (System.TimeZoneNotFoundException)
+            {
+                return System.DateTime.UtcNow.AddHours(-3);
+            }
+            catch (System.InvalidTimeZoneException)
+            {
+                return System.DateTime.UtcNow.AddHours(-3);
+            }
+        }
+
         public IEnumerable<OrderStatusHistory> GetHistoryByOrderId(long orderId)
         {
             // Obtiene todos los cambios de estado para un pedido, ordenados por fecha
@@ -26,7 +43,7 @@ namespace Datos.Repositories
             {
                 OrderId = orderId,
                 Status = newStatus,
-                ChangeDate = System.DateTime.UtcNow,
+                ChangeDate = GetBusinessNow(),
                 // ChangedByUserId = userId // Si agregaste este campo a la entidad
             };
 

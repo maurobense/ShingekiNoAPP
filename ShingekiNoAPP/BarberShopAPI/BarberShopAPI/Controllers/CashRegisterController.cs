@@ -45,8 +45,9 @@ namespace ShingekiNoAPPI.Controllers
                 .Where(o => o.OrderDate >= currentSession.OpenTime &&
                             o.CurrentStatus != OrderStatus.Cancelled && // Nunca sumar cancelados
                             (
-                                // A) Si es EFECTIVO: Solo sumar si ya se entregó
-                                (o.PaymentMethod == PaymentMethod.Cash && o.CurrentStatus == OrderStatus.Delivered)
+                                // A) Si se cobra al entregar: solo sumar si ya se entregó
+                                ((o.PaymentMethod == PaymentMethod.Cash || o.PaymentMethod == PaymentMethod.Pos)
+                                  && o.CurrentStatus == OrderStatus.Delivered)
                                 ||
                                 // B) Si es DIGITAL (MP/Transfer): Sumar desde que se CONFIRMA (cualquier estado menos Pendiente)
                                 ((o.PaymentMethod == PaymentMethod.MercadoPago || o.PaymentMethod == PaymentMethod.Transfer)
@@ -172,24 +173,57 @@ namespace ShingekiNoAPPI.Controllers
 
         // GET: api/CashRegister/history
         [HttpGet("history")]
-        public async Task<IActionResult> GetHistory()
+        public async Task<IActionResult> GetHistory([FromQuery] string? search, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var history = await _context.CashSessions
+            page = page < 1 ? 1 : page;
+            pageSize = pageSize < 1 ? 10 : Math.Min(pageSize, 50);
+            var query = _context.CashSessions
                 .Where(c => c.IsClosed)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                var numericTerm = term.TrimStart('#');
+                if (long.TryParse(numericTerm, out var sessionId))
+                {
+                    query = query.Where(c =>
+                        c.Id == sessionId ||
+                        (c.Notes != null && c.Notes.Contains(term)));
+                }
+                else
+                {
+                    query = query.Where(c => c.Notes != null && c.Notes.Contains(term));
+                }
+            }
+
+            var total = await query.CountAsync();
+            var history = await query
                 .OrderByDescending(c => c.CloseTime)
-                .Take(30)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(c => new
                 {
                     c.Id,
                     c.OpenTime,
                     c.CloseTime,
+                    c.InitialBalance,
+                    c.ExpectedBalance,
                     c.FinalBalance,
                     c.Difference,
+                    c.Notes,
                     User = "Admin"
                 })
                 .ToListAsync();
 
-            return Ok(history);
+            return Ok(new
+            {
+                items = history,
+                total,
+                page,
+                pageSize,
+                totalPages = (int)Math.Ceiling(total / (double)pageSize)
+            });
         }
 
         // =================================================================
@@ -215,7 +249,8 @@ namespace ShingekiNoAPPI.Controllers
                             o.OrderDate <= endTime &&
                             o.CurrentStatus != OrderStatus.Cancelled &&
                             (
-                                (o.PaymentMethod == PaymentMethod.Cash && o.CurrentStatus == OrderStatus.Delivered)
+                                ((o.PaymentMethod == PaymentMethod.Cash || o.PaymentMethod == PaymentMethod.Pos)
+                                  && o.CurrentStatus == OrderStatus.Delivered)
                                 ||
                                 ((o.PaymentMethod == PaymentMethod.MercadoPago || o.PaymentMethod == PaymentMethod.Transfer)
                                   && o.CurrentStatus != OrderStatus.Pending)
@@ -235,6 +270,9 @@ namespace ShingekiNoAPPI.Controllers
                 openTime = session.OpenTime,
                 closeTime = session.CloseTime,
                 initialBalance = session.InitialBalance,
+                expectedBalance = session.ExpectedBalance,
+                finalBalance = session.FinalBalance,
+                difference = session.Difference,
                 sessionId = session.Id,
                 notes = session.Notes,
                 movements = movements,

@@ -40,3 +40,6 @@ C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\DTO\obj\Debug\net8.0\DTO.d
 C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\DTO\obj\Debug\net8.0\refint\DTO.dll
 C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\DTO\obj\Debug\net8.0\DTO.pdb
 C:\Software\ShingekiNoAPP\ShingekiNoAPP\BarberShopAPI\DTO\obj\Debug\net8.0\ref\DTO.dll
+C:\Software\ShingekiNoAPP\.buildcheck\DTO.deps.json
+C:\Software\ShingekiNoAPP\.buildcheck\DTO.dll
+C:\Software\ShingekiNoAPP\.buildcheck\DTO.pdb

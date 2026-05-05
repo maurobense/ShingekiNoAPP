@@ -1,6 +1,7 @@
 ﻿using Business.BusinessEntities;
 using Business.RepositoryInterfaces;
 using DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace ShingekiNoAPPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    // [Authorize(Roles = "Admin")] // Descomentar cuando la seguridad esté lista
+    [Authorize(Roles = "SuperAdmin")]
     public class BranchController : ControllerBase
     {
         private readonly IRepositoryBranch _repoBranch;
@@ -51,7 +52,16 @@ namespace ShingekiNoAPPI.Controllers
                     MembershipStatus = b.MembershipStatus.ToString(),
                     PublicOrderingEnabled = b.PublicOrderingEnabled,
                     MonthlyOrderLimit = b.MonthlyOrderLimit,
-                    PublicOrderingUrl = $"/order.html?tenant={Uri.EscapeDataString(b.Slug)}"
+                    OpeningHour = b.OpeningHour,
+                    ClosingHour = b.ClosingHour,
+                    DayShiftEnabled = b.DayShiftEnabled,
+                    DayOpeningHour = b.DayOpeningHour,
+                    DayClosingHour = b.DayClosingHour,
+                    NightShiftEnabled = b.NightShiftEnabled,
+                    NightOpeningHour = b.NightOpeningHour,
+                    NightClosingHour = b.NightClosingHour,
+                    TimeZoneId = b.TimeZoneId,
+                    PublicOrderingUrl = $"/order.html?negocio={Uri.EscapeDataString(GetPublicHandle(b))}"
                 });
 
                 return Ok(dtos);
@@ -91,7 +101,16 @@ namespace ShingekiNoAPPI.Controllers
                 MembershipStatus = branch.MembershipStatus.ToString(),
                 PublicOrderingEnabled = branch.PublicOrderingEnabled,
                 MonthlyOrderLimit = branch.MonthlyOrderLimit,
-                PublicOrderingUrl = $"/order.html?tenant={Uri.EscapeDataString(branch.Slug)}"
+                OpeningHour = branch.OpeningHour,
+                ClosingHour = branch.ClosingHour,
+                DayShiftEnabled = branch.DayShiftEnabled,
+                DayOpeningHour = branch.DayOpeningHour,
+                DayClosingHour = branch.DayClosingHour,
+                NightShiftEnabled = branch.NightShiftEnabled,
+                NightOpeningHour = branch.NightOpeningHour,
+                NightClosingHour = branch.NightClosingHour,
+                TimeZoneId = branch.TimeZoneId,
+                PublicOrderingUrl = $"/order.html?negocio={Uri.EscapeDataString(GetPublicHandle(branch))}"
             };
 
             return Ok(dto);
@@ -124,8 +143,18 @@ namespace ShingekiNoAPPI.Controllers
                     BillingEmail = dto.BillingEmail,
                     PublicOrderingEnabled = dto.PublicOrderingEnabled,
                     MonthlyOrderLimit = dto.MonthlyOrderLimit,
+                    OpeningHour = NormalizeHour(dto.OpeningHour, 18),
+                    ClosingHour = NormalizeHour(dto.ClosingHour, 2),
+                    DayShiftEnabled = dto.DayShiftEnabled,
+                    DayOpeningHour = NormalizeHour(dto.DayOpeningHour, 10),
+                    DayClosingHour = NormalizeHour(dto.DayClosingHour, 16),
+                    NightShiftEnabled = dto.NightShiftEnabled,
+                    NightOpeningHour = NormalizeHour(dto.NightOpeningHour, 21),
+                    NightClosingHour = NormalizeHour(dto.NightClosingHour, 2),
+                    TimeZoneId = string.IsNullOrWhiteSpace(dto.TimeZoneId) ? "America/Montevideo" : dto.TimeZoneId,
                     IsDeleted = false
                 };
+                SyncLegacyHours(newBranch);
                 ApplyMembership(newBranch, dto);
 
                 // Validar (si la lógica está en la entidad)
@@ -171,6 +200,16 @@ namespace ShingekiNoAPPI.Controllers
                 branch.BillingEmail = dto.BillingEmail;
                 branch.PublicOrderingEnabled = dto.PublicOrderingEnabled;
                 branch.MonthlyOrderLimit = dto.MonthlyOrderLimit;
+                branch.OpeningHour = NormalizeHour(dto.OpeningHour, branch.OpeningHour);
+                branch.ClosingHour = NormalizeHour(dto.ClosingHour, branch.ClosingHour);
+                branch.DayShiftEnabled = dto.DayShiftEnabled;
+                branch.DayOpeningHour = NormalizeHour(dto.DayOpeningHour, branch.DayOpeningHour);
+                branch.DayClosingHour = NormalizeHour(dto.DayClosingHour, branch.DayClosingHour);
+                branch.NightShiftEnabled = dto.NightShiftEnabled;
+                branch.NightOpeningHour = NormalizeHour(dto.NightOpeningHour, branch.NightOpeningHour);
+                branch.NightClosingHour = NormalizeHour(dto.NightClosingHour, branch.NightClosingHour);
+                SyncLegacyHours(branch);
+                branch.TimeZoneId = string.IsNullOrWhiteSpace(dto.TimeZoneId) ? branch.TimeZoneId : dto.TimeZoneId;
                 ApplyMembership(branch, dto);
 
                 _repoBranch.Update(branch);
@@ -222,6 +261,38 @@ namespace ShingekiNoAPPI.Controllers
         {
             var slug = Regex.Replace((value ?? string.Empty).Trim().ToLowerInvariant(), @"[^a-z0-9]+", "-").Trim('-');
             return string.IsNullOrWhiteSpace(slug) ? $"tenant-{Guid.NewGuid():N}".Substring(0, 16) : slug;
+        }
+
+        private static int NormalizeHour(int value, int fallback)
+        {
+            return value >= 0 && value <= 23 ? value : fallback;
+        }
+
+        private static void SyncLegacyHours(Branch branch)
+        {
+            if (!branch.DayShiftEnabled && !branch.NightShiftEnabled)
+            {
+                branch.DayShiftEnabled = true;
+            }
+
+            if (branch.DayShiftEnabled)
+            {
+                branch.OpeningHour = branch.DayOpeningHour;
+                branch.ClosingHour = branch.DayClosingHour;
+            }
+            else
+            {
+                branch.OpeningHour = branch.NightOpeningHour;
+                branch.ClosingHour = branch.NightClosingHour;
+            }
+        }
+
+        private static string GetPublicHandle(Branch branch)
+        {
+            var slug = NormalizeSlug(branch.Slug);
+            if (!slug.StartsWith("tenant-", StringComparison.OrdinalIgnoreCase)) return slug;
+
+            return NormalizeSlug(branch.BrandName ?? branch.Name);
         }
     }
 }

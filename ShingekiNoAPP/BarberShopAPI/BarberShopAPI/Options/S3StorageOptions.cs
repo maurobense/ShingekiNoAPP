@@ -5,6 +5,6 @@ namespace ShingekiNoAPPI.Options
         public string BucketName { get; set; } = string.Empty;
         public string Region { get; set; } = "us-east-1";
         public string? PublicBaseUrl { get; set; }
-        public int MaxFileSizeMb { get; set; } = 5;
+        public int MaxFileSizeMb { get; set; } = 12;
     }
 }

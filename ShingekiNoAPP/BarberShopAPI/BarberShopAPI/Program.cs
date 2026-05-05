@@ -14,6 +14,8 @@ using Amazon.Runtime;
 using Amazon.S3;
 using ShingekiNoAPPI.Options;
 using ShingekiNoAPPI.Services.Storage;
+using ShingekiNoAPPI.Services.Email;
+using ShingekiNoAPPI.Services.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +52,7 @@ builder.Services.AddControllers()
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddMemoryCache();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
@@ -57,6 +60,7 @@ builder.Services.AddSession();
 builder.Services.AddSignalR();
 
 builder.Services.Configure<S3StorageOptions>(builder.Configuration.GetSection("S3"));
+builder.Services.Configure<SmtpEmailOptions>(builder.Configuration.GetSection("Email:Smtp"));
 builder.Services.AddSingleton<IAmazonS3>(sp =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
@@ -73,6 +77,8 @@ builder.Services.AddSingleton<IAmazonS3>(sp =>
     return new AmazonS3Client(region);
 });
 builder.Services.AddScoped<IFileStorageService, S3FileStorageService>();
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
+builder.Services.AddSingleton<ICustomerRateLimitService, InMemoryCustomerRateLimitService>();
 
 // Base de Datos
 builder.Services.AddDbContext<ShingekiContext>(options =>

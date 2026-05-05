@@ -60,6 +60,26 @@ namespace Datos.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("ClosingHour")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(2);
+
+                    b.Property<int>("DayClosingHour")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(16);
+
+                    b.Property<int>("DayOpeningHour")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(10);
+
+                    b.Property<bool>("DayShiftEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<string>("HomePage")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -85,6 +105,26 @@ namespace Datos.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NightClosingHour")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(2);
+
+                    b.Property<int>("NightOpeningHour")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(21);
+
+                    b.Property<bool>("NightShiftEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("OpeningHour")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(18);
 
                     b.Property<int>("Phone")
                         .HasColumnType("int");
@@ -132,6 +172,13 @@ namespace Datos.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("nvarchar(120)")
                         .HasDefaultValue("");
+
+                    b.Property<string>("TimeZoneId")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)")
+                        .HasDefaultValue("America/Montevideo");
 
                     b.Property<DateTime?>("TrialEndsAt")
                         .HasColumnType("datetime2");
@@ -326,6 +373,30 @@ namespace Datos.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("EmailVerificationCodeHash")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime?>("EmailVerificationCodeExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EmailVerificationFailedAttempts")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("EmailVerificationLastSentAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsEmailVerified")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -333,9 +404,16 @@ namespace Datos.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("LastLoginAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
 
                     b.Property<int>("Phone")
                         .HasColumnType("int");
@@ -344,6 +422,14 @@ namespace Datos.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BranchId", "Phone")
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0 AND [Phone] > 0");
+
+                    b.HasIndex("BranchId", "Email")
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = 0 AND [Email] IS NOT NULL");
 
                     b.ToTable("Clients");
                 });

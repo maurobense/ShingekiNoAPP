@@ -2,12 +2,14 @@
 using Business.RepositoryInterfaces;
 using DTO; // Para UserDTO y UserCreateDto
 using DTO.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography; // Necesario para el Hash
 using System.Text; // Necesario para el Hash
+using System.Text.RegularExpressions;
 using WebAPI; // Para el ManejadorJWT
 
 namespace ShingekiNoAPPI.Controllers
@@ -65,7 +67,7 @@ namespace ShingekiNoAPPI.Controllers
                 BranchId = user.BranchId,
                 TenantSlug = user.Branch?.Slug ?? string.Empty,
                 TenantFolder = user.Branch?.TenantFolder ?? string.Empty,
-                PublicOrderingUrl = $"/order.html?tenant={Uri.EscapeDataString(user.Branch?.Slug ?? string.Empty)}"
+                PublicOrderingUrl = user.Branch == null ? string.Empty : $"/order.html?negocio={Uri.EscapeDataString(GetPublicHandle(user.Branch))}"
             });
         }
 
@@ -74,6 +76,7 @@ namespace ShingekiNoAPPI.Controllers
         // =========================================================
 
         [HttpGet]
+        [Authorize(Roles = "Admin,BranchManager")]
         public ActionResult<IEnumerable<UserDTO>> GetAll()
         {
             try
@@ -101,6 +104,7 @@ namespace ShingekiNoAPPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,BranchManager")]
         public ActionResult<UserDTO> Get(long id)
         {
             try
@@ -122,6 +126,7 @@ namespace ShingekiNoAPPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,BranchManager")]
         public ActionResult Post([FromBody] UserCreateDto dto)
         {
             try
@@ -165,6 +170,7 @@ namespace ShingekiNoAPPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,BranchManager")]
         public ActionResult Put(long id, [FromBody] User user)
         {
             if (id != user.Id) return BadRequest("ID no coincide.");
@@ -214,6 +220,7 @@ namespace ShingekiNoAPPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,BranchManager")]
         public ActionResult Delete(long id)
         {
             try
@@ -245,6 +252,20 @@ namespace ShingekiNoAPPI.Controllers
                 }
                 return builder.ToString();
             }
+        }
+
+        private static string GetPublicHandle(Branch branch)
+        {
+            var slug = NormalizePublicHandle(branch.Slug);
+            if (!slug.StartsWith("tenant-", StringComparison.OrdinalIgnoreCase)) return slug;
+
+            return NormalizePublicHandle(branch.BrandName ?? branch.Name);
+        }
+
+        private static string NormalizePublicHandle(string? value)
+        {
+            var slug = Regex.Replace((value ?? string.Empty).Trim().ToLowerInvariant(), @"[^a-z0-9]+", "-").Trim('-');
+            return string.IsNullOrWhiteSpace(slug) ? "negocio" : slug;
         }
     }
 }
